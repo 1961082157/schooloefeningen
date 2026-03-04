@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Oefeningen voor Kids - Lekker Oefenen!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#b3e0ff 2px, transparent 2px);
+            background-size: 40px 40px;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: #ffeb3b;
+            border-radius: 20px;
+            box-shadow: 0 8px 0 #ff9800;
+            border: 5px solid #ff9800;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #d32f2f;
+            font-size: 2.8rem;
+            text-shadow: 3px 3px 0 #ffcc80;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.4rem;
+            color: #1976d2;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .decoration {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+        
+        .decoration:nth-child(1) { top: 15px; left: 20px; color: #e91e63; }
+        .decoration:nth-child(2) { top: 10px; right: 25px; color: #4caf50; }
+        .decoration:nth-child(3) { bottom: 15px; left: 30px; color: #2196f3; }
+        .decoration:nth-child(4) { bottom: 10px; right: 20px; color: #ff9800; }
+        
+        .intro {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 15px;
+            border-left: 8px solid #4caf50;
+            border-right: 8px solid #4caf50;
+        }
+        
+        .intro p {
+            margin-bottom: 10px;
+        }
+        
+        .subject-section {
+            background-color: white;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .subject-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .subject-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .subject-icon {
+            font-size: 2.8rem;
+            margin-right: 20px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .subject-title {
+            font-size: 2.2rem;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+            padding: 5px 15px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .engels-section {
+            border-color: #e91e63;
+        }
+        
+        .engels-header .subject-title {
+            background-color: #e91e63;
+        }
+        
+        .engels-icon {
+            background-color: #fce4ec;
+            color: #e91e63;
+        }
+        
+        .biologie-section {
+            border-color: #4caf50;
+        }
+        
+        .biologie-header .subject-title {
+            background-color: #4caf50;
+        }
+        
+        .biologie-icon {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        .taal-section {
+            border-color: #2196f3;
+        }
+        
+        .taal-header .subject-title {
+            background-color: #2196f3;
+        }
+        
+        .taal-icon {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        
+        /* Nieuwe sectie voor Rekenen */
+        .rekenen-section {
+            border-color: #ff9800;
+        }
+        
+        .rekenen-header .subject-title {
+            background-color: #ff9800;
+        }
+        
+        .rekenen-icon {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        
+        /* Nieuwe sectie voor Leren Met Muziek */
+        .muziek-section {
+            border-color: #9c27b0;
+        }
+        
+        .muziek-header .subject-title {
+            background-color: #9c27b0;
+        }
+        
+        .muziek-icon {
+            background-color: #f3e5f5;
+            color: #9c27b0;
+        }
+        
+        .exercise-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .exercise-link {
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #333;
+            border: 3px dashed;
+            transition: all 0.3s;
+        }
+        
+        .exercise-link:hover {
+            background-color: #fff;
+            transform: scale(1.05);
+            border-style: solid;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .link-icon {
+            font-size: 2.2rem;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .engels-link .link-icon {
+            background-color: #fce4ec;
+            color: #e91e63;
+        }
+        
+        .biologie-link .link-icon {
+            background-color: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        .taal-link .link-icon {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        
+        .rekenen-link .link-icon {
+            background-color: #fff3e0;
+            color: #ff9800;
+        }
+        
+        .muziek-link .link-icon {
+            background-color: #f3e5f5;
+            color: #9c27b0;
+        }
+        
+        .link-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        /* Externe link indicator */
+        .external-link-icon {
+            font-size: 1rem;
+            margin-left: 8px;
+            color: #999;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #ffcc80;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            color: #5d4037;
+            border: 3px solid #ff9800;
+        }
+        
+        .encouragement {
+            font-size: 1.5rem;
+            color: #d32f2f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .fun-elements {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .fun-element {
+            font-size: 3rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .fun-element:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .fun-element:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .fun-element:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        /* speciale nieuw badge voor nieuwe flashcard */
+        .new-badge {
+            background-color: #ff5722;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
+            vertical-align: middle;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .exercise-links {
+                grid-template-columns: 1fr;
+            }
+            
+            .subject-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .subject-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="decoration">✏️</div>
+            <div class="decoration">📚</div>
+            <div class="decoration">🎨</div>
+            <div class="decoration">⭐</div>
+            
+            <h1>School Oefeningen voor Kids</h1>
+            <div class="tagline">Doe er je voordeel mee!</div>
+            <p>Lekker oefenen, goede cijfers!</p>
+        </header>
+        
+        <div class="intro">
+            <p>Welkom bij de leukste oefenpagina voor school!</p>
+            <p>Klik op de leuke figuurtjes om naar de oefeningen te gaan.</p>
+            <p>Veel plezier met leren!</p>
+        </div>
+        
+        <div class="fun-elements">
+            <div class="fun-element">🧠</div>
+            <div class="fun-element">✏️</div>
+            <div class="fun-element">📖</div>
+            <div class="fun-element">🎯</div>
+        </div>
+        
+        <!-- Engels Sectie -->
+        <section class="subject-section engels-section">
+            <div class="subject-header engels-header">
+                <div class="subject-icon engels-icon">🇬🇧</div>
+                <h2 class="subject-title">Engels</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="./engels/gr6-unit2_lesson4.html" class="exercise-link engels-link">
+                    <div class="link-icon">📝</div>
+                    <div class="link-text">Engels - Groep 6 - Unit 2 Les 4</div>
+                </a>
+                
+                <a href="./engels/gr6-unit3_lesson4.html" class="exercise-link engels-link">
+                    <div class="link-icon">🔤</div>
+                    <div class="link-text">Engels - Groep 6 - Unit 3 Les 4</div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Biologie Sectie -->
+        <section class="subject-section biologie-section">
+            <div class="subject-header biologie-header">
+                <div class="subject-icon biologie-icon">🔬</div>
+                <h2 class="subject-title">Biologie</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="./biologie/gr6-dierenrijk-jan26.html" class="exercise-link biologie-link">
+                    <div class="link-icon">🐯</div>
+                    <div class="link-text">Biologie - Groep 6 - Dierenrijk</div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Taal Sectie - met nieuwe stadssafari link -->
+        <section class="subject-section taal-section">
+            <div class="subject-header taal-header">
+                <div class="subject-icon taal-icon">📖</div>
+                <h2 class="subject-title">Taal</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="./taal/gr6-broodjeaap.html" class="exercise-link taal-link">
+                    <div class="link-icon">🍞</div>
+                    <div class="link-text">Taal - Groep 6 - Broodjeaap</div>
+                </a>
+                
+                <a href="./taal/gr6-blok6-dictee.html" class="exercise-link taal-link">
+                    <div class="link-icon">📝</div>
+                    <div class="link-text">Taal - Groep 6 - Blok 6 Dictee</div>
+                </a>
+
+                <!-- NIEUWE STADSSAFARI FLASHCARD LINK (toegevoegd) -->
+                <a href="./taal/gr6-stads_safari.html" class="exercise-link taal-link">
+                    <div class="link-icon">🏙️</div>
+                    <div class="link-text">
+                        Taal - Groep 6 - Stadssafari <span class="new-badge">Nieuw!</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Rekenen Sectie -->
+        <section class="subject-section rekenen-section">
+            <div class="subject-header rekenen-header">
+                <div class="subject-icon rekenen-icon">🧮</div>
+                <h2 class="subject-title">Rekenen</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="https://www.redactiesommen.nl" target="_blank" rel="noopener noreferrer" class="exercise-link rekenen-link">
+                    <div class="link-icon">🔢</div>
+                    <div class="link-text">
+                        Rekenen - Redactiesommen
+                        <span class="external-link-icon">↗️</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Leren Met Muziek Sectie -->
+        <section class="subject-section muziek-section">
+            <div class="subject-header muziek-header">
+                <div class="subject-icon muziek-icon">🎵</div>
+                <h2 class="subject-title">Leren Met Muziek</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="./LerenMetMuziek/index.html" class="exercise-link muziek-link">
+                    <div class="link-icon">🎶</div>
+                    <div class="link-text">Muziek Speler - Alle School Liedjes</div>
+                </a>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Veel plezier met oefenen! Onthoud: oefening baart kunst! 🎨</p>
+            <div class="encouragement">Lekker oefenen, goede cijfers! 🎉</div>
+        </footer>
+    </div>
+
+    <script>
+        // Interactieve animaties voor de links
+        document.querySelectorAll('.exercise-link').forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('.link-icon');
+                if (icon) icon.style.transform = 'rotate(15deg) scale(1.2)';
+            });
+            
+            link.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('.link-icon');
+                if (icon) icon.style.transform = 'rotate(0) scale(1)';
+            });
+            
+            // Leuke animatie bij klikken
+            link.addEventListener('click', function(e) {
+                console.log("Klik! Naar: " + this.getAttribute('href'));
+                
+                // Voeg een leuke achtergrondflits toe
+                this.style.backgroundColor = '#ffffcc';
+                setTimeout(() => {
+                    this.style.backgroundColor = '';
+                }, 300);
+            });
+        });
+        
+        // Decoratieve elementen in de header laten bewegen
+        const decorations = document.querySelectorAll('.decoration');
+        decorations.forEach((dec, index) => {
+            setInterval(() => {
+                dec.style.transform = `translateY(${Math.sin(Date.now()/500 + index)*5}px)`;
+            }, 50);
+        });
+        
+        // Extra muziek-element toevoegen
+        setTimeout(() => {
+            const funElements = document.querySelector('.fun-elements');
+            const newElement = document.createElement('div');
+            newElement.className = 'fun-element';
+            newElement.innerHTML = '🎵';
+            newElement.style.animationDelay = '0.8s';
+            if (funElements) funElements.appendChild(newElement);
+        }, 1000);
+
+        // Extra feestelijk effect voor de nieuwe stadssafari link
+        const newBadge = document.querySelector('.new-badge');
+        if (newBadge) {
+            setInterval(() => {
+                newBadge.style.transform = 'scale(1.1)';
+                setTimeout(() => newBadge.style.transform = 'scale(1)', 150);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
