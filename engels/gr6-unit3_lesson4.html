@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80s Synthwave Flashcards | NL-ENG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #0f0b1e;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 20, 147, 0.1) 0%, transparent 20%),
+                linear-gradient(to bottom, #0f0b1e, #1a0f2e, #0f0b1e);
+            position: relative;
+        }
+
+        /* Grid lines for retro effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(20, 20, 40, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 20, 40, 0.3) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Pulsing sun effect */
+        body::after {
+            content: "";
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,105,180,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: pulse 8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 2px solid #ff00ff;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(to right, #ff00ff, #00ffff, #ffff00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            animation: glow 3s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3); }
+            100% { text-shadow: 0 0 15px rgba(0, 255, 255, 0.7), 0 0 25px rgba(0, 255, 255, 0.5); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00ffff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: linear-gradient(45deg, #ff00ff, #9d00ff);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(45deg, #00ffff, #0099ff);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(20, 10, 40, 0.7);
+            border: 1px solid #00ffff;
+            border-radius: 10px;
+            padding: 15px 25px;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #ccccff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flashcard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .flashcard {
+            background: rgba(30, 15, 60, 0.8);
+            border-radius: 15px;
+            padding: 0;
+            height: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flashcard::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #ff00ff, #00ffff, #ffff00);
+            z-index: 2;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(255, 0, 255, 0.4);
+            border-color: #00ffff;
+        }
+
+        .flashcard.marked-for-repeat {
+            border-color: #ffff00;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        /* Voorkant van de kaart */
+        .flashcard-front {
+            color: #00ffff;
+            background: rgba(30, 15, 60, 0.95);
+            transform: rotateY(0deg);
+            z-index: 1;
+        }
+
+        /* Achterkant van de kaart - gedraaid en verborgen */
+        .flashcard-back {
+            color: #ffff00;
+            background: rgba(40, 20, 80, 0.95);
+            transform: rotateY(180deg);
+        }
+
+        .word {
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px currentColor;
+            padding: 0 10px;
+        }
+
+        .language {
+            font-size: 1rem;
+            color: #ff00ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(255, 0, 255, 0.2);
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            color: #8888cc;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* Repeat checkbox styling */
+        .repeat-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        .repeat-checkbox-label {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: rgba(255, 255, 0, 0.2);
+            border: 2px solid rgba(255, 255, 0, 0.5);
+            cursor: pointer;
+            z-index: 9;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .repeat-checkbox-label:hover {
+            background: rgba(255, 255, 0, 0.3);
+            border-color: #ffff00;
+        }
+
+        .repeat-checkbox:checked + .repeat-checkbox-label {
+            background: rgba(255, 255, 0, 0.8);
+            border-color: #ffff00;
+        }
+
+        .repeat-checkbox:checked + .repeat-checkbox-label::after {
+            content: "✓";
+            color: #0f0b1e;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Repeat buttons container */
+        .repeat-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .repeat-btn {
+            background: linear-gradient(45deg, #ffff00, #ff9900);
+            border: none;
+            color: #0f0b1e;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+        }
+
+        .repeat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.8);
+        }
+
+        .instructions {
+            background: rgba(40, 20, 80, 0.6);
+            border: 1px solid #9d00ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instructions h3 {
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .instructions p {
+            color: #ccccff;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ff00ff;
+            color: #8888cc;
+            font-size: 0.9rem;
+        }
+
+        /* Retro 80s elements */
+        .retro-element {
+            position: fixed;
+            z-index: 0;
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 50px solid rgba(255, 0, 255, 0.1);
+            top: 15%;
+            left: 5%;
+            animation: float 12s infinite linear;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            bottom: 20%;
+            right: 8%;
+            animation: float 15s infinite linear reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .flashcard-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls, .repeat-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .mode-btn, .repeat-btn {
+                width: 80%;
+            }
+            
+            .word {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .flashcard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-box {
+                min-width: 120px;
+                padding: 10px 15px;
+            }
+            
+            .word {
+                font-size: 1.6rem;
+            }
+            
+            .repeat-checkbox-label, .repeat-checkbox {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Retro floating elements -->
+    <div class="retro-element triangle"></div>
+    <div class="retro-element circle"></div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sync-alt"></i> Synthwave Flashcards</h1>
+            <div class="subtitle">Unit 3 | Lesson 4 - 31 Nederlands/Engels woorden</div>
+        </header>
+
+        <div class="controls">
+            <button class="mode-btn active" id="modeAll">Toon Alle Flashcards</button>
+            <button class="mode-btn" id="modeNLtoENG">NL → ENG Oefenen</button>
+            <button class="mode-btn" id="modeENGtoNL">ENG → NL Oefenen</button>
+            <button class="mode-btn" id="shuffleBtn"><i class="fas fa-random"></i> Shuffle</button>
+        </div>
+
+        <div class="repeat-controls">
+            <button class="repeat-btn" id="showRepeatOnly"><i class="fas fa-redo"></i> Toon alleen herhalingen</button>
+            <button class="repeat-btn" id="markAllRepeat"><i class="fas fa-check-double"></i> Alles markeren</button>
+            <button class="repeat-btn" id="unmarkAllRepeat"><i class="fas fa-times"></i> Alles demarkeren</button>
+            <button class="repeat-btn" id="practiceRepeat"><i class="fas fa-dumbbell"></i> Oefen herhalingen</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="totalCards">31</div>
+                <div class="stat-label">Totaal Kaarten</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="flippedCards">0</div>
+                <div class="stat-label">Omgedraaid</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="repeatCards">0</div>
+                <div class="stat-label">Te Herhalen</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="practiceMode">Alle</div>
+                <div class="stat-label">Huidige Modus</div>
+            </div>
+        </div>
+
+        <div class="flashcard-container" id="flashcardContainer">
+            <!-- Flashcards will be generated by JavaScript -->
+        </div>
+
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> Hoe gebruik je deze flashcards</h3>
+            <p>Klik op een flashcard om deze om te draaien en de vertaling te zien. Gebruik het vinkje rechtsboven om aan te geven dat je een woord wilt herhalen. Gebruik de knoppen bovenaan om te wisselen tussen studie modi en herhalingsopties.</p>
+        </div>
+
+        <div class="footer">
+            <p>Gemaakt met <i class="fas fa-heart" style="color:#ff00ff;"></i> in retro 80s synthwave stijl | Alle 31 woorden uit Unit 3 Lesson 4</p>
+        </div>
+    </div>
+
+    <script>
+        // All 31 words from the list
+        const wordPairs = [
+            { dutch: "middag", english: "afternoon" },
+            { dutch: "wakker", english: "awake" },
+            { dutch: "een dag", english: "a day" },
+            { dutch: "een week", english: "a week" },
+            { dutch: "een uur", english: "an hour" },
+            { dutch: "’s nachts", english: "at night" },
+            { dutch: "een keer per week", english: "once a week" },
+            { dutch: "zaterdag", english: "Saturday" },
+            { dutch: "zondag", english: "Sunday" },
+            { dutch: "dinsdag", english: "Tuesday" },
+            { dutch: "donderdag", english: "Thursday" },
+            { dutch: "tijd", english: "time" },
+            { dutch: "vandaag", english: "today" },
+            { dutch: "morgen", english: "tomorrow" },
+            { dutch: "kalender", english: "calendar" },
+            { dutch: "klok", english: "clock" },
+            { dutch: "agenda", english: "diary" },
+            { dutch: "avond", english: "evening" },
+            { dutch: "vrijdag", english: "Friday" },
+            { dutch: "half elf", english: "half past ten" },
+            { dutch: "vorige week", english: "last week" },
+            { dutch: "lui", english: "lazy" },
+            { dutch: "maandag", english: "Monday" },
+            { dutch: "ochtend", english: "morning" },
+            { dutch: "negen uur", english: "nine o'clock" },
+            { dutch: "opstaan", english: "to get up" },
+            { dutch: "haasten", english: "to rush" },
+            { dutch: "slapen", english: "to sleep" },
+            { dutch: "wakker worden", english: "to wake up" },
+            { dutch: "horloge", english: "watch" },
+            { dutch: "woensdag", english: "Wednesday" }
+        ];
+
+        // Initialize repeat status in localStorage or as array
+        let repeatStatus = JSON.parse(localStorage.getItem('flashcardRepeatStatus')) || Array(wordPairs.length).fill(false);
+
+        // DOM elements
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const modeAllBtn = document.getElementById('modeAll');
+        const modeNLtoENGBtn = document.getElementById('modeNLtoENG');
+        const modeENGtoNLBtn = document.getElementById('modeENGtoNL');
+        const shuffleBtn = document.getElementById('shuffleBtn');
+        const showRepeatOnlyBtn = document.getElementById('showRepeatOnly');
+        const markAllRepeatBtn = document.getElementById('markAllRepeat');
+        const unmarkAllRepeatBtn = document.getElementById('unmarkAllRepeat');
+        const practiceRepeatBtn = document.getElementById('practiceRepeat');
+        const flippedCardsElement = document.getElementById('flippedCards');
+        const repeatCardsElement = document.getElementById('repeatCards');
+        const practiceModeElement = document.getElementById('practiceMode');
+        
+        let currentMode = 'all'; // 'all', 'nlToEng', 'engToNl', 'repeatOnly'
+        let flippedCount = 0;
+        let showOnlyRepeat = false;
+        
+        // Save repeat status to localStorage
+        function saveRepeatStatus() {
+            localStorage.setItem('flashcardRepeatStatus', JSON.stringify(repeatStatus));
+            updateRepeatCount();
+        }
+        
+        // Update repeat count display
+        function updateRepeatCount() {
+            const repeatCount = repeatStatus.filter(status => status).length;
+            repeatCardsElement.textContent = repeatCount;
+        }
+        
+        // Initialize flashcards
+        function initFlashcards() {
+            generateFlashcards();
+            updateStats();
+            updateRepeatCount();
+        }
+        
+        // Generate flashcards based on current mode
+        function generateFlashcards() {
+            flashcardContainer.innerHTML = '';
+            
+            let displayedCount = 0;
+            
+            wordPairs.forEach((pair, index) => {
+                // Skip if we're in repeat-only mode and this card isn't marked for repeat
+                if (showOnlyRepeat && !repeatStatus[index]) {
+                    return;
+                }
+                
+                displayedCount++;
+                const flashcard = document.createElement('div');
+                flashcard.className = 'flashcard';
+                flashcard.dataset.index = index;
+                
+                // Add marked class if this card is marked for repeat
+                if (repeatStatus[index]) {
+                    flashcard.classList.add('marked-for-repeat');
+                }
+                
+                // Determine which side is front based on mode
+                let frontText, frontLang, backText, backLang;
+                
+                if (currentMode === 'nlToEng') {
+                    frontText = pair.dutch;
+                    frontLang = 'Nederlands';
+                    backText = pair.english;
+                    backLang = 'English';
+                } else if (currentMode === 'engToNl') {
+                    frontText = pair.english;
+                    frontLang = 'English';
+                    backText = pair.dutch;
+                    backLang = 'Nederlands';
+                } else {
+                    // All mode - alternate between NL and ENG as front
+                    if (index % 2 === 0) {
+                        frontText = pair.dutch;
+                        frontLang = 'Nederlands';
+                        backText = pair.english;
+                        backLang = 'English';
+                    } else {
+                        frontText = pair.english;
+                        frontLang = 'English';
+                        backText = pair.dutch;
+                        backLang = 'Nederlands';
+                    }
+                }
+                
+                flashcard.innerHTML = `
+                    <input type="checkbox" class="repeat-checkbox" id="repeat-${index}" ${repeatStatus[index] ? 'checked' : ''}>
+                    <label for="repeat-${index}" class="repeat-checkbox-label" title="Markeren voor herhaling"></label>
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <div class="word">${frontText}</div>
+                            <div class="language">${frontLang}</div>
+                            <div class="hint"><i class="fas fa-hand-pointer"></i> Klik om om te draaien</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="word">${backText}</div>
+                            <div class="language">${backLang}</div>
+                            <div class="hint"><i class="fas fa-redo"></i> Klik om terug te draaien</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add click event to flip card (but not when clicking the checkbox)
+                flashcard.addEventListener('click', function(e) {
+                    // Don't flip if clicking the checkbox or its label
+                    if (e.target.classList.contains('repeat-checkbox') || 
+                        e.target.classList.contains('repeat-checkbox-label')) {
+                        return;
+                    }
+                    
+                    this.classList.toggle('flipped');
+                    
+                    // Update flipped count if flipping from front to back
+                    if (this.classList.contains('flipped')) {
+                        if (!this.dataset.alreadyFlipped) {
+                            flippedCount++;
+                            this.dataset.alreadyFlipped = true;
+                            updateStats();
+                        }
+                    }
+                });
+                
+                // Add change event to checkbox
+                const checkbox = flashcard.querySelector('.repeat-checkbox');
+                checkbox.addEventListener('change', function() {
+                    const cardIndex = parseInt(this.id.split('-')[1]);
+                    repeatStatus[cardIndex] = this.checked;
+                    
+                    // Update card visual
+                    const card = this.closest('.flashcard');
+                    if (this.checked) {
+                        card.classList.add('marked-for-repeat');
+                    } else {
+                        card.classList.remove('marked-for-repeat');
+                    }
+                    
+                    saveRepeatStatus();
+                    
+                    // If we're in repeat-only mode and unchecking, hide the card
+                    if (showOnlyRepeat && !this.checked) {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                flashcardContainer.appendChild(flashcard);
+            });
+            
+            // Update total cards display
+            document.getElementById('totalCards').textContent = displayedCount;
+        }
+        
+        // Update statistics display
+        function updateStats() {
+            flippedCardsElement.textContent = flippedCount;
+            
+            if (currentMode === 'all') {
+                practiceModeElement.textContent = "Alle";
+            } else if (currentMode === 'nlToEng') {
+                practiceModeElement.textContent = "NL→ENG";
+            } else if (currentMode === 'engToNl') {
+                practiceModeElement.textContent = "ENG→NL";
+            } else {
+                practiceModeElement.textContent = "Herhaling";
+            }
+        }
+        
+        // Shuffle flashcards
+        function shuffleFlashcards() {
+            // Fisher-Yates shuffle algorithm
+            for (let i = wordPairs.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [wordPairs[i], wordPairs[j]] = [wordPairs[j], wordPairs[i]];
+                // Also shuffle the repeat status to match
+                [repeatStatus[i], repeatStatus[j]] = [repeatStatus[j], repeatStatus[i]];
+            }
+            
+            saveRepeatStatus();
+            generateFlashcards();
+            
+            // Add visual feedback for shuffle
+            shuffleBtn.innerHTML = '<i class="fas fa-check"></i> Geschud!';
+            setTimeout(() => {
+                shuffleBtn.innerHTML = '<i class="fas fa-random"></i> Shuffle';
+            }, 1000);
+        }
+        
+        // Mark all cards for repeat
+        function markAllForRepeat() {
+            repeatStatus = Array(wordPairs.length).fill(true);
+            saveRepeatStatus();
+            generateFlashcards();
+            
+            // Visual feedback
+            markAllRepeatBtn.innerHTML = '<i class="fas fa-check"></i> Alles gemarkeerd!';
+            setTimeout(() => {
+                markAllRepeatBtn.innerHTML = '<i class="fas fa-check-double"></i> Alles markeren';
+            }, 1000);
+        }
+        
+        // Unmark all cards for repeat
+        function unmarkAllForRepeat() {
+            repeatStatus = Array(wordPairs.length).fill(false);
+            saveRepeatStatus();
+            generateFlashcards();
+            
+            // Visual feedback
+            unmarkAllRepeatBtn.innerHTML = '<i class="fas fa-check"></i> Alles gedemarkeerd!';
+            setTimeout(() => {
+                unmarkAllRepeatBtn.innerHTML = '<i class="fas fa-times"></i> Alles demarkeren';
+            }, 1000);
+        }
+        
+        // Show only cards marked for repeat
+        function toggleRepeatOnly() {
+            showOnlyRepeat = !showOnlyRepeat;
+            
+            if (showOnlyRepeat) {
+                showRepeatOnlyBtn.innerHTML = '<i class="fas fa-eye"></i> Toon alle kaarten';
+                showRepeatOnlyBtn.style.background = 'linear-gradient(45deg, #ffff00, #ff5500)';
+                currentMode = 'repeatOnly';
+            } else {
+                showRepeatOnlyBtn.innerHTML = '<i class="fas fa-redo"></i> Toon alleen herhalingen';
+                showRepeatOnlyBtn.style.background = 'linear-gradient(45deg, #ffff00, #ff9900)';
+                currentMode = 'all';
+            }
+            
+            generateFlashcards();
+            updateStats();
+        }
+        
+        // Practice only repeat cards
+        function practiceRepeatCards() {
+            // First, make sure we're showing repeat cards
+            if (!showOnlyRepeat) {
+                showOnlyRepeat = true;
+                showRepeatOnlyBtn.innerHTML = '<i class="fas fa-eye"></i> Toon alle kaarten';
+                showRepeatOnlyBtn.style.background = 'linear-gradient(45deg, #ffff00, #ff5500)';
+            }
+            
+            // Switch to NL→ENG mode for practice
+            currentMode = 'nlToEng';
+            setActiveButton(modeNLtoENGBtn);
+            
+            generateFlashcards();
+            updateStats();
+            
+            // Visual feedback
+            practiceRepeatBtn.innerHTML = '<i class="fas fa-dumbbell"></i> Oefening gestart!';
+            setTimeout(() => {
+                practiceRepeatBtn.innerHTML = '<i class="fas fa-dumbbell"></i> Oefen herhalingen';
+            }, 1500);
+        }
+        
+        // Event listeners for mode buttons
+        modeAllBtn.addEventListener('click', function() {
+            currentMode = 'all';
+            showOnlyRepeat = false;
+            showRepeatOnlyBtn.innerHTML = '<i class="fas fa-redo"></i> Toon alleen herhalingen';
+            showRepeatOnlyBtn.style.background = 'linear-gradient(45deg, #ffff00, #ff9900)';
+            setActiveButton(this);
+            generateFlashcards();
+            updateStats();
+        });
+        
+        modeNLtoENGBtn.addEventListener('click', function() {
+            currentMode = 'nlToEng';
+            setActiveButton(this);
+            generateFlashcards();
+            updateStats();
+        });
+        
+        modeENGtoNLBtn.addEventListener('click', function() {
+            currentMode = 'engToNl';
+            setActiveButton(this);
+            generateFlashcards();
+            updateStats();
+        });
+        
+        shuffleBtn.addEventListener('click', shuffleFlashcards);
+        showRepeatOnlyBtn.addEventListener('click', toggleRepeatOnly);
+        markAllRepeatBtn.addEventListener('click', markAllForRepeat);
+        unmarkAllRepeatBtn.addEventListener('click', unmarkAllForRepeat);
+        practiceRepeatBtn.addEventListener('click', practiceRepeatCards);
+        
+        // Helper to set active button
+        function setActiveButton(activeBtn) {
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            activeBtn.classList.add('active');
+        }
+        
+        // Initialize the page
+        initFlashcards();
+        
+        // Add some visual effects for fun
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add subtle animation to cards on load
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.flashcard');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        card.offsetHeight; // Trigger reflow
+                        card.style.transition = 'opacity 0.5s, transform 0.5s';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 50);
+                });
+            }, 300);
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Space to shuffle
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    shuffleFlashcards();
+                }
+                
+                // Number keys to switch modes
+                if (e.code === 'Digit1') {
+                    modeAllBtn.click();
+                } else if (e.code === 'Digit2') {
+                    modeNLtoENGBtn.click();
+                } else if (e.code === 'Digit3') {
+                    modeENGtoNLBtn.click();
+                }
+                
+                // R for repeat mode
+                if (e.code === 'KeyR' && e.ctrlKey) {
+                    e.preventDefault();
+                    toggleRepeatOnly();
+                }
+            });
+        });
+        
+        // Reset flipped counter when changing modes
+        const originalGenerateFlashcards = generateFlashcards;
+        generateFlashcards = function() {
+            flippedCount = 0;
+            originalGenerateFlashcards();
+        };
+    </script>
+</body>
+</html>

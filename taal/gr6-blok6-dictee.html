@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>🌈 Dictee Trainer Groep 6 - Blok 6 🌈</title>
+
+<style>
+body {
+    font-family: 'Comic Sans MS', Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+    text-align: center;
+    padding: 20px;
+}
+
+#container {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    max-width: 950px;
+    margin: auto;
+    box-shadow: 0 0 30px rgba(0,0,0,0.25);
+}
+
+h1 {
+    font-size: 42px;
+    color: #ff4081;
+}
+
+button {
+    font-size: 24px;
+    padding: 18px 28px;
+    margin: 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.green { background: #4caf50; color: white; }
+.blue { background: #2196f3; color: white; }
+.orange { background: #ff9800; color: white; }
+.purple { background: #9c27b0; color: white; }
+
+input {
+    font-size: 26px;
+    padding: 18px;
+    width: 90%;
+    border-radius: 20px;
+    border: 4px solid #2196f3;
+    margin-top: 20px;
+}
+
+.bigText {
+    font-size: 34px;
+    font-weight: bold;
+    margin: 20px;
+    color: #333;
+}
+
+.correct { color: green; font-size: 28px; }
+.wrong { color: red; font-size: 28px; }
+
+#score {
+    font-size: 26px;
+    margin-top: 20px;
+}
+
+.hidden {
+    visibility: hidden;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+
+<h1>🌈 Dictee Trainer Groep 6 🌈</h1>
+
+<h2>Kies wat je wilt oefenen:</h2>
+
+<button class="green" onclick="startRonde('woorden')">📝 Woorden</button>
+<button class="blue" onclick="startRonde('zinnen')">📖 Zinnen</button>
+
+<hr>
+
+<div id="oefening" style="display:none;">
+
+<p id="nummer" style="font-size:28px;"></p>
+
+<div id="toonTekst" class="bigText hidden"></div>
+
+<button class="orange" onclick="spreekHuidige()">🔊 Luister</button>
+<button class="purple" onclick="toggleTekst()">👀 Toon / Verberg</button>
+
+<br>
+
+<input type="text" id="antwoord" placeholder="Typ hier wat je hoort...">
+
+<br>
+
+<button class="green" onclick="controleer()">✔ Controleer</button>
+
+<p id="feedback"></p>
+
+<div id="score"></div>
+
+<div id="herhaal"></div>
+
+</div>
+
+</div>
+
+<script>
+
+// ==========================
+// DATA
+// ==========================
+
+let woorden = [
+"coupé","openluchttheater","presentatie","individuele","tour","nauwkeurige",
+"plumeau","olifantje","route","schroevendraaiers",
+"lanceren","couplet","douane","explosie","paté","cadeau",
+"coureur","chaos","thema","officieel","tegelijk",
+"retour","menu’s","waarschuwing","plateautje","satésaus",
+"linialen","etage","rouge","moeilijkheid","niveauverschil",
+"logé","percentage","gouverneur","leguanen","expeditieleider",
+"chantage","giraffen","vernieuwen","eindelijk",
+"massage","exotisch","zenuwachtig","camouflage","politiecel",
+"technische","lekkage","couveuse","poncho’s","duizendste","college",
+"typisch","hyacint","echo’s","astronaut","verhuizing","actuele",
+"plateau","viooltje","mysterie","piano’s","pony","wandelroutes",
+"systeem","energie","affiche","hyena","toernooidirecteur",
+"maximum","hobby","sympathiek","universiteit","manege","nieuwbouwlocatie",
+"riolering","reeds","courgettes","automatisch","mythologie","hartchirurg",
+"olympisch","intelligentie","luxe","angstige","eventueel","voorbereiden",
+"beteuterd","zichtbaarheid","papegaaitje","onvoldoende",
+"yoghurt","fonkelen","oké","mannetjesleeuw","originaliteit","textielverf",
+"spionage","materialen","recentelijk","couponnetje","paraplu’s","bureaublad"
+];
+
+let zinnen = [
+"Hij bewaart de porseleinen kopjes op een speciale plek.",
+"Mevrouw Dekker heeft in het eetcafé naast het hotelletje gegeten.",
+"Pip rijdt met haar elektrische fiets naar Woerden, Breukelen en Naarden.",
+"Daan, liep jij nonchalant op dat privéterrein?",
+"Zij wonnen bij de banketbakkerij een prachtige taart.",
+"Fien, de Aziatische koekjes van die reclame lust ik niet.",
+"Ik vroeg: ‘Wie ontving na de marathon de zilveren beker?’",
+"Zij heeft bij die kringloopwinkel een bureautje, een stoel en een kast gekocht.",
+"Ik bleef in het kleine appartementje, terwijl zij naar de voorstelling ging.",
+"Hij redt de kristallen vaas van een ongelukkige val.",
+"Jonas bondt chagrijnig zijn tas op de bagagedrager.",
+"Koen, heb jij opa voor zijn tachtigste verjaardag een horloge gegeven?",
+"De kok braadt het kippetje met wat ui, prei en taugé, terwijl hij in de saus roert.",
+"De Zweedse douane ontdekt ivoren slagtanden in zijn koffer.",
+"Mette zei: ‘Ik heb van exact twaalf madeliefjes een kransje gemaakt.’",
+"In de trein naar Parijs geniet de passagier van een celloconcert.",
+"In de lobby dronken wij melk, sap en aardbeienthee.",
+"Hij besteedt zijn geld aan een knapperige zak chips, voordat hij vertrekt.",
+"Juul, vertrok jij al vroeg naar de gymclub in Heerlen?"
+];
+
+let huidigeLijst = [];
+let huidigeIndex = 0;
+let score = 0;
+let fouten = [];
+let zichtbaar = false;
+let actief = false;
+
+// ==========================
+// ENTER = CONTROLEREN
+// ==========================
+
+document.getElementById("antwoord").addEventListener("keydown", function(e) {
+    if(e.key === "Enter" && actief) {
+        e.preventDefault();
+        controleer();
+    }
+});
+
+// ==========================
+
+function normaliseerTekst(tekst) {
+    return tekst
+        .toLowerCase()
+        .replace(/[’´`‘]/g, "'")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function startRonde(type) {
+
+    document.getElementById("oefening").style.display = "block";
+
+    huidigeLijst = (type === "woorden") ? shuffle([...woorden]) : shuffle([...zinnen]);
+
+    huidigeIndex = 0;
+    score = 0;
+    fouten = [];
+    zichtbaar = false;
+    actief = true;
+
+    document.getElementById("toonTekst").classList.add("hidden");
+    document.getElementById("antwoord").value = "";
+    document.getElementById("feedback").innerHTML = "";
+    document.getElementById("herhaal").innerHTML = "";
+
+    volgende();
+}
+
+function volgende() {
+
+    if(huidigeIndex >= huidigeLijst.length) {
+        einde();
+        return;
+    }
+
+    document.getElementById("nummer").innerText =
+        "Oefening " + (huidigeIndex + 1) + " van " + huidigeLijst.length;
+
+    zichtbaar = false;
+    document.getElementById("toonTekst").classList.add("hidden");
+
+    spreekHuidige();
+
+    document.getElementById("antwoord").focus();
+}
+
+function toggleTekst() {
+    let div = document.getElementById("toonTekst");
+
+    if(zichtbaar) {
+        div.classList.add("hidden");
+        zichtbaar = false;
+    } else {
+        div.innerText = huidigeLijst[huidigeIndex];
+        div.classList.remove("hidden");
+        zichtbaar = true;
+    }
+}
+
+function controleer() {
+
+    let invoer = normaliseerTekst(document.getElementById("antwoord").value);
+    let goed = normaliseerTekst(huidigeLijst[huidigeIndex]);
+
+    if(invoer === goed) {
+        document.getElementById("feedback").innerHTML =
+            "<span class='correct'>🎉 Goed gedaan!</span>";
+        score++;
+    } else {
+        document.getElementById("feedback").innerHTML =
+            "<span class='wrong'>❌ Fout! Het juiste antwoord was:<br>" + huidigeLijst[huidigeIndex] + "</span>";
+        fouten.push(huidigeLijst[huidigeIndex]);
+    }
+
+    huidigeIndex++;
+    document.getElementById("antwoord").value = "";
+    updateScore();
+
+    setTimeout(volgende, 1200);
+}
+
+function updateScore() {
+    let percentage = Math.round((score / huidigeLijst.length) * 100);
+    document.getElementById("score").innerText =
+        "Score: " + score + " / " + huidigeLijst.length + " (" + percentage + "%)";
+}
+
+function einde() {
+    actief = false;
+    document.getElementById("nummer").innerHTML = "<strong>🏁 Klaar!</strong>";
+
+    if(fouten.length > 0) {
+        document.getElementById("herhaal").innerHTML =
+            "<button class='purple' onclick='herhaalFouten()'>🔁 Oefen fouten opnieuw</button>";
+    }
+}
+
+function herhaalFouten() {
+    huidigeLijst = shuffle([...fouten]);
+    huidigeIndex = 0;
+    score = 0;
+    fouten = [];
+    actief = true;
+    volgende();
+}
+
+function spreekHuidige() {
+    let tekst = huidigeLijst[huidigeIndex];
+    let speech = new SpeechSynthesisUtterance(tekst);
+    speech.lang = "nl-NL";
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(speech);
+}
+
+</script>
+
+</body>
+</html>

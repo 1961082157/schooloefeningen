@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Engels ⇄ Nederlands - Oefenpagina</title>
+  <style>
+    :root{--accent:#2b9bd7;--muted:#f1f6f9;--card:#ffffff}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg,#f7fbfd,#eef6fb); margin:0;padding:24px;color:#123}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:#345}
+    .container{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+    .card{background:var(--card);border-radius:10px;padding:14px;box-shadow:0 6px 18px rgba(12,30,50,0.06)}
+    .pair-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+    .pair{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:var(--muted);cursor:pointer;user-select:none}
+    .eng{font-weight:600}
+    .nl{opacity:0.0;transition:opacity .18s}
+    .pair.revealed .nl{opacity:1}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    button{background:var(--accent);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+    button.secondary{background:#e6eef6;color:#123}
+    .quiz{margin-top:12px}
+    .status{margin-top:8px;color:#244;min-height:1.2em}
+    .small{font-size:13px;color:#456}
+    footer{margin-top:20px;color:#456;font-size:13px}
+    @media (max-width:800px){.container{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Engels ⇄ Nederlands — Oefenen</h1>
+      <p class="lead small">Klik een rij om de vertaling te tonen. Gebruik de quiz om actief te oefenen.</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- links: lijst 1 -->
+    <div class="card">
+      <div class="controls">
+        <button id="revealAll">Toon alle vertalingen</button>
+        <button id="hideAll" class="secondary">Verberg alle vertalingen</button>
+        <button id="shuffleLeft" class="secondary">Shuffle</button>
+      </div>
+
+      <h3>Woorden (linkerkolom)</h3>
+      <div id="leftList" class="pair-list">
+        <!-- items komen via JS -->
+      </div>
+    </div>
+
+    <!-- rechts: lijst 2 -->
+    <div class="card">
+      <div class="controls">
+        <button id="quizBtn">Start quiz</button>
+        <button id="reverseBtn" class="secondary">Oefen NU Engels → Nederlands</button>
+      </div>
+
+      <h3>Woorden (rechterkolom)</h3>
+      <div id="rightList" class="pair-list">
+        <!-- items via JS -->
+      </div>
+
+      <div class="quiz" id="quizArea" style="display:none;">
+        <div><strong id="quizPrompt">Vraag</strong></div>
+        <input id="answerInput" type="text" placeholder="Typ hier je antwoord" style="width:100%;padding:8px;margin-top:8px;border-radius:8px;border:1px solid #d5e9f6" />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="checkBtn">Controleer</button>
+          <button id="nextBtn" class="secondary">Volgende</button>
+          <button id="flipBtn" class="secondary">Wissel richting</button>
+        </div>
+        <div class="status" id="quizStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="small">Bron: Woordenlijst uit je foto. Klik een rij om handmatig te oefenen of gebruik de quiz.</div>
+  </footer>
+
+  <script>
+    // woordparen uit de foto
+    const leftPairs = [
+      ["banknotes", "briefgeld"],
+      ["broccoli", "broccoli"],
+      ["carrots", "wortelen"],
+      ["change", "wisselgeld"],
+      ["cheap", "goedkoop"],
+
+      ["checkout", "kassa"],
+      ["coins", "muntgeld"],
+      ["delicious", "heerlijk / lekker"],
+      ["drink", "drankje"],
+      ["fish", "vis"],
+      ["food", "voedsel, eten"],
+      ["fruit", "fruit"],
+
+      ["fruit section", "fruit afdeling"],
+      ["greengrocer", "groenteboer"],
+      ["meat", "vlees"]
+    ];
+
+    const rightPairs = [
+      ["money", "geld"],
+      ["peaches", "perziken"],
+      ["pence", "Brits muntgeld"],
+      ["pound", "Brits briefgeld"],
+
+      ["price", "prijs"],
+      ["shopping list", "boodschappenlijst"],
+      ["shopping trolley", "winkelwagentje"],
+      ["strawberries", "aardbeien"],
+      ["supermarket", "supermarkt"],
+      ["sweets", "snoep"],
+
+      ["to be hungry", "honger hebben"],
+      ["to buy", "kopen"],
+      ["to pay", "betalen"],
+      ["to smell", "ruiken"],
+      ["vegetables", "groenten"]
+    ];
+
+    // hulpfuncties
+    function makePairElement(en, nl) {
+      const el = document.createElement('div');
+      el.className = 'pair';
+      el.innerHTML = '<span class="eng">'+escapeHtml(en)+'</span><span class="nl">'+escapeHtml(nl)+'</span>';
+      el.addEventListener('click', () => el.classList.toggle('revealed'));
+      return el;
+    }
+
+    function populateList(containerId, pairs) {
+      const cont = document.getElementById(containerId);
+      cont.innerHTML = '';
+      pairs.forEach(p => cont.appendChild(makePairElement(p[0], p[1])));
+    }
+
+    function shuffleArray(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // initialisatie
+    populateList('leftList', leftPairs);
+    populateList('rightList', rightPairs);
+
+    // knoppen
+    document.getElementById('revealAll').addEventListener('click', () => {
+      document.querySelectorAll('.pair').forEach(p => p.classList.add('revealed'));
+    });
+    document.getElementById('hideAll').addEventListener('click', () => {
+      document.querySelectorAll('.pair').forEach(p => p.classList.remove('revealed'));
+    });
+    document.getElementById('shuffleLeft').addEventListener('click', () => {
+      shuffleArray(leftPairs);
+      populateList('leftList', leftPairs);
+    });
+
+    // --- quiz ---
+    let quizActive = false;
+    let quizPairs = leftPairs.concat(rightPairs);
+    let quizIndex = 0;
+    let quizDirection = 'EN->NL'; // or 'NL->EN'
+
+    function startQuiz() {
+      quizActive = true;
+      document.getElementById('quizArea').style.display = 'block';
+      shuffleArray(quizPairs);
+      quizIndex = 0;
+      quizDirection = 'EN->NL';
+      showQuizItem();
+    }
+
+    function showQuizItem() {
+      if (quizPairs.length === 0) {
+        document.getElementById('quizPrompt').textContent = 'Geen woorden beschikbaar';
+        return;
+      }
+      const pair = quizPairs[quizIndex % quizPairs.length];
+      if (quizDirection === 'EN->NL') {
+        document.getElementById('quizPrompt').textContent = 'Vertaal naar Nederlands: ' + pair[0];
+      } else {
+        document.getElementById('quizPrompt').textContent = 'Vertaal naar Engels: ' + pair[1];
+      }
+      document.getElementById('answerInput').value = '';
+      document.getElementById('quizStatus').textContent = '';
+      document.getElementById('answerInput').focus();
+    }
+
+    document.getElementById('quizBtn').addEventListener('click', () => {
+      startQuiz();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      quizIndex++;
+      showQuizItem();
+    });
+
+    document.getElementById('flipBtn').addEventListener('click', () => {
+      quizDirection = (quizDirection === 'EN->NL') ? 'NL->EN' : 'EN->NL';
+      showQuizItem();
+    });
+
+    document.getElementById('checkBtn').addEventListener('click', () => {
+      checkAnswer();
+    });
+
+    document.getElementById('answerInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+    function normalize(s){ return s.trim().toLowerCase().replace(/\s+/g,' '); }
+
+    function checkAnswer(){
+      const user = normalize(document.getElementById('answerInput').value);
+      const pair = quizPairs[quizIndex % quizPairs.length];
+      const correct = (quizDirection === 'EN->NL') ? pair[1] : pair[0];
+      const normalizedCorrect = normalize(correct.replace(/\/.*/,'').replace(/,.*$/,''));
+      // allow small flexibility: if user matches any of slash-separated options or comma list
+      const options = normalizedCorrect.split(/\s*\/\s*|\s*,\s*/).map(s=>s.trim()).filter(Boolean);
+      const match = options.some(opt => opt === user);
+      const statusEl = document.getElementById('quizStatus');
+      if (match) {
+        statusEl.textContent = '✅ Goed! Antwoord: ' + correct;
+      } else if (user === '') {
+        statusEl.textContent = 'Type een antwoord en druk op Controleer.';
+      } else {
+        statusEl.textContent = '❌ Niet helemaal. Correct: ' + correct;
+      }
+    }
+
+    // reverse practice toggle (quick)
+    document.getElementById('reverseBtn').addEventListener('click', () => {
+      // toggle revealing: reveal English and hide Dutch for easier reverse reading
+      document.querySelectorAll('#leftList .pair, #rightList .pair').forEach(p => p.classList.remove('revealed'));
+      alert('Klik op een rij om de vertaling te tonen. Gebruik de quiz-knop om een oefenronde te starten.');
+    });
+
+    // make right-click on pair copy the translation (convenience)
+    document.addEventListener('contextmenu', (e) => {
+      const p = e.target.closest('.pair');
+      if (p) {
+        e.preventDefault();
+        const nl = p.querySelector('.nl').textContent;
+        navigator.clipboard?.writeText(nl).then(()=> {
+          const saved = document.createElement('div');
+          saved.textContent = 'Vertaling gekopieerd: ' + nl;
+          saved.style.position='fixed';
+          saved.style.right='16px';
+          saved.style.bottom='16px';
+          saved.style.padding='8px 12px';
+          saved.style.background='rgba(12,30,50,0.9)';
+          saved.style.color='#fff';
+          saved.style.borderRadius='8px';
+          document.body.appendChild(saved);
+          setTimeout(()=>saved.remove(),1400);
+        }).catch(()=>{/* ignore */});
+      }
+    });
+
+  </script>
+</body>
+</html>
