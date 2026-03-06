@@ -174,6 +174,19 @@
             color: #ff9800;
         }
         
+        .muziek-section {
+            border-color: #9c27b0;
+        }
+        
+        .muziek-header .subject-title {
+            background-color: #9c27b0;
+        }
+        
+        .muziek-icon {
+            background-color: #f3e5f5;
+            color: #9c27b0;
+        }
+        
         .exercise-links {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -228,6 +241,11 @@
         .rekenen-link .link-icon {
             background-color: #fff3e0;
             color: #ff9800;
+        }
+        
+        .muziek-link .link-icon {
+            background-color: #f3e5f5;
+            color: #9c27b0;
         }
         
         .link-text {
@@ -300,7 +318,6 @@
             text-transform: uppercase;
             animation: pulse 1.5s infinite;
         }
-        
         @keyframes pulse {
             0% { opacity: 0.7; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.1); }
@@ -371,6 +388,12 @@
                     <div class="link-icon">🔤</div>
                     <div class="link-text">Engels - Groep 6 - Unit 3 Les 4</div>
                 </a>
+				
+                <!-- NIEUWE LINK voor Unit 4 Les 4 -->
+                <a href="./engels/gr6-unit4-les4.html" class="exercise-link taal-link">
+                    <div class="link-icon">🚂</div>
+                    <div class="link-text">Taal - Groep 6 - Unit 4 Les 4 <span class="new-badge">Nieuw!</span></div>
+                </a>
             </div>
         </section>
         
@@ -389,7 +412,7 @@
             </div>
         </section>
         
-        <!-- Taal Sectie - met nieuwe stadssafari link -->
+        <!-- Taal Sectie - met nieuwe link -->
         <section class="subject-section taal-section">
             <div class="subject-header taal-header">
                 <div class="subject-icon taal-icon">📖</div>
@@ -409,10 +432,9 @@
 
                 <a href="./taal/gr6-stads_safari.html" class="exercise-link taal-link">
                     <div class="link-icon">🏙️</div>
-                    <div class="link-text">
-                        Taal - Groep 6 - Stadssafari <span class="new-badge">Nieuw!</span>
-                    </div>
+                    <div class="link-text">Taal - Groep 6 - Stadssafari <span class="new-badge">Nieuw!</span></div>
                 </a>
+
             </div>
         </section>
         
@@ -434,6 +456,21 @@
             </div>
         </section>
         
+        <!-- Leren Met Muziek Sectie -->
+        <section class="subject-section muziek-section">
+            <div class="subject-header muziek-header">
+                <div class="subject-icon muziek-icon">🎵</div>
+                <h2 class="subject-title">Leren Met Muziek</h2>
+            </div>
+            
+            <div class="exercise-links">
+                <a href="./LerenMetMuziek/index.html" class="exercise-link muziek-link">
+                    <div class="link-icon">🎶</div>
+                    <div class="link-text">Muziek Speler - Alle School Liedjes</div>
+                </a>
+            </div>
+        </section>
+        
         <footer>
             <p>Veel plezier met oefenen! Onthoud: oefening baart kunst! 🎨</p>
             <div class="encouragement">Lekker oefenen, goede cijfers! 🎉</div>
@@ -441,7 +478,7 @@
     </div>
 
     <script>
-        // Interactieve animaties voor de links
+        // Interactieve animaties
         document.querySelectorAll('.exercise-link').forEach(link => {
             link.addEventListener('mouseenter', function() {
                 const icon = this.querySelector('.link-icon');
@@ -454,8 +491,6 @@
             });
             
             link.addEventListener('click', function(e) {
-                console.log("Klik! Naar: " + this.getAttribute('href'));
-                
                 this.style.backgroundColor = '#ffffcc';
                 setTimeout(() => {
                     this.style.backgroundColor = '';
@@ -463,6 +498,7 @@
             });
         });
         
+        // Decoratieve beweging
         const decorations = document.querySelectorAll('.decoration');
         decorations.forEach((dec, index) => {
             setInterval(() => {
@@ -470,13 +506,15 @@
             }, 50);
         });
         
-        const newBadge = document.querySelector('.new-badge');
-        if (newBadge) {
-            setInterval(() => {
-                newBadge.style.transform = 'scale(1.1)';
-                setTimeout(() => newBadge.style.transform = 'scale(1)', 150);
-            }, 2000);
-        }
+        // Extra muziek-element
+        setTimeout(() => {
+            const funElements = document.querySelector('.fun-elements');
+            const newElement = document.createElement('div');
+            newElement.className = 'fun-element';
+            newElement.innerHTML = '🎵';
+            newElement.style.animationDelay = '0.8s';
+            if (funElements) funElements.appendChild(newElement);
+        }, 1000);
     </script>
 </body>
 </html>

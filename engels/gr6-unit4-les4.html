@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 4 Les 4 · Words to Know · Groep 6</title>
+    <!-- Font Awesome voor iconen -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', 'Quicksand', 'Segoe UI', cursive, sans-serif;
+        }
+
+        :root {
+            --road: #4b8b9d;
+            --taxi: #f3b33d;
+            --train: #c05850;
+            --bike: #6fb35b;
+            --paper: #fef9e4;
+            --ink: #2e3b4e;
+        }
+
+        body {
+            background: linear-gradient(145deg, #c1d9d0 0%, #aac7bf 100%);
+            min-height: 100vh;
+            padding: 1.2rem;
+            position: relative;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,200,0.2) 0px, rgba(255,255,200,0.2) 20px, transparent 20px, transparent 40px);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: rgba(255, 250, 235, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 60px 60px 30px 30px;
+            border: 5px solid #5f7e6b;
+            box-shadow: 0 18px 0 #3a5743, 0 22px 22px rgba(0,0,0,0.25);
+            padding: 1.8rem 2rem 2rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: #fef0cf;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            margin-bottom: 1.8rem;
+            border: 4px dashed var(--taxi);
+            box-shadow: 0 6px 0 #b87c2e;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--train);
+            text-shadow: 4px 4px 0 #ffd966;
+            letter-spacing: 1px;
+        }
+
+        .title i {
+            color: var(--taxi);
+            margin-right: 10px;
+        }
+
+        .subhead {
+            background: #cfecf0;
+            border-radius: 30px;
+            padding: 0.4rem 1.5rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f5e7a;
+            border: 3px solid #32829e;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+            justify-content: center;
+            margin: 1.8rem 0 1.5rem;
+        }
+
+        .btn {
+            background: #f5b87b;
+            border: none;
+            border-radius: 50px;
+            padding: 0.7rem 1.8rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2f2f1f;
+            border: 3px solid #a5662b;
+            box-shadow: 0 6px 0 #7b4820, 0 5px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: 0.08s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 1px 0 #7b4820;
+        }
+
+        .btn.groen {
+            background: #b1d86b;
+            border-color: #2f7d4a;
+            box-shadow: 0 6px 0 #236538;
+        }
+
+        .btn.blauw {
+            background: #7fbcd2;
+            border-color: #226f8a;
+            box-shadow: 0 6px 0 #165467;
+        }
+
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            justify-content: center;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .stat-item {
+            background: #f1dbc0;
+            border-radius: 30px;
+            border: 3px solid #7f5539;
+            padding: 0.8rem 2rem;
+            min-width: 150px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #2a441e;
+            box-shadow: 0 5px 0 #8b6240;
+        }
+
+        .stat-item span {
+            font-size: 2rem;
+            margin-right: 10px;
+            color: #c05850;
+        }
+
+        /* Oefenzone */
+        .practice-zone {
+            background: #efe1c6;
+            border: 5px solid #32829e;
+            border-radius: 60px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: inset 0 0 0 4px #ffe9b6, 0 12px 0 #1f607a;
+            display: none;
+        }
+
+        .practice-zone.active {
+            display: block;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #b4d5a2;
+            border-radius: 40px;
+            padding: 1rem 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .practice-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f4d2b;
+        }
+
+        .practice-stats {
+            display: flex;
+            gap: 1.2rem;
+            font-size: 1.3rem;
+            background: #fcf0cf;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+        }
+
+        .practice-card {
+            background: #fffae9;
+            border-radius: 50px;
+            padding: 2.2rem;
+            text-align: center;
+            border: 5px solid var(--taxi);
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 12px 0 #c4642c;
+            margin-bottom: 1.5rem;
+        }
+
+        .practice-word {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #2f6b42;
+            text-shadow: 3px 3px 0 #ffd966;
+            margin-bottom: 20px;
+        }
+
+        .practice-answer {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #9d4e1f;
+            background: #f9e7b3;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            display: none;
+            border: 3px solid #bb5b1e;
+        }
+
+        .practice-answer.show {
+            display: inline-block;
+        }
+
+        .practice-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Flitskaarten grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin: 2rem 0;
+        }
+
+        .flashcard {
+            background: #ffeecb;
+            border-radius: 30px;
+            border: 4px solid #bf8f60;
+            box-shadow: 0 12px 0 #7f613f, 0 8px 12px rgba(0,0,0,0.2);
+            aspect-ratio: 1 / 1.1;
+            perspective: 1200px;
+            cursor: pointer;
+            transition: 0.15s;
+            position: relative;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.01);
+            border-color: #f7b05e;
+        }
+
+        .flipper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 28px;
+        }
+
+        .flashcard.flipped .flipper {
+            transform: rotateY(180deg);
+        }
+
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 28px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #fffae1;
+            border: 3px solid #b5763a;
+        }
+
+        .front {
+            background: #fcf1d6;
+            background-image: radial-gradient(circle at 10px 10px, #ffd78c 2px, transparent 2px);
+            background-size: 40px 40px;
+        }
+
+        .back {
+            background: #e6efc5;
+            transform: rotateY(180deg);
+        }
+
+        .woord-flash {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f6533;
+            margin-bottom: 10px;
+        }
+
+        .definitie-flash {
+            font-size: 1.2rem;
+            color: #4a2f12;
+            background: #f7eac6;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px dashed #b98c4b;
+        }
+
+        /* moeilijk-markeer knop */
+        .moeilijk-markeer {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 42px;
+            height: 42px;
+            background: white;
+            border: 4px solid #d14545;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #d14545;
+            z-index: 20;
+            transition: all 0.1s;
+            box-shadow: 0 4px 0 #8b2c2c;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .flashcard.difficult .moeilijk-markeer {
+            background: #ffb5b5;
+            border-color: #b12b2b;
+            color: #b12b2b;
+            box-shadow: 0 4px 0 #701f1f;
+        }
+
+        .moeilijk-markeer i {
+            pointer-events: none;
+        }
+
+        .footer-tip {
+            background: #d1dbb6;
+            border-radius: 50px;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1d4d2b;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="title">
+            <i class="fas fa-train"></i> Unit 4 · Lesson 4
+        </div>
+        <div class="subhead">
+            <i class="fas fa-bus"></i> Words to Know
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button class="btn" id="toonAlleBtn"><i class="fas fa-th"></i> alle kaarten</button>
+        <button class="btn" id="toonMoeilijkBtn"><i class="fas fa-exclamation-triangle"></i> alleen lastige</button>
+        <button class="btn groen" id="startOefenBtn"><i class="fas fa-graduation-cap"></i> start herhaling</button>
+        <button class="btn blauw" id="shuffleBtn"><i class="fas fa-random"></i> shuffle</button>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-item"><span>📋</span> <span id="totaalCount">0</span> woorden</div>
+        <div class="stat-item"><span>❗</span> <span id="moeilijkCount">0</span> lastig</div>
+        <div class="stat-item"><span>🔄</span> <span id="gedraaidCount">0</span> bekeken</div>
+    </div>
+
+    <!-- Oefenzone voor moeilijke woorden -->
+    <div class="practice-zone" id="practiceZone">
+        <div class="practice-header">
+            <span class="practice-title"><i class="fas fa-campground"></i> herhaal‑sessie</span>
+            <div class="practice-stats">
+                <span><i class="fas fa-hourglass-half"></i> <span id="practiceOver">0</span> over</span>
+                <span><i class="fas fa-check-circle" style="color:#208a3a;"></i> <span id="practiceGedaan">0</span></span>
+            </div>
+        </div>
+        <div class="practice-card" id="practiceCard">
+            <div class="practice-word" id="practiceWoord">—</div>
+            <div class="practice-answer" id="practiceBetekenis">—</div>
+        </div>
+        <div class="practice-buttons">
+            <button class="btn" id="toonAntwoordBtn"><i class="fas fa-eye"></i> toon betekenis</button>
+            <button class="btn" id="nogMoeilijkBtn" style="background:#f08080;"><i class="fas fa-times-circle"></i> nog lastig</button>
+            <button class="btn groen" id="nuMakkelijkBtn"><i class="fas fa-check-circle"></i> nu makkelijk</button>
+            <button class="btn blauw" id="stopOefenBtn"><i class="fas fa-stop"></i> stop</button>
+        </div>
+    </div>
+
+    <!-- Grid voor flitskaarten -->
+    <div class="cards-grid" id="cardsGrid"></div>
+
+    <div class="footer-tip">
+        <i class="fas fa-lightbulb"></i> Tik op een kaart om te draaien. Vink lastige woorden aan met de rode knop ⬆️. Groene knop = herhaal alleen gemerkte.
+    </div>
+</div>
+
+<script>
+(function() {
+    // ========== WOORDENLIJST (Nederlands - Engels) ==========
+    const woordData = [
+        { dutch: "te voet", english: "on foot" },
+        { dutch: "perron", english: "platform" },
+        { dutch: "snel", english: "fast" },
+        { dutch: "treinstation", english: "train station" },
+        { dutch: "tweede", english: "second" },
+        { dutch: "langzaam", english: "slow" },
+        { dutch: "het zuiden", english: "the south" },
+        { dutch: "taxichauffeur", english: "taxi driver" },
+        { dutch: "treinconducteur", english: "train conductor" },
+        { dutch: "ticket", english: "ticket" },
+        { dutch: "met de fiets", english: "by bicycle" },
+        { dutch: "met de boot", english: "by boat" },
+        { dutch: "met de bus", english: "by bus" },
+        { dutch: "met de auto", english: "by car" },
+        { dutch: "met de trein", english: "by train" },
+        { dutch: "mensen", english: "people" },
+        { dutch: "het oosten", english: "the east" },
+        { dutch: "eerst", english: "first" },
+        { dutch: "haast", english: "hurry" },
+        { dutch: "laat", english: "late" },
+        { dutch: "meter", english: "meter" },
+        { dutch: "noord", english: "north" },
+        { dutch: "direct", english: "direct" },       // (dürek met?)
+        { dutch: "het westen", english: "the west" }  // voor de volledigheid
+    ];
+
+    // moeilijk-status: 0 = niet, 1 = moeilijk
+    let moeilijkStatus = new Array(woordData.length).fill(0);
+    let flippedCount = new Array(woordData.length).fill(false);
+    let totaalGedraaid = 0;
+
+    // filters (geen week, maar we houden simpele 'all' en 'difficult')
+    let currentFilter = 'all';   // 'all' of 'difficult'
+
+    // Oefen-sessie
+    let practiceActief = false;
+    let practiceLijst = [];
+    let practiceIndex = 0;
+
+    // DOM
+    const grid = document.getElementById('cardsGrid');
+    const totaalSpan = document.getElementById('totaalCount');
+    const moeilijkSpan = document.getElementById('moeilijkCount');
+    const gedraaidSpan = document.getElementById('gedraaidCount');
+    const toonAlleBtn = document.getElementById('toonAlleBtn');
+    const toonMoeilijkBtn = document.getElementById('toonMoeilijkBtn');
+    const startOefenBtn = document.getElementById('startOefenBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const practiceZone = document.getElementById('practiceZone');
+    const practiceWoord = document.getElementById('practiceWoord');
+    const practiceBetekenis = document.getElementById('practiceBetekenis');
+    const toonAntwoordBtn = document.getElementById('toonAntwoordBtn');
+    const nogMoeilijkBtn = document.getElementById('nogMoeilijkBtn');
+    const nuMakkelijkBtn = document.getElementById('nuMakkelijkBtn');
+    const stopOefenBtn = document.getElementById('stopOefenBtn');
+    const practiceOver = document.getElementById('practiceOver');
+    const practiceGedaan = document.getElementById('practiceGedaan');
+
+    // Helper: aantal moeilijke woorden
+    function telMoeilijk() {
+        return moeilijkStatus.filter(v => v === 1).length;
+    }
+
+    // Update statistieken
+    function updateStats() {
+        totaalGedraaid = flippedCount.filter(v => v).length;
+        gedraaidSpan.textContent = totaalGedraaid;
+        moeilijkSpan.textContent = telMoeilijk();
+    }
+
+    // Welke indices moeten getoond worden?
+    function indicesOmTeTonen() {
+        return woordData.reduce((acc, _, idx) => {
+            if (currentFilter === 'difficult' && moeilijkStatus[idx] !== 1) return acc;
+            acc.push(idx);
+            return acc;
+        }, []);
+    }
+
+    // Kaarten renderen
+    function renderKaarten(indices) {
+        grid.innerHTML = '';
+        indices.forEach(idx => {
+            const item = woordData[idx];
+            const card = document.createElement('div');
+            card.className = `flashcard ${moeilijkStatus[idx] === 1 ? 'difficult' : ''}`;
+            card.dataset.index = idx;
+
+            // moeilijk-knop (vink)
+            const moeilijkDiv = document.createElement('div');
+            moeilijkDiv.className = 'moeilijk-markeer';
+            moeilijkDiv.innerHTML = '<i class="fas fa-exclamation"></i>';
+            card.appendChild(moeilijkDiv);
+
+            // flipper
+            const flipper = document.createElement('div');
+            flipper.className = 'flipper';
+
+            const front = document.createElement('div');
+            front.className = 'front';
+            front.innerHTML = `<div class="woord-flash">${item.dutch}</div><div style="margin-top:15px;"><i class="fas fa-hand-pointer"></i> tik om te draaien</div>`;
+
+            const back = document.createElement('div');
+            back.className = 'back';
+            back.innerHTML = `<div class="woord-flash">${item.dutch}</div><div class="definitie-flash">${item.english}</div>`;
+
+            flipper.appendChild(front);
+            flipper.appendChild(back);
+            card.appendChild(flipper);
+
+            // click: flip + tellen, maar niet op de vinkknop
+            card.addEventListener('click', function(e) {
+                if (e.target.classList.contains('moeilijk-markeer') || e.target.closest('.moeilijk-markeer')) {
+                    e.stopPropagation();
+                    const i = parseInt(this.dataset.index);
+                    moeilijkStatus[i] = moeilijkStatus[i] === 1 ? 0 : 1;
+                    this.classList.toggle('difficult', moeilijkStatus[i] === 1);
+                    updateStats();
+                    // als we in moeilijk-modus zijn en vinkje gaat uit, verberg de kaart
+                    if (currentFilter === 'difficult' && moeilijkStatus[i] !== 1) {
+                        if (indicesOmTeTonen().indexOf(i) === -1) {
+                            this.style.display = 'none';
+                        }
+                    }
+                    return;
+                }
+                // flip
+                this.classList.toggle('flipped');
+                const i = parseInt(this.dataset.index);
+                if (!flippedCount[i] && this.classList.contains('flipped')) {
+                    flippedCount[i] = true;
+                    updateStats();
+                }
+            });
+
+            grid.appendChild(card);
+        });
+        totaalSpan.textContent = indices.length;
+    }
+
+    // Ververs grid op basis van huidige filter
+    function verversGrid() {
+        const indices = indicesOmTeTonen();
+        renderKaarten(indices);
+    }
+
+    // ========== OEFENSESSIE ==========
+    function startPractice() {
+        const moeilijkeIndices = moeilijkStatus.reduce((acc, val, idx) => val === 1 ? acc.concat(idx) : acc, []);
+        if (moeilijkeIndices.length === 0) {
+            alert('Je hebt nog geen lastige woorden gemarkeerd! Tik op de rode knop op een kaart.');
+            return;
+        }
+        practiceLijst = [...moeilijkeIndices];
+        // shuffle
+        for (let i = practiceLijst.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [practiceLijst[i], practiceLijst[j]] = [practiceLijst[j], practiceLijst[i]];
+        }
+        practiceIndex = 0;
+        practiceActief = true;
+        practiceZone.classList.add('active');
+        grid.style.display = 'none';
+        practiceBetekenis.classList.remove('show');
+        toonVolgendePractice();
+    }
+
+    function toonVolgendePractice() {
+        if (!practiceActief) return;
+        if (practiceIndex >= practiceLijst.length) {
+            alert('Goed gedaan! Je hebt alle lastige woorden geoefend.');
+            stopPractice();
+            return;
+        }
+        const idx = practiceLijst[practiceIndex];
+        practiceWoord.textContent = woordData[idx].dutch;
+        practiceBetekenis.textContent = woordData[idx].english;
+        practiceBetekenis.classList.remove('show');
+        practiceOver.textContent = practiceLijst.length - practiceIndex;
+        practiceGedaan.textContent = practiceIndex;
+    }
+
+    function stopPractice() {
+        practiceActief = false;
+        practiceZone.classList.remove('active');
+        grid.style.display = 'grid';
+        verversGrid();
+    }
+
+    // ========== EVENT LISTENERS ==========
+    toonAlleBtn.addEventListener('click', function() {
+        currentFilter = 'all';
+        toonAlleBtn.classList.add('active'); // simpele visuele feedback
+        toonMoeilijkBtn.classList.remove('active');
+        verversGrid();
+    });
+
+    toonMoeilijkBtn.addEventListener('click', function() {
+        currentFilter = 'difficult';
+        toonMoeilijkBtn.classList.add('active');
+        toonAlleBtn.classList.remove('active');
+        verversGrid();
+    });
+
+    shuffleBtn.addEventListener('click', function() {
+        const indices = indicesOmTeTonen();
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        renderKaarten(indices);
+    });
+
+    startOefenBtn.addEventListener('click', startPractice);
+
+    toonAntwoordBtn.addEventListener('click', function() {
+        practiceBetekenis.classList.add('show');
+    });
+
+    nogMoeilijkBtn.addEventListener('click', function() {
+        if (!practiceActief) return;
+        const idx = practiceLijst[practiceIndex];
+        moeilijkStatus[idx] = 1;
+        practiceIndex++;
+        toonVolgendePractice();
+        updateStats();
+    });
+
+    nuMakkelijkBtn.addEventListener('click', function() {
+        if (!practiceActief) return;
+        const idx = practiceLijst[practiceIndex];
+        moeilijkStatus[idx] = 0;
+        practiceIndex++;
+        toonVolgendePractice();
+        updateStats();
+    });
+
+    stopOefenBtn.addEventListener('click', stopPractice);
+
+    // initialiseer
+    verversGrid();
+    updateStats();
+})();
+</script>
+</body>
+</html>
