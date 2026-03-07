@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 4 Les 4 · Words to Know · Groep 6</title>
+    <title>Unit 4 Lesson 4 · Words to Know · Engels Groep 6</title>
     <!-- Font Awesome voor iconen -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -15,30 +15,43 @@
         }
 
         :root {
-            --road: #4b8b9d;
-            --taxi: #f3b33d;
-            --train: #c05850;
-            --bike: #6fb35b;
-            --paper: #fef9e4;
-            --ink: #2e3b4e;
+            --train-blue: #4a7a9c;
+            --train-red: #c43e3e;
+            --train-yellow: #f7d44a;
+            --train-green: #4a9359;
+            --window-light: #d9eaf5;
+            --track-brown: #735e4d;
         }
 
         body {
-            background: linear-gradient(145deg, #c1d9d0 0%, #aac7bf 100%);
+            background: linear-gradient(145deg, #8ba8c0 0%, #6b8ca3 100%);
             min-height: 100vh;
             padding: 1.2rem;
-            position: relative;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,200,0.2) 0px, rgba(255,255,200,0.2) 20px, transparent 20px, transparent 40px);
+            background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 20px, transparent 20px, transparent 40px);
+        }
+
+        /* locomotief decoratie */
+        body::before {
+            content: "🚂🚆🚇🚊";
+            position: fixed;
+            bottom: 5px;
+            left: 10px;
+            font-size: 4rem;
+            opacity: 0.2;
+            white-space: nowrap;
+            pointer-events: none;
+            rotate: -5deg;
+            z-index: 0;
         }
 
         .container {
             max-width: 1300px;
             margin: 0 auto;
-            background-color: rgba(255, 250, 235, 0.85);
+            background-color: rgba(255, 250, 240, 0.9);
             backdrop-filter: blur(4px);
-            border-radius: 60px 60px 30px 30px;
-            border: 5px solid #5f7e6b;
-            box-shadow: 0 18px 0 #3a5743, 0 22px 22px rgba(0,0,0,0.25);
+            border-radius: 80px 80px 40px 40px;
+            border: 5px solid var(--track-brown);
+            box-shadow: 0 18px 0 #4e3f33, 0 22px 22px rgba(0,0,0,0.3);
             padding: 1.8rem 2rem 2rem;
             position: relative;
             z-index: 5;
@@ -49,37 +62,39 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            background: #fef0cf;
+            background: var(--window-light);
             border-radius: 50px;
             padding: 0.8rem 2rem;
             margin-bottom: 1.8rem;
-            border: 4px dashed var(--taxi);
-            box-shadow: 0 6px 0 #b87c2e;
+            border: 4px solid var(--train-blue);
+            box-shadow: 0 6px 0 #315f7a;
+            background-image: repeating-linear-gradient(45deg, rgba(74,122,156,0.1) 0px, rgba(74,122,156,0.1) 15px, transparent 15px, transparent 30px);
         }
 
         .title {
             font-size: 2.5rem;
             font-weight: 800;
-            color: var(--train);
-            text-shadow: 4px 4px 0 #ffd966;
+            color: var(--train-red);
+            text-shadow: 4px 4px 0 var(--train-yellow);
             letter-spacing: 1px;
         }
 
         .title i {
-            color: var(--taxi);
+            color: var(--train-blue);
             margin-right: 10px;
         }
 
         .subhead {
-            background: #cfecf0;
+            background: var(--train-yellow);
             border-radius: 30px;
             padding: 0.4rem 1.5rem;
             font-size: 1.4rem;
             font-weight: 700;
             color: #1f5e7a;
-            border: 3px solid #32829e;
+            border: 3px solid #c88f2e;
         }
 
+        /* trein-achtige knoppenbalk */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -89,15 +104,16 @@
         }
 
         .btn {
-            background: #f5b87b;
+            background: #f0c45a;
             border: none;
-            border-radius: 50px;
+            border-radius: 40px 40px 20px 20px;
             padding: 0.7rem 1.8rem;
             font-size: 1.2rem;
             font-weight: 700;
-            color: #2f2f1f;
-            border: 3px solid #a5662b;
-            box-shadow: 0 6px 0 #7b4820, 0 5px 10px rgba(0,0,0,0.2);
+            color: #1e3b4f;
+            border: 3px solid #9b6f2c;
+            border-bottom-width: 6px;
+            box-shadow: 0 6px 0 #7b4f1a, 0 5px 10px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: 0.08s ease;
             display: inline-flex;
@@ -107,19 +123,57 @@
 
         .btn:active {
             transform: translateY(6px);
-            box-shadow: 0 1px 0 #7b4820;
+            border-bottom-width: 3px;
+            box-shadow: 0 2px 0 #7b4f1a;
         }
 
         .btn.groen {
-            background: #b1d86b;
-            border-color: #2f7d4a;
-            box-shadow: 0 6px 0 #236538;
+            background: #6bb46b;
+            border-color: #2d752d;
+            box-shadow: 0 6px 0 #1e551e;
         }
 
         .btn.blauw {
-            background: #7fbcd2;
-            border-color: #226f8a;
-            box-shadow: 0 6px 0 #165467;
+            background: #6cb2d1;
+            border-color: #23648c;
+            box-shadow: 0 6px 0 #15475f;
+        }
+
+        .btn.rood {
+            background: #e46767;
+            border-color: #a53c3c;
+            box-shadow: 0 6px 0 #732a2a;
+        }
+
+        /* NIEUW: richtingsknoppen */
+        .direction-panel {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .direction-btn {
+            background: #e6e9f0;
+            border: 4px solid #4a7a9c;
+            border-radius: 40px;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a3c4f;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #274e66;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .direction-btn.active {
+            background: var(--train-yellow);
+            border-color: #c43e3e;
+            box-shadow: 0 6px 0 #992f2f;
+            transform: translateY(2px);
         }
 
         .stats-row {
@@ -131,7 +185,7 @@
         }
 
         .stat-item {
-            background: #f1dbc0;
+            background: #f0e5d5;
             border-radius: 30px;
             border: 3px solid #7f5539;
             padding: 0.8rem 2rem;
@@ -146,28 +200,30 @@
         .stat-item span {
             font-size: 2rem;
             margin-right: 10px;
-            color: #c05850;
+            color: #c43e3e;
         }
 
-        /* Oefenzone */
+        /* Oefenzone - treincoupé stijl */
         .practice-zone {
-            background: #efe1c6;
-            border: 5px solid #32829e;
+            background: #ccddee;
+            border: 6px ridge var(--train-blue);
             border-radius: 60px;
             padding: 1.5rem;
             margin-bottom: 2.5rem;
-            box-shadow: inset 0 0 0 4px #ffe9b6, 0 12px 0 #1f607a;
+            box-shadow: inset 0 0 0 4px #f9eec1, 0 12px 0 #1f607a;
             display: none;
+            background-image: radial-gradient(circle at 20px 30px, #ffffff80 2px, transparent 2px);
+            background-size: 30px 30px;
         }
 
         .practice-zone.active {
             display: block;
-            animation: popIn 0.3s ease-out;
+            animation: treinBinnen 0.3s ease-out;
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes treinBinnen {
+            0% { transform: translateX(30px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
         }
 
         .practice-header {
@@ -179,6 +235,7 @@
             border-radius: 40px;
             padding: 1rem 2rem;
             margin-bottom: 1.5rem;
+            border: 3px solid var(--train-green);
         }
 
         .practice-title {
@@ -201,14 +258,15 @@
             border-radius: 50px;
             padding: 2.2rem;
             text-align: center;
-            border: 5px solid var(--taxi);
+            border: 5px solid var(--train-red);
             min-height: 250px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 12px 0 #c4642c;
+            box-shadow: 0 12px 0 #992f2f;
             margin-bottom: 1.5rem;
+            background-image: repeating-linear-gradient(0deg, #fdf4d9, #fdf4d9 10px, #fff7e0 10px, #fff7e0 20px);
         }
 
         .practice-word {
@@ -241,7 +299,7 @@
             flex-wrap: wrap;
         }
 
-        /* Flitskaarten grid */
+        /* Grid voor flitskaarten */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -365,6 +423,7 @@
             font-weight: 600;
             color: #1d4d2b;
             margin-top: 1.5rem;
+            border: 3px solid var(--train-green);
         }
     </style>
 </head>
@@ -375,8 +434,14 @@
             <i class="fas fa-train"></i> Unit 4 · Lesson 4
         </div>
         <div class="subhead">
-            <i class="fas fa-bus"></i> Words to Know
+            <i class="fas fa-language"></i> Engels - Groep 6
         </div>
+    </div>
+
+    <!-- Richting kiezen: NL→ENG of ENG→NL -->
+    <div class="direction-panel">
+        <div class="direction-btn active" id="dirNlToEng"><i class="fas fa-arrow-right"></i> NL → ENG</div>
+        <div class="direction-btn" id="dirEngToNl"><i class="fas fa-arrow-left"></i> ENG → NL</div>
     </div>
 
     <div class="toolbar">
@@ -395,7 +460,7 @@
     <!-- Oefenzone voor moeilijke woorden -->
     <div class="practice-zone" id="practiceZone">
         <div class="practice-header">
-            <span class="practice-title"><i class="fas fa-campground"></i> herhaal‑sessie</span>
+            <span class="practice-title"><i class="fas fa-train-subway-tunnel"></i> herhaal‑sessie</span>
             <div class="practice-stats">
                 <span><i class="fas fa-hourglass-half"></i> <span id="practiceOver">0</span> over</span>
                 <span><i class="fas fa-check-circle" style="color:#208a3a;"></i> <span id="practiceGedaan">0</span></span>
@@ -407,7 +472,7 @@
         </div>
         <div class="practice-buttons">
             <button class="btn" id="toonAntwoordBtn"><i class="fas fa-eye"></i> toon betekenis</button>
-            <button class="btn" id="nogMoeilijkBtn" style="background:#f08080;"><i class="fas fa-times-circle"></i> nog lastig</button>
+            <button class="btn rood" id="nogMoeilijkBtn"><i class="fas fa-times-circle"></i> nog lastig</button>
             <button class="btn groen" id="nuMakkelijkBtn"><i class="fas fa-check-circle"></i> nu makkelijk</button>
             <button class="btn blauw" id="stopOefenBtn"><i class="fas fa-stop"></i> stop</button>
         </div>
@@ -417,7 +482,7 @@
     <div class="cards-grid" id="cardsGrid"></div>
 
     <div class="footer-tip">
-        <i class="fas fa-lightbulb"></i> Tik op een kaart om te draaien. Vink lastige woorden aan met de rode knop ⬆️. Groene knop = herhaal alleen gemerkte.
+        <i class="fas fa-lightbulb"></i> Kies richting bovenaan. Tik op een kaart om te draaien. Rode knop = lastig woord.
     </div>
 </div>
 
@@ -425,30 +490,30 @@
 (function() {
     // ========== WOORDENLIJST (Nederlands - Engels) ==========
     const woordData = [
-        { dutch: "te voet", english: "on foot" },
-        { dutch: "perron", english: "platform" },
-        { dutch: "snel", english: "fast" },
-        { dutch: "treinstation", english: "train station" },
-        { dutch: "tweede", english: "second" },
-        { dutch: "langzaam", english: "slow" },
-        { dutch: "het zuiden", english: "the south" },
-        { dutch: "taxichauffeur", english: "taxi driver" },
-        { dutch: "treinconducteur", english: "train conductor" },
-        { dutch: "ticket", english: "ticket" },
-        { dutch: "met de fiets", english: "by bicycle" },
-        { dutch: "met de boot", english: "by boat" },
-        { dutch: "met de bus", english: "by bus" },
-        { dutch: "met de auto", english: "by car" },
-        { dutch: "met de trein", english: "by train" },
-        { dutch: "mensen", english: "people" },
-        { dutch: "het oosten", english: "the east" },
-        { dutch: "eerst", english: "first" },
-        { dutch: "haast", english: "hurry" },
-        { dutch: "laat", english: "late" },
-        { dutch: "meter", english: "meter" },
-        { dutch: "noord", english: "north" },
-        { dutch: "direct", english: "direct" },       // (dürek met?)
-        { dutch: "het westen", english: "the west" }  // voor de volledigheid
+        { nl: "te voet", eng: "on foot" },
+        { nl: "perron", eng: "platform" },
+        { nl: "snel", eng: "fast" },
+        { nl: "treinstation", eng: "train station" },
+        { nl: "tweede", eng: "second" },
+        { nl: "langzaam", eng: "slow" },
+        { nl: "het zuiden", eng: "the south" },
+        { nl: "taxichauffeur", eng: "taxi driver" },
+        { nl: "treinconducteur", eng: "train conductor" },
+        { nl: "ticket", eng: "ticket" },
+        { nl: "met de fiets", eng: "by bicycle" },
+        { nl: "met de boot", eng: "by boat" },
+        { nl: "met de bus", eng: "by bus" },
+        { nl: "met de auto", eng: "by car" },
+        { nl: "met de trein", eng: "by train" },
+        { nl: "mensen", eng: "people" },
+        { nl: "het oosten", eng: "the east" },
+        { nl: "eerst", eng: "first" },
+        { nl: "haast", eng: "hurry" },
+        { nl: "laat", eng: "late" },
+        { nl: "meter", eng: "meter" },
+        { nl: "noord", eng: "north" },
+        { nl: "direct", eng: "direct" },
+        { nl: "het westen", eng: "the west" }
     ];
 
     // moeilijk-status: 0 = niet, 1 = moeilijk
@@ -456,8 +521,9 @@
     let flippedCount = new Array(woordData.length).fill(false);
     let totaalGedraaid = 0;
 
-    // filters (geen week, maar we houden simpele 'all' en 'difficult')
+    // filters
     let currentFilter = 'all';   // 'all' of 'difficult'
+    let currentDirection = 'nl2eng'; // 'nl2eng' of 'eng2nl'
 
     // Oefen-sessie
     let practiceActief = false;
@@ -482,8 +548,10 @@
     const stopOefenBtn = document.getElementById('stopOefenBtn');
     const practiceOver = document.getElementById('practiceOver');
     const practiceGedaan = document.getElementById('practiceGedaan');
+    const dirNlToEng = document.getElementById('dirNlToEng');
+    const dirEngToNl = document.getElementById('dirEngToNl');
 
-    // Helper: aantal moeilijke woorden
+    // Tel aantal moeilijke woorden
     function telMoeilijk() {
         return moeilijkStatus.filter(v => v === 1).length;
     }
@@ -504,7 +572,7 @@
         }, []);
     }
 
-    // Kaarten renderen
+    // Kaarten renderen met huidige richting
     function renderKaarten(indices) {
         grid.innerHTML = '';
         indices.forEach(idx => {
@@ -523,13 +591,23 @@
             const flipper = document.createElement('div');
             flipper.className = 'flipper';
 
+            // Afhankelijk van richting: voorkant toont vraagtaal, achterkant antwoordtaal
+            let frontText, backText;
+            if (currentDirection === 'nl2eng') {
+                frontText = item.nl;
+                backText = item.eng;
+            } else {
+                frontText = item.eng;
+                backText = item.nl;
+            }
+
             const front = document.createElement('div');
             front.className = 'front';
-            front.innerHTML = `<div class="woord-flash">${item.dutch}</div><div style="margin-top:15px;"><i class="fas fa-hand-pointer"></i> tik om te draaien</div>`;
+            front.innerHTML = `<div class="woord-flash">${frontText}</div><div style="margin-top:15px;"><i class="fas fa-hand-pointer"></i> tik om te draaien</div>`;
 
             const back = document.createElement('div');
             back.className = 'back';
-            back.innerHTML = `<div class="woord-flash">${item.dutch}</div><div class="definitie-flash">${item.english}</div>`;
+            back.innerHTML = `<div class="woord-flash">${frontText}</div><div class="definitie-flash">${backText}</div>`;
 
             flipper.appendChild(front);
             flipper.appendChild(back);
@@ -543,7 +621,6 @@
                     moeilijkStatus[i] = moeilijkStatus[i] === 1 ? 0 : 1;
                     this.classList.toggle('difficult', moeilijkStatus[i] === 1);
                     updateStats();
-                    // als we in moeilijk-modus zijn en vinkje gaat uit, verberg de kaart
                     if (currentFilter === 'difficult' && moeilijkStatus[i] !== 1) {
                         if (indicesOmTeTonen().indexOf(i) === -1) {
                             this.style.display = 'none';
@@ -565,7 +642,7 @@
         totaalSpan.textContent = indices.length;
     }
 
-    // Ververs grid op basis van huidige filter
+    // Ververs grid op basis van huidige filter en richting
     function verversGrid() {
         const indices = indicesOmTeTonen();
         renderKaarten(indices);
@@ -600,8 +677,15 @@
             return;
         }
         const idx = practiceLijst[practiceIndex];
-        practiceWoord.textContent = woordData[idx].dutch;
-        practiceBetekenis.textContent = woordData[idx].english;
+        const item = woordData[idx];
+        // in oefensessie gebruiken we de gekozen richting (vraag = huidige front-taal)
+        if (currentDirection === 'nl2eng') {
+            practiceWoord.textContent = item.nl;
+            practiceBetekenis.textContent = item.eng;
+        } else {
+            practiceWoord.textContent = item.eng;
+            practiceBetekenis.textContent = item.nl;
+        }
         practiceBetekenis.classList.remove('show');
         practiceOver.textContent = practiceLijst.length - practiceIndex;
         practiceGedaan.textContent = practiceIndex;
@@ -617,7 +701,7 @@
     // ========== EVENT LISTENERS ==========
     toonAlleBtn.addEventListener('click', function() {
         currentFilter = 'all';
-        toonAlleBtn.classList.add('active'); // simpele visuele feedback
+        toonAlleBtn.classList.add('active');
         toonMoeilijkBtn.classList.remove('active');
         verversGrid();
     });
@@ -663,6 +747,21 @@
     });
 
     stopOefenBtn.addEventListener('click', stopPractice);
+
+    // Richtingsknoppen
+    dirNlToEng.addEventListener('click', function() {
+        currentDirection = 'nl2eng';
+        dirNlToEng.classList.add('active');
+        dirEngToNl.classList.remove('active');
+        verversGrid();
+    });
+
+    dirEngToNl.addEventListener('click', function() {
+        currentDirection = 'eng2nl';
+        dirEngToNl.classList.add('active');
+        dirNlToEng.classList.remove('active');
+        verversGrid();
+    });
 
     // initialiseer
     verversGrid();
