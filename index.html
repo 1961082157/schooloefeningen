@@ -490,16 +490,6 @@
                 dec.style.transform = `translateY(${Math.sin(Date.now()/500 + index)*5}px)`;
             }, 50);
         });
-        
-        // Extra muziek-element
-        setTimeout(() => {
-            const funElements = document.querySelector('.fun-elements');
-            const newElement = document.createElement('div');
-            newElement.className = 'fun-element';
-            newElement.innerHTML = '🎵';
-            newElement.style.animationDelay = '0.8s';
-            if (funElements) funElements.appendChild(newElement);
-        }, 1000);
     </script>
 </body>
 </html>
