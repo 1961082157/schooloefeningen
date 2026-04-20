@@ -184,123 +184,203 @@ const Q=[
 {cat:"Awbi",art:"Art. 9",lvl:"T",text:"Een opsporingsambtenaar is rechtmatig een woning binnengetreden maar de bewoner blokkeert de gang naar de slaapkamer. Wat mag de agent doen?",opts:["Niets, hij mag geen kracht gebruiken","Hij mag zich de toegang of doorgang verschaffen voor zover dit redelijkerwijs nodig is voor het doel van het binnentreden (art. 9 Awbi)","Hij moet wachten op versterking","Hij moet de woning verlaten en een nieuwe machtiging aanvragen"],ans:1,exp:"Art. 9 Awbi: de bevoegde ambtenaar mag zich de toegang of doorgang in de woning verschaffen voor zover dit redelijkerwijs nodig is voor het doel van het binnentreden. Hij kan daarvoor de hulp van de sterke arm inroepen."}
 ];
 
-let cur=0, answers={}, reviewed=false, filterCat='Alles';
+// ---- Shuffle helpers ----
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ---- State ----
+// shuffledQ: array of objects {qIdx, optOrder} where optOrder maps display pos -> original opt index
+// answers: {shuffledPos: displayedOptIndex chosen}  (index into shuffledQ)
+let shuffledQ=[], answers={}, reviewed=false, filterCat='Alles', randomMode=true, cur=0;
 
 const cats=[...new Set(Q.map(q=>q.cat))];
 
-function pct(){return Math.round(Object.keys(answers).length/Q.length*100)}
+function buildShuffled(){
+  const base=filterCat==='Alles'?Q.map((_,i)=>i):Q.map((_,i)=>i).filter(i=>Q[i].cat===filterCat);
+  const ordered=base.map(qIdx=>{
+    const optOrder=Q[qIdx].opts.map((_,i)=>i);
+    return {qIdx, optOrder};
+  });
+  if(randomMode){
+    const qShuffled=shuffle(ordered);
+    return qShuffled.map(item=>({qIdx:item.qIdx, optOrder:shuffle(item.optOrder)}));
+  }
+  return ordered;
+}
 
-function filteredQ(){
-  return filterCat==='Alles' ? Q.map((_,i)=>i) : Q.map((_,i)=>i).filter(i=>Q[i].cat===filterCat);
+function initSession(){
+  shuffledQ=buildShuffled();
+  answers={};
+  reviewed=false;
+  cur=0;
+}
+
+initSession();
+
+function countCorrect(){
+  let n=0;
+  Object.keys(answers).forEach(pos=>{
+    const item=shuffledQ[pos];
+    const chosenDisplay=answers[pos];
+    const chosenOrig=item.optOrder[chosenDisplay];
+    if(chosenOrig===Q[item.qIdx].ans)n++;
+  });
+  return n;
 }
 
 function render(){
   const m=document.getElementById('main');
   if(reviewed){renderResults(m);return;}
-  const visIdx=filteredQ();
-  const prog=Object.keys(answers).length/Q.length*100;
-  const q=Q[cur];
-  const given=answers[cur];
-  const done=given!==undefined;
-  const posInFilter=visIdx.indexOf(cur);
+  const total=shuffledQ.length;
+  const answered=Object.keys(answers).length;
+  const prog=answered/total*100;
+  const item=shuffledQ[cur];
+  const q=Q[item.qIdx];
+  const givenDisplay=answers[cur]; // index into displayed options
+  const done=givenDisplay!==undefined;
+  const givenOrig=done?item.optOrder[givenDisplay]:undefined;
+
   m.innerHTML=`
 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${prog.toFixed(1)}%"></div></div>
 <div class="stats">
-  <div class="stat"><div class="stat-num">${Object.keys(answers).length}/${Q.length}</div><div class="stat-lbl">Beantwoord</div></div>
-  <div class="stat"><div class="stat-num">${pct()}%</div><div class="stat-lbl">Voortgang</div></div>
-  <div class="stat"><div class="stat-num">${Object.values(answers).filter((a,i)=>{const ki=Object.keys(answers)[i];return a===Q[ki].ans;}).length}</div><div class="stat-lbl">Goed</div></div>
-  <div class="stat"><div class="stat-num">${Q.length-Object.keys(answers).length}</div><div class="stat-lbl">Open</div></div>
+  <div class="stat"><div class="stat-num">${answered}/${total}</div><div class="stat-lbl">Beantwoord</div></div>
+  <div class="stat"><div class="stat-num">${Math.round(prog)}%</div><div class="stat-lbl">Voortgang</div></div>
+  <div class="stat"><div class="stat-num">${countCorrect()}</div><div class="stat-lbl">Goed</div></div>
+  <div class="stat"><div class="stat-num">${total-answered}</div><div class="stat-lbl">Open</div></div>
 </div>
 <div class="filter-bar">
-  <span style="font-size:12px;color:#888780;line-height:2;margin-right:4px">Filter:</span>
+  <span style="font-size:12px;color:#888780;line-height:2;margin-right:4px">Volgorde:</span>
+  <button class="filter-btn${randomMode?' active':''}" onclick="setMode(true)">🔀 Willekeurig</button>
+  <button class="filter-btn${!randomMode?' active':''}" onclick="setMode(false)">📋 Op volgorde</button>
+  <span style="font-size:12px;color:#888780;line-height:2;margin-left:8px;margin-right:4px">Categorie:</span>
   ${['Alles',...cats].map(c=>`<button class="filter-btn${filterCat===c?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('')}
 </div>
-<div class="q-nav">${visIdx.map((qi,pos)=>{
+<div class="q-nav">${shuffledQ.map((it,pos)=>{
   let cls='q-nav-btn';
-  if(qi===cur)cls+=' current';
-  else if(answers[qi]!==undefined)cls+=' answered';
-  return `<button class="${cls}" onclick="goTo(${qi})">${pos+1}</button>`;
+  if(pos===cur)cls+=' current';
+  else if(answers[pos]!==undefined)cls+=' answered';
+  return `<button class="${cls}" onclick="goTo(${pos})">${pos+1}</button>`;
 }).join('')}</div>
 <div class="question-card">
   <div class="q-meta">
     <span class="q-tag">${q.cat}</span>
     <span class="q-art">${q.art}</span>
     <span class="q-level ${q.lvl}">${q.lvl==='K'?'Kennis':q.lvl==='B'?'Begrip':'Toepassing'}</span>
-    <span style="color:#888780;font-size:11px">Vraag ${posInFilter+1}/${visIdx.length}</span>
+    <span style="color:#888780;font-size:11px">Vraag ${cur+1}/${total}</span>
   </div>
   <div class="q-text">${q.text}</div>
-  <div class="options">${q.opts.map((o,i)=>{
+  <div class="options">${item.optOrder.map((origIdx,displayPos)=>{
+    const optText=q.opts[origIdx];
+    const isCorrect=origIdx===q.ans;
+    const isChosen=givenDisplay===displayPos;
     let cls='opt';
     if(done){
-      if(i===q.ans)cls+=' correct';
-      else if(i===given&&given!==q.ans)cls+=' wrong';
-    } else if(given===i)cls+=' selected';
-    const ltr=['A','B','C','D'][i];
-    return `<button class="${cls}" ${done?'disabled':''} onclick="pick(${i})"><span class="opt-letter">${ltr}</span><span>${o}</span></button>`;
+      if(isCorrect)cls+=' correct';
+      else if(isChosen&&!isCorrect)cls+=' wrong';
+    } else if(isChosen)cls+=' selected';
+    const ltr=['A','B','C','D'][displayPos];
+    return `<button class="${cls}" ${done?'disabled':''} onclick="pick(${displayPos})"><span class="opt-letter">${ltr}</span><span>${optText}</span></button>`;
   }).join('')}</div>
-  ${done?`<div class="feedback ${given===q.ans?'correct':'wrong'}">
-    <strong>${given===q.ans?'Correct!':'Helaas.'}</strong> ${q.exp}
+  ${done?`<div class="feedback ${givenOrig===q.ans?'correct':'wrong'}">
+    <strong>${givenOrig===q.ans?'Correct!':'Helaas.'}</strong> ${q.exp}
   </div>`:''}
 </div>
 <div class="nav">
-  ${posInFilter>0?`<button class="nav-btn" onclick="goTo(${visIdx[posInFilter-1]})">← Vorige</button>`:''}
-  ${posInFilter<visIdx.length-1?`<button class="nav-btn primary" onclick="goTo(${visIdx[posInFilter+1]})">Volgende →</button>`:''}
-  ${Object.keys(answers).length===Q.length?`<button class="nav-btn primary" onclick="showResults()">Resultaten bekijken</button>`:''}
-  <button class="nav-btn" onclick="if(confirm('Alle antwoorden wissen?'))reset()" style="margin-left:auto;font-size:12px;color:#888780">Opnieuw</button>
+  ${cur>0?`<button class="nav-btn" onclick="goTo(${cur-1})">← Vorige</button>`:''}
+  ${cur<total-1?`<button class="nav-btn primary" onclick="goTo(${cur+1})">Volgende →</button>`:''}
+  ${answered===total?`<button class="nav-btn primary" onclick="showResults()">Resultaten bekijken</button>`:''}
+  <button class="nav-btn" onclick="if(confirm('Alle antwoorden wissen en opnieuw beginnen?'))initSession(),render()" style="margin-left:auto;font-size:12px;color:#888780">Opnieuw</button>
 </div>`;
 }
 
 function renderResults(m){
-  const correct=Q.filter((_,i)=>answers[i]===Q[i].ans);
-  const s=correct.length;
-  const pct2=Math.round(s/Q.length*100);
+  const correct=countCorrect();
+  const total=shuffledQ.length;
+  const pct2=Math.round(correct/total*100);
   const pass=pct2>=55;
   const catScores={};
   cats.forEach(c=>{
-    const cq=Q.map((_,i)=>i).filter(i=>Q[i].cat===c);
-    catScores[c]={right:cq.filter(i=>answers[i]===Q[i].ans).length,total:cq.length};
+    const items=shuffledQ.map((it,pos)=>({it,pos})).filter(({it})=>Q[it.qIdx].cat===c);
+    const right=items.filter(({it,pos})=>{
+      const d=answers[pos];
+      return d!==undefined && it.optOrder[d]===Q[it.qIdx].ans;
+    }).length;
+    catScores[c]={right,total:items.length};
   });
+
   m.innerHTML=`
 <div class="result-card">
-  <div class="result-score">${s}/${Q.length}</div>
+  <div class="result-score">${correct}/${total}</div>
   <div class="result-pct">${pct2}%</div>
   <div class="result-pass ${pass?'pass':'fail'}">${pass?'Geslaagd ✓':'Gezakt ✗'} — Cesuur: 55%</div>
   <div class="cat-results">${cats.map(c=>{
     const cs=catScores[c];
+    if(!cs||cs.total===0)return '';
     const cp=Math.round(cs.right/cs.total*100);
     return `<div class="cat-result"><div class="cat-result-name">${c}</div><div class="cat-result-score" style="color:${cp>=55?'#27500a':'#791f1f'}">${cs.right}/${cs.total} (${cp}%)</div></div>`;
   }).join('')}</div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button class="nav-btn primary" onclick="reset()">Opnieuw oefenen</button>
-    <button class="nav-btn" onclick="showWrong()">Alleen foute vragen bekijken</button>
+    <button class="nav-btn primary" onclick="initSession();render()">Opnieuw oefenen</button>
+    <button class="nav-btn" onclick="showWrong()">Alleen foute vragen</button>
   </div>
 </div>
-${Q.filter((_,i)=>answers[i]!==Q[i].ans).length>0?`
-<div class="section-divider">Foute vragen (${Q.filter((_,i)=>answers[i]!==Q[i].ans).length})</div>
+${shuffledQ.filter((_,pos)=>{const it=shuffledQ[pos];const d=answers[pos];return d===undefined||it.optOrder[d]!==Q[it.qIdx].ans;}).length>0?`
+<div class="section-divider">Foute / niet-beantwoorde vragen</div>
 <div>
-${Q.map((q,i)=>{
-  if(answers[i]===q.ans)return '';
-  const given=answers[i];
+${shuffledQ.map((item,pos)=>{
+  const d=answers[pos];
+  const givenOrig=d!==undefined?item.optOrder[d]:undefined;
+  const q=Q[item.qIdx];
+  if(givenOrig===q.ans)return '';
   return `<div class="question-card">
   <div class="q-meta"><span class="q-tag">${q.cat}</span><span class="q-art">${q.art}</span><span class="q-level ${q.lvl}">${q.lvl==='K'?'Kennis':q.lvl==='B'?'Begrip':'Toepassing'}</span></div>
   <div class="q-text">${q.text}</div>
-  <div class="options">${q.opts.map((o,oi)=>{
+  <div class="options">${item.optOrder.map((origIdx,displayPos)=>{
+    const isCorrect=origIdx===q.ans;
+    const isChosen=d===displayPos;
     let cls='opt';
-    if(oi===q.ans)cls+=' correct';
-    else if(oi===given)cls+=' wrong';
-    return `<button class="${cls}" disabled><span class="opt-letter">${['A','B','C','D'][oi]}</span><span>${o}</span></button>`;
+    if(isCorrect)cls+=' correct';
+    else if(isChosen)cls+=' wrong';
+    return `<button class="${cls}" disabled><span class="opt-letter">${['A','B','C','D'][displayPos]}</span><span>${q.opts[origIdx]}</span></button>`;
   }).join('')}</div>
-  <div class="feedback wrong"><strong>Jouw antwoord: ${given!==undefined?['A','B','C','D'][given]:'—'}</strong> — Goed: ${['A','B','C','D'][q.ans]}. ${q.exp}</div>
+  <div class="feedback wrong"><strong>Jouw antwoord: ${d!==undefined?['A','B','C','D'][d]:'—'}</strong>. ${q.exp}</div>
 </div>`;}).join('')}
 </div>`:'<p style="text-align:center;color:#27500a;padding:2rem;font-size:15px">Alle vragen goed! Uitstekend!</p>'}`;
 }
 
-function pick(i){if(answers[cur]!==undefined)return;answers[cur]=i;render();}
-function goTo(i){cur=i;render();}
-function setFilter(c){filterCat=c;const fi=filteredQ();if(!fi.includes(cur))cur=fi[0];render();}
+function pick(displayPos){
+  if(answers[cur]!==undefined)return;
+  answers[cur]=displayPos;
+  render();
+}
+function goTo(pos){cur=pos;render();}
+function setMode(rand){
+  if(randomMode===rand)return;
+  if(!confirm('Volgorde wijzigen wist je huidige voortgang. Doorgaan?'))return;
+  randomMode=rand;
+  initSession();
+  render();
+}
+function setFilter(c){
+  if(filterCat===c)return;
+  if(Object.keys(answers).length>0&&!confirm('Categorie wijzigen wist je huidige voortgang. Doorgaan?'))return;
+  filterCat=c;
+  initSession();
+  render();
+}
 function showResults(){reviewed=true;render();}
-function showWrong(){reviewed=false;filterCat='Alles';const wrong=Q.map((_,i)=>i).filter(i=>answers[i]!==Q[i].ans);if(wrong.length>0){cur=wrong[0];}render();}
-function reset(){answers={};cur=0;reviewed=false;filterCat='Alles';render();}
+function showWrong(){
+  reviewed=false;
+  const wrongPos=shuffledQ.map((_,pos)=>pos).filter(pos=>{
+    const d=answers[pos];
+    return d===undefined||shuffledQ[pos].optOrder[d]!==Q[shuffledQ[pos].qIdx].ans;
+  });
+  if(wrongPos.length>0)cur=wrongPos[0];
+  render();
+}
 render();
 </script>
 </body>
