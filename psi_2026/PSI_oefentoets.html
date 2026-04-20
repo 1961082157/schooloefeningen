@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSI Theorietoets — Oefenvragen</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18;padding:1rem}
+#app{max-width:700px;margin:0 auto;padding:1rem 0}
+.header{margin-bottom:1.5rem}
+.header h1{font-size:20px;font-weight:500;margin-bottom:4px}
+.header p{font-size:13px;color:#5f5e5a}
+.progress-bar-bg{height:4px;background:#d3d1c7;border-radius:2px;margin-bottom:1.5rem}
+.progress-bar-fill{height:4px;background:#378ADD;border-radius:2px;transition:width 0.3s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.stat{background:#e8e8e4;border-radius:8px;padding:10px;text-align:center}
+.stat-num{font-size:20px;font-weight:500}
+.stat-lbl{font-size:11px;color:#5f5e5a;margin-top:2px}
+.question-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.q-meta{font-size:11px;color:#5f5e5a;margin-bottom:8px}
+.q-tag{display:inline-block;background:#e6f1fb;color:#185fa5;border-radius:4px;padding:2px 7px;font-size:11px;margin-right:6px}
+.q-text{font-size:15px;line-height:1.6;margin-bottom:1rem}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:0.5px solid #d3d1c7;border-radius:8px;cursor:pointer;transition:background 0.15s;font-size:14px;line-height:1.5}
+.opt:hover{background:#f1efe8}
+.opt.selected{border-color:#378ADD;background:#e6f1fb}
+.opt.correct{border-color:#3b6d11;background:#eaf3de;color:#27500a}
+.opt.wrong{border-color:#a32d2d;background:#fcebeb;color:#791f1f}
+.opt-letter{font-weight:500;min-width:18px;flex-shrink:0}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.6}
+.feedback.correct{background:#eaf3de;color:#27500a;border:0.5px solid #639922}
+.feedback.wrong{background:#fcebeb;color:#791f1f;border:0.5px solid #a32d2d}
+.nav{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
+button{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:8px;padding:8px 16px;font-size:14px;font-family:inherit;color:#1a1a18}
+button:hover{background:#f1efe8}
+button.primary{background:#378ADD;border-color:#378ADD;color:#fff}
+button.primary:hover{background:#185fa5}
+.q-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem}
+.q-nav-btn{width:32px;height:32px;border-radius:8px;font-size:12px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.q-nav-btn.answered{background:#b5d4f4;border-color:#378ADD;color:#0c447c}
+.q-nav-btn.current{background:#378ADD;border-color:#378ADD;color:#fff}
+.q-nav-btn.c-right{background:#c0dd97;border-color:#639922;color:#27500a}
+.q-nav-btn.c-wrong{background:#f7c1c1;border-color:#a32d2d;color:#791f1f}
+.result-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:2rem;text-align:center;margin-bottom:1.5rem}
+.result-score{font-size:48px;font-weight:500}
+.result-pct{font-size:18px;color:#5f5e5a;margin-bottom:1rem}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="header">
+<h1>PSI Theorietoets — Oefenvragen</h1>
+<p>35 vragen · 60 minuten · Cesuur ≈ 55%</p>
+</div>
+<div id="main"></div>
+</div>
+<script>
+const Q=[
+{id:1,cat:"Grondwet",art:"Art. 1",text:"Een werkgever weigert een sollicitant aan te nemen omdat hij een hoofddoek draagt wegens zijn geloof. Is dit toegestaan?",opts:["Ja, de werkgever mag zelf bepalen wie hij aanneemt","Nee, dit is discriminatie op grond van godsdienst en verboden","Ja, mits de werkgever dit schriftelijk motiveert","Nee, maar alleen als het om een overheidsfunctie gaat"],ans:1,exp:"Art. 1 Grondwet verbiedt discriminatie op grond van godsdienst. Onderscheid op basis van geloof is verboden, ongeacht of het een overheidsfunctie betreft."},
+{id:2,cat:"Grondwet",art:"Art. 10/11",text:"Een politieagent wil een verdachte fouilleren (onderzoek aan de kleding). Op welk grondwetsartikel maakt hij inbreuk?",opts:["Artikel 1 – gelijkheidsbeginsel","Artikel 10 – persoonlijke levenssfeer","Artikel 11 – onaantastbaarheid van het lichaam","Artikel 15 – recht op vrijheid"],ans:2,exp:"Fouilleren maakt inbreuk op art. 11 Grondwet (onaantastbaarheid van het lichaam). Art. 56 WvSv biedt hiervoor een wettelijke grondslag."},
+{id:3,cat:"Grondwet",art:"Art. 12",text:"Onder welke voorwaarde mag een opsporingsambtenaar een woning binnengaan zonder toestemming van de bewoner?",opts:["Als hij dat noodzakelijk acht voor de openbare orde","Altijd, mits hij zich legitimeert","Alleen op basis van een wettelijke bevoegdheid en doorgaans met schriftelijke machtiging","Nooit zonder toestemming van de bewoner"],ans:2,exp:"Art. 12 Grondwet beschermt het huisrecht. Binnentreden zonder toestemming kan alleen op basis van een wettelijke bevoegdheid en in de regel met een schriftelijke machtiging (zie Awbi)."},
+{id:4,cat:"Grondwet",art:"Art. 15",text:"Wat houdt het recht op vrijheid (art. 15 Grondwet) in?",opts:["Niemand mag zomaar van zijn vrijheid worden beroofd; dit is alleen toegestaan bij wettelijke grondslag","Iedereen mag overal vrij heen gaan in Nederland","De politie mag iemand maximaal 24 uur vasthouden zonder rechterlijke tussenkomst","Burgers mogen nooit door de staat worden aangehouden"],ans:0,exp:"Art. 15 Grondwet stelt dat niemand zomaar van zijn vrijheid mag worden beroofd. Vrijheidsberoving is slechts toegestaan op basis van een wettelijke grondslag."},
+{id:5,cat:"Politiewet 2012",art:"Art. 2/3",text:"Wie worden als 'ambtenaren van politie' beschouwd onder de Politiewet 2012?",opts:["Alle medewerkers in dienst van de politie, inclusief administratief personeel","Alleen de hogere rangen zoals hoofdcommissarissen en inspecteurs","Uitsluitend (vrijwillige) ambtenaren aangesteld voor de uitvoering van de politietaak","Alle medewerkers inclusief kantinepersoneel en technische dienst"],ans:2,exp:"Art. 2 Politiewet 2012: alleen (vrijwillige) ambtenaren aangesteld voor de uitvoering van de politietaak zijn ambtenaren van politie. Kantinepersoneel en administratief personeel vallen hier niet onder."},
+{id:6,cat:"Politiewet 2012",art:"Art. 6",text:"Een agent uit Amsterdam ziet in Maastricht dat iemand een tasje snatcht. Mag hij optreden?",opts:["Nee, hij is buiten zijn werkgebied en heeft geen bevoegdheid","Ja, mits zijn optreden redelijkerwijs noodzakelijk is","Ja, maar alleen als hij eerst de lokale politie heeft gebeld","Nee, tenzij hij een schriftelijke machtiging heeft van de burgemeester"],ans:1,exp:"Art. 6 Politiewet: een politiefunctionaris is landelijk bevoegd en mag buiten zijn werkgebied optreden als dit redelijkerwijs noodzakelijk is."},
+{id:7,cat:"Politiewet 2012",art:"Art. 7 lid 1",text:"Agent De Vries gebruikt zijn wapenstok om een agressieve arrestant te overmeesteren. Wanneer is dit rechtmatig?",opts:["Altijd, als de agent in uniform is","Alleen als de officier van justitie hiervoor toestemming geeft","Als het geweld proportioneel is en de agent in de rechtmatige uitoefening van zijn bediening is","Nooit, geweld door politie is altijd een strafbaar feit"],ans:2,exp:"Art. 7 lid 1 Politiewet: een politiefunctionaris mag geweld gebruiken mits hij in de rechtmatige uitoefening van zijn bediening is én het geweld proportioneel (en subsidiair) is."},
+{id:8,cat:"Politiewet 2012",art:"Art. 7 lid 2",text:"Een agent hoort schreeuwen achter een gesloten voordeur. Mag hij de woning betreden?",opts:["Nee, dat mag nooit zonder machtiging","Ja, op basis van art. 7 lid 2 Politiewet ter verlening van hulp, rekening houdend met de Awbi","Ja, maar alleen 's nachts","Alleen als de bewoner dit schriftelijk toestaat"],ans:1,exp:"Art. 7 lid 2 Politiewet geeft de bevoegdheid om elke plaats te betreden voor zover dit nodig is voor hulpverlening. De Awbi stelt aanvullende voorwaarden (legitimatie, machtiging e.d.)."},
+{id:9,cat:"Politiewet 2012",art:"Art. 7 lid 3",text:"Wat is een veiligheidsfouillering en hoe wordt deze uitgevoerd?",opts:["Een grondig onderzoek aan het lichaam op bevel van de OvJ","Een oppervlakkig aftasten van de kleding gericht op gevaarlijke voorwerpen, bij voorkeur door iemand van hetzelfde geslacht","Een doorzoeken van zakken en tassen ter waarheidsvinding","Een onderzoek in het lichaam voor een dokter"],ans:1,exp:"Art. 7 lid 3 Politiewet / art. 20 Ambtsinstructie: veiligheidsfouillering = oppervlakkig aftasten van kleding gericht op voorwerpen waarmee iemand zichzelf of anderen schade kan toebrengen, zo mogelijk door iemand van hetzelfde geslacht."},
+{id:10,cat:"Politiewet 2012",art:"Art. 8",text:"Mag een agent van een willekeurige burger op straat inzage vorderen van een identiteitsbewijs?",opts:["Nee, dit mag alleen bij verdachten","Ja, voor de uitvoering van de politietaak, ook zonder dat er sprake is van een strafbaar feit","Ja, maar alleen als er een strafbaar feit wordt gepleegd","Nee, dit recht heeft alleen de hulpofficier van justitie"],ans:1,exp:"Art. 8 Politiewet: de politie kan voor de uitvoering van de politietaak iedereen vorderen inzage te geven in een identiteitsbewijs; een strafbaar feit hoeft daarvoor (nog) niet aanwezig te zijn."},
+{id:11,cat:"Ambtsinstructie",art:"Art. 2",text:"Wanneer is een politieambtenaar verplicht zich te legitimeren?",opts:["Alleen bij een aanhouding","Bij elke ambtshandeling waarbij dit redelijkerwijs mogelijk is","Alleen op verzoek van de burger","Alleen buiten zijn werkgebied"],ans:1,exp:"Art. 2 Ambtsinstructie: een politieambtenaar is verplicht zich te legitimeren bij elke ambtshandeling, voor zover dit redelijkerwijs mogelijk en relevant is."},
+{id:12,cat:"Gemeentewet",art:"Art. 172",text:"Wie is bevoegd gezag bij de handhaving van de openbare orde in een gemeente?",opts:["De officier van justitie","De politiechef","De burgemeester","De minister van Justitie en Veiligheid"],ans:2,exp:"Art. 172 Gemeentewet: de burgemeester is het bevoegde gezag voor de handhaving van de openbare orde en kan daarvoor de politie inroepen."},
+{id:13,cat:"Wet Politiegegevens",art:"Art. 8",text:"Voor welke situatie regelt art. 8 Wet Politiegegevens de verwerking van politiegegevens?",opts:["Zware georganiseerde misdaad met internationaal karakter","Dagelijkse politietaak zoals verkeerscontroles en eenvoudige opsporingsonderzoeken","Terrorismebestrijding door de AIVD","Bewaren van DNA-profielen voor 30 jaar"],ans:1,exp:"Art. 8 Wet Politiegegevens regelt de verwerking voor de 'dagelijkse politietaak', zoals eenvoudige opsporingsonderzoeken, handhaving openbare orde en hulpverlening."},
+{id:14,cat:"WvSr",art:"Art. 1",text:"Het legaliteitsbeginsel (art. 1 Sr) houdt in dat...",opts:["Niemand gestraft mag worden voor een daad die niet bij wet strafbaar was gesteld ten tijde van het plegen","De politie altijd een wettelijke basis nodig heeft voor haar optreden","Een verdachte altijd recht heeft op een eerlijk proces","Straf alleen door een rechter mag worden opgelegd"],ans:0,exp:"Art. 1 Sr: geen straf zonder wet. De wet moet vóór het plegen van het feit bestaan hebben. Terugwerkende kracht is niet toegestaan, behalve in het voordeel van de verdachte."},
+{id:15,cat:"WvSr",art:"Art. 39",text:"Een verdachte heeft een ernstige psychische stoornis en kon zijn wil niet bepalen ten tijde van het delict. Wat is het rechtsgevolg?",opts:["De verdachte wordt vrijgesproken","De verdachte wordt veroordeeld maar krijgt een lagere straf","Er volgt ontslag van alle rechtsvervolging (OVAR)","De verdachte wordt verplicht opgenomen maar ook gestraft"],ans:2,exp:"Art. 39 Sr: bij volledige ontoerekeningsvatbaarheid vanwege een psychische stoornis volgt ontslag van alle rechtsvervolging. De verdachte wordt dan niet gestraft."},
+{id:16,cat:"WvSr",art:"Art. 40",text:"Een moeder rijdt door rood om haar ernstig ziek kind snel naar het ziekenhuis te brengen. Op welke strafuitsluitingsgrond kan zij een beroep doen?",opts:["Noodweer (art. 41)","Wettelijk voorschrift (art. 42)","Overmacht – noodtoestand (art. 40)","Ambtelijk bevel (art. 43)"],ans:2,exp:"Art. 40 Sr: overmacht/noodtoestand = botsende plichten waarbij de verdachte een hogere plicht laat prevaleren. De moeder kiest voor het leven van haar kind boven het naleven van een verkeersregel."},
+{id:17,cat:"WvSr",art:"Art. 41",text:"Iemand geeft een aanvaller één klap om zich te verdedigen. De klap was voldoende maar hij geeft er nog vier bij uit woede. Wat is van toepassing?",opts:["Noodweer: hij handelde volledig gerechtvaardigd","Noodweerexces: hij ging verder dan noodzakelijk door emotie, maar is niet strafbaar","Overmacht: hij kon niet anders","Hij is volledig strafbaar want de aanval was al gestopt"],ans:1,exp:"Art. 41 lid 2 Sr: noodweerexces. Er was een noodweersituatie maar door emotie (woede/paniek) koos hij een te zwaar middel. Geen straf vanwege de hevige gemoedsbeweging veroorzaakt door de aanval."},
+{id:18,cat:"WvSr",art:"Art. 42",text:"Een agent slaat een agressieve arrestant met zijn wapenstok conform de geweldsinstructie. Is hij strafbaar?",opts:["Ja, geweld blijft altijd een strafbaar feit","Nee, hij beroept zich op art. 42 Sr: wettelijk voorschrift / rechtmatige ambtelijke uitoefening","Nee, maar alleen als de OvJ achteraf toestemming geeft","Ja, tenzij hij noodweer kan aantonen"],ans:1,exp:"Art. 42 Sr (lid 2): een ambtenaar die in de rechtmatige uitoefening van zijn taak en conform de geweldsinstructie geweld gebruikt, is niet strafbaar."},
+{id:19,cat:"WvSr",art:"Art. 43",text:"Een agent geeft opdracht om door rood te rijden bij een noodsituatie. De bestuurder gehoorzaamt. Is de bestuurder strafbaar?",opts:["Ja, iedereen is verantwoordelijk voor zijn eigen handelen","Nee, een bevoegd gegeven ambtelijk bevel sluit strafbaarheid uit","Nee, maar alleen als het schriftelijk is vastgelegd","Ja, want een agent heeft geen bevoegdheid verkeersregels op te heffen"],ans:1,exp:"Art. 43 Sr: handelen op grond van een bevoegd gegeven ambtelijk bevel sluit strafbaarheid uit. Een agent in functie heeft de bevoegdheid om verkeersinstructies te geven."},
+{id:20,cat:"WvSr",art:"Art. 45/46",text:"Iemand koopt handschoenen en een bivakmuts 'om een bank te overvallen'. Er is nog geen begin van uitvoering. Wat is van toepassing?",opts:["Strafbare poging (art. 45)","Strafbare voorbereiding (art. 46) als het misdrijf >8 jaar is","Geen strafbaar feit, want hij heeft nog niets gedaan","Medeplichtigheid (art. 48)"],ans:1,exp:"Art. 46 Sr: voorbereidingshandelingen zijn strafbaar bij misdrijven met een maximum van 8 jaar of meer (zoals overval), mits er opzet is. Aankopen van middelen bestemd voor het misdrijf valt hieronder."},
+{id:21,cat:"WvSr",art:"Art. 47/48",text:"Ali overtuigt Bas via valse beloften om een inbraak te plegen. Ali blijft zelf thuis. Wat is Ali's rol?",opts:["Medepleger","Uitlokker","Doen-pleger","Medeplichtige"],ans:1,exp:"Art. 47 Sr: uitlokken = een ander op het idee brengen via een van de 9 uitlokkingsmiddelen (hier: valse beloften). Uitlokker én feitelijke dader zijn beiden strafbaar."},
+{id:22,cat:"WvSr",art:"Art. 138",text:"Iemand loopt via een openstaande voordeur een woning binnen terwijl de bewoner duidelijk niet thuis is en hem niet heeft uitgenodigd. Is dit huisvredebreuk?",opts:["Nee, de deur stond open dus er is geen sprake van binnendringen","Ja, ook via een openstaande deur kan huisvredebreuk worden gepleegd als er geen toestemming is","Nee, huisvredebreuk vereist altijd braak","Ja, maar alleen als de bewoner aanwezig is"],ans:1,exp:"Art. 138 Sr: het maakt niet uit of de deur op slot was. Ook binnengaan via een openstaande deur is huisvredebreuk als duidelijk is dat de bewoner geen toestemming heeft gegeven."},
+{id:23,cat:"WvSr",art:"Art. 139",text:"Na sluitingstijd weigert iemand een gemeentekantoor te verlaten. Welk artikel is van toepassing?",opts:["Art. 138 Sr – huisvredebreuk","Art. 139 Sr – lokaalvredebreuk","Art. 180 Sr – wederspannigheid","Art. 184 Sr – niet voldoen aan ambtelijk bevel"],ans:1,exp:"Art. 139 Sr: lokaalvredebreuk ziet op wederrechtelijk verblijven in voor de openbare dienst bestemde lokalen (zoals een gemeentekantoor) buiten openingstijden."},
+{id:24,cat:"WvSr",art:"Art. 141",text:"Een groep van drie personen vernielt openlijk en luidruchtig een bushokje. Welk artikel is het meest van toepassing?",opts:["Art. 350 Sr – vernieling","Art. 141 Sr – openlijke geweldpleging","Art. 300 Sr – mishandeling","Art. 138 Sr – huisvredebreuk"],ans:1,exp:"Art. 141 Sr: openlijke geweldpleging vereist openlijk (zichtbaar/hoorbaar voor publiek) geweld in vereniging (≥2 personen) tegen personen of goederen. Dit is een speciale, zwaardere vorm dan art. 350."},
+{id:25,cat:"WvSr",art:"Art. 177",text:"Iemand geeft een politieagent €500 zodat hij een boete niet uitschrijft. Welk artikel overtreedt hij?",opts:["Art. 363 Sr – passieve omkoping","Art. 177 Sr – actieve omkoping","Art. 180 Sr – wederspannigheid","Art. 184 Sr – belemmering ambtenaar"],ans:1,exp:"Art. 177 Sr: actieve omkoping = het omkopen van een ambtenaar (hier: de agent) zodat hij iets doet of nalaat. De omkoper is strafbaar onder art. 177; de omgekochte ambtenaar onder art. 363."},
+{id:26,cat:"WvSr",art:"Art. 180",text:"Een verdachte verzet zich fysiek als twee agenten hem rechtmatig aanhouden. Welk artikel is van toepassing?",opts:["Art. 179 Sr – ambtsdwang","Art. 180 Sr – wederspannigheid","Art. 184 Sr – niet voldoen aan bevel","Art. 141 Sr – openlijke geweldpleging"],ans:1,exp:"Art. 180 Sr: wederspannigheid = met geweld of bedreiging met geweld verzetten tegen een ambtenaar die een wettelijke taak (hier: aanhouding) uitvoert. Het optreden moet rechtmatig zijn."},
+{id:27,cat:"WvSr",art:"Art. 184",text:"Een agent geeft de opdracht door te lopen bij een menigte. Iemand blijft staan en weigert dit. Welk strafbaar feit pleegt hij?",opts:["Art. 180 Sr – wederspannigheid","Art. 184 Sr – niet voldoen aan een bevoegd gegeven ambtelijk bevel","Art. 266 Sr – belediging","Art. 285 Sr – bedreiging"],ans:1,exp:"Art. 184 Sr: opzettelijk niet voldoen aan een bevoegd gegeven bevel of vordering van een ambtenaar. Geen fysiek geweld nodig; passief weigeren volstaat."},
+{id:28,cat:"WvSr",art:"Art. 207",text:"Een getuige legt voor de rechter een valse verklaring af onder ede. Wat is het maximale strafmaximum?",opts:["2 jaar","4 jaar","6 jaar, oplopend tot 9 jaar bij nadeel voor een verdachte","Levenslang"],ans:2,exp:"Art. 207 Sr: meineed heeft een maximumgevangenisstraf van 6 jaar, oplopend tot 9 jaar als de valse verklaring ten nadele van een verdachte in een strafzaak werd afgelegd."},
+{id:29,cat:"WvSr",art:"Art. 225",text:"Iemand maakt een nep-arbeidscontract om een uitkering te verkrijgen. Welk artikel is van toepassing?",opts:["Art. 188 Sr – valse aangifte","Art. 225 Sr – valsheid in geschrifte","Art. 326 Sr – oplichting","Art. 321 Sr – verduistering"],ans:1,exp:"Art. 225 Sr: valsheid in geschrifte = het valselijk opmaken of vervalsen van een geschrift met het oogmerk dit te gebruiken alsof het echt is (hier: nep-arbeidscontract voor uitkering)."},
+{id:30,cat:"WvSr",art:"Art. 285/285b/285d",text:"Iemand stuurt zijn ex-partner dagelijks tientallen berichten, volgt hem/haar en wacht voor het werk op. Wat is het strafbare feit?",opts:["Art. 285 Sr – bedreiging","Art. 285b Sr – belaging (stalking)","Art. 285d Sr – doxing","Art. 266 Sr – eenvoudige belediging"],ans:1,exp:"Art. 285b Sr: belaging/stalking = wederrechtelijk, opzettelijk en stelselmatig lastigvallen waardoor inbreuk wordt gemaakt op de privacy. Het is een absoluut klachtendelict."},
+{id:31,cat:"WvSr",art:"Art. 310/311/312",text:"Een man neemt een fiets mee die niet van hem is, wetende dat dit niet mag. Hij gebruikt daarbij geen geweld. Welk artikel?",opts:["Art. 321 Sr – verduistering","Art. 310 Sr – diefstal","Art. 317 Sr – afpersing","Art. 312 Sr – diefstal met geweld"],ans:1,exp:"Art. 310 Sr: diefstal = enig goed wegnemen dat aan een ander toebehoort, met het oogmerk zich dit wederrechtelijk toe te eigenen. Geen geweld, dus niet art. 312."},
+{id:32,cat:"WvSr",art:"Art. 287/289",text:"Iemand doodt zijn buurman in een plotselinge woede-aanval, zonder voorafgaande planning. Welk misdrijf is dit?",opts:["Moord (art. 289 Sr)","Doodslag (art. 287 Sr)","Dood door schuld (art. 307 Sr)","Zware mishandeling (art. 302 Sr)"],ans:1,exp:"Art. 287 Sr: doodslag = opzettelijk doden zonder voorbedachte rade. De impulsieve woede-aanval sluit voorbedachte rade uit. Moord (art. 289) vereist wél voorbedachte rade."},
+{id:33,cat:"WvSv",art:"Art. 27",text:"Wanneer is iemand een 'verdachte' in de zin van art. 27 WvSv?",opts:["Zodra de politie hem aanhoudt","Als er op basis van feiten of omstandigheden een redelijk vermoeden van schuld aan een strafbaar feit bestaat","Pas als het OM hem dagvaardt","Zodra hij bekent een strafbaar feit te hebben gepleegd"],ans:1,exp:"Art. 27 lid 1 WvSv: iemand is verdachte als er op basis van concrete feiten of omstandigheden een redelijk vermoeden van schuld aan enig strafbaar feit bestaat."},
+{id:34,cat:"WvSv",art:"Art. 53/54",text:"Een burger ziet hoe iemand op heterdaad een telefoon steelt. Mag hij de dief aanhouden?",opts:["Nee, dat mag alleen een opsporingsambtenaar","Ja, iedereen mag iemand aanhouden op heterdaad (art. 53 WvSv)","Ja, maar hij mag daarna ook voorwerpen in beslag nemen","Alleen als hij een buitengewoon opsporingsambtenaar is"],ans:1,exp:"Art. 53 WvSv: bij ontdekking op heterdaad mag iedereen een verdachte aanhouden. Een burger mag echter geen voorwerpen in beslag nemen; dat is voorbehouden aan opsporingsambtenaren."},
+{id:35,cat:"Awbi",art:"Art. 7",text:"Een opsporingsambtenaar wil 's nachts om 02:00 uur een woning binnengaan zonder toestemming van de bewoner. Wat is vereist?",opts:["Alleen mondelinge toestemming van de officier van justitie","Dringende noodzakelijkheid én de machtiging moet binnentreden 's nachts uitdrukkelijk toestaan","Dit is altijd verboden tussen middernacht en 06:00","Alleen een proces-verbaal na afloop"],ans:1,exp:"Art. 7 Awbi: binnentreden tussen middernacht en 06:00 vereist dringende noodzakelijkheid én de machtiging moet dit uitdrukkelijk vermelden."}
+];
+
+let cur=0,answers={},reviewed=false;
+
+function render(){
+  const m=document.getElementById('main');
+  if(reviewed){renderResults(m);return;}
+  const prog=Object.keys(answers).length/Q.length*100;
+  const q=Q[cur];
+  const given=answers[cur];
+  const done=given!==undefined;
+  m.innerHTML=`
+<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${prog}%"></div></div>
+<div class="stats">
+  <div class="stat"><div class="stat-num">${cur+1}/${Q.length}</div><div class="stat-lbl">Vraag</div></div>
+  <div class="stat"><div class="stat-num">${Object.keys(answers).length}</div><div class="stat-lbl">Beantwoord</div></div>
+  <div class="stat"><div class="stat-num">${Math.round(Object.keys(answers).length/Q.length*100)}%</div><div class="stat-lbl">Voortgang</div></div>
+  <div class="stat"><div class="stat-num">${Q.length-Object.keys(answers).length}</div><div class="stat-lbl">Open</div></div>
+</div>
+<div class="q-nav">${Q.map((qq,i)=>{
+  let cls='q-nav-btn';
+  if(i===cur)cls+=' current';
+  else if(answers[i]!==undefined)cls+=' answered';
+  return `<button class="${cls}" onclick="goTo(${i})">${i+1}</button>`;
+}).join('')}</div>
+<div class="question-card">
+  <div class="q-meta"><span class="q-tag">${q.cat}</span><span style="color:#888780">${q.art}</span></div>
+  <div class="q-text">${q.text}</div>
+  <div class="options">${q.opts.map((o,i)=>{
+    let cls='opt';
+    if(done){
+      if(i===q.ans)cls+=' correct';
+      else if(i===given&&given!==q.ans)cls+=' wrong';
+    } else if(given===i)cls+=' selected';
+    const ltr=['A','B','C','D'][i];
+    return `<div class="${cls}" ${!done?`onclick="pick(${i})"`:''}><span class="opt-letter">${ltr}</span><span>${o}</span></div>`;
+  }).join('')}</div>
+  ${done?`<div class="feedback ${given===q.ans?'correct':'wrong'}">${given===q.ans?'Correct! ':'Helaas. '}${q.exp}</div>`:''}
+</div>
+<div class="nav">
+  ${cur>0?`<button onclick="goTo(${cur-1})">← Vorige</button>`:''}
+  ${cur<Q.length-1?`<button class="primary" onclick="goTo(${cur+1})">Volgende →</button>`:''}
+  ${Object.keys(answers).length===Q.length?`<button class="primary" onclick="showResults()">Resultaten bekijken</button>`:''}
+</div>`;
+}
+
+function renderResults(m){
+  const s=Object.entries(answers).filter(([i,a])=>a===Q[i].ans).length;
+  const pct=Math.round(s/Q.length*100);
+  const pass=pct>=55;
+  m.innerHTML=`
+<div class="result-card">
+  <div class="result-score">${s}/${Q.length}</div>
+  <div class="result-pct">${pct}% — ${pass?'Geslaagd ✓':'Gezakt ✗'}</div>
+  <p style="font-size:14px;color:#5f5e5a;margin-bottom:1rem">Cesuur: 55%. ${pass?'Goed gedaan!':'Bekijk de foute vragen hieronder.'}</p>
+  <button class="primary" onclick="reset()">Opnieuw oefenen</button>
+</div>
+<div class="q-nav">${Q.map((qq,i)=>{
+  const a=answers[i];
+  let cls='q-nav-btn '+(a===qq.ans?'c-right':'c-wrong');
+  return `<button class="${cls}" onclick="goToReview(${i})">${i+1}</button>`;
+}).join('')}</div>
+<div style="margin-top:1rem">
+${Q.filter((_,i)=>answers[i]!==Q[i].ans).map(q=>{
+  const i=Q.indexOf(q);
+  const given=answers[i];
+  return `<div class="question-card">
+  <div class="q-meta"><span class="q-tag">${q.cat}</span> ${q.art} · Vraag ${i+1}</div>
+  <div class="q-text">${q.text}</div>
+  <div class="options">${q.opts.map((o,oi)=>{
+    let cls='opt';
+    if(oi===q.ans)cls+=' correct';
+    else if(oi===given)cls+=' wrong';
+    return `<div class="${cls}"><span class="opt-letter">${['A','B','C','D'][oi]}</span><span>${o}</span></div>`;
+  }).join('')}</div>
+  <div class="feedback wrong">Jouw antwoord: ${['A','B','C','D'][given]||'?'}. Goed: ${['A','B','C','D'][q.ans]}. ${q.exp}</div>
+</div>`;}).join('')||'<p style="color:#5f5e5a;text-align:center;padding:2rem">Alle vragen goed! Perfect.</p>'}
+</div>`;
+}
+
+function pick(i){if(answers[cur]!==undefined)return;answers[cur]=i;render();}
+function goTo(i){cur=i;render();}
+function goToReview(i){reviewed=false;cur=i;render();}
+function showResults(){reviewed=true;render();}
+function reset(){answers={};cur=0;reviewed=false;render();}
+render();
+</script>
+</body>
+</html>
