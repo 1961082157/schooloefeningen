@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inleiding Recht — Oefentoets</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18;padding:1rem}
+#app{max-width:720px;margin:0 auto;padding:1rem 0}
+.header{margin-bottom:1.5rem}
+.header h1{font-size:22px;font-weight:500;margin-bottom:4px}
+.header p{font-size:13px;color:#5f5e5a}
+.progress-bar-bg{height:4px;background:#d3d1c7;border-radius:2px;margin-bottom:1.25rem}
+.progress-bar-fill{height:4px;background:#378ADD;border-radius:2px;transition:width 0.3s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
+.stat{background:#e8e8e4;border-radius:8px;padding:10px;text-align:center}
+.stat-num{font-size:20px;font-weight:500}
+.stat-lbl{font-size:11px;color:#5f5e5a;margin-top:2px}
+.q-nav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.25rem}
+.q-nav-btn{width:30px;height:30px;border-radius:6px;font-size:11px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:0.5px solid #b4b2a9;background:transparent;color:#1a1a18;font-family:inherit}
+.q-nav-btn.answered{background:#b5d4f4;border-color:#378ADD;color:#0c447c}
+.q-nav-btn.current{background:#378ADD;border-color:#378ADD;color:#fff}
+.q-nav-btn.c-right{background:#c0dd97;border-color:#639922;color:#27500a}
+.q-nav-btn.c-wrong{background:#f7c1c1;border-color:#a32d2d;color:#791f1f}
+.question-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.q-meta{font-size:11px;color:#5f5e5a;margin-bottom:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.q-tag{display:inline-block;background:#e6f1fb;color:#185fa5;border-radius:4px;padding:2px 7px;font-size:11px}
+.q-text{font-size:15px;line-height:1.6;margin-bottom:1rem;color:#1a1a18}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:0.5px solid #d3d1c7;border-radius:8px;cursor:pointer;transition:background 0.15s;font-size:14px;color:#1a1a18;line-height:1.5;text-align:left;width:100%;background:transparent;font-family:inherit}
+.opt:hover:not(:disabled){background:#f1efe8}
+.opt.selected{border-color:#378ADD;background:#e6f1fb}
+.opt.correct{border-color:#3b6d11;background:#eaf3de;color:#27500a}
+.opt.wrong{border-color:#a32d2d;background:#fcebeb;color:#791f1f}
+.opt-letter{font-weight:500;min-width:18px;flex-shrink:0}
+.feedback{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.6}
+.feedback.correct{background:#eaf3de;color:#27500a;border:0.5px solid #639922}
+.feedback.wrong{background:#fcebeb;color:#791f1f;border:0.5px solid #a32d2d}
+.nav{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
+button.nav-btn{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:8px;padding:8px 16px;font-size:14px;color:#1a1a18;font-family:inherit}
+button.nav-btn:hover{background:#f1efe8}
+button.nav-btn.primary{background:#378ADD;border-color:#378ADD;color:#fff}
+button.nav-btn.primary:hover{background:#185fa5}
+.result-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:2rem;text-align:center;margin-bottom:1.5rem}
+.result-score{font-size:52px;font-weight:500}
+.result-pct{font-size:20px;color:#5f5e5a;margin-bottom:0.5rem}
+.result-pass{font-size:16px;margin-bottom:1rem;font-weight:500}
+.result-pass.pass{color:#27500a}
+.result-pass.fail{color:#791f1f}
+.cat-results{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:1rem 0;text-align:left}
+.cat-result{background:#f1efe8;border-radius:8px;padding:10px 12px;font-size:13px}
+.cat-result-name{color:#5f5e5a;margin-bottom:2px;font-size:12px}
+.cat-result-score{font-weight:500;font-size:15px}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.filter-btn{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:6px;padding:5px 10px;font-size:12px;color:#5f5e5a;font-family:inherit}
+.filter-btn:hover{background:#f1efe8}
+.filter-btn.active{background:#378ADD;border-color:#378ADD;color:#fff}
+.section-divider{font-size:12px;color:#888780;padding:6px 0 4px;font-weight:500;border-bottom:0.5px solid #d3d1c7;margin-bottom:8px}
+@media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}.cat-results{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="header">
+<h1>Inleiding Recht — Oefentoets</h1>
+<p>Gebaseerd op de e-learning Inleiding Recht · Spaced repetition · Willekeurige volgorde</p>
+</div>
+<div id="main"></div>
+</div>
+<script>
+const Q=[
+// ===== RECHTSSTAAT / TRIAS POLITICA =====
+{cat:"Rechtsstaat",text:"Welk staatsrechtelijk beginsel is bedacht door Montesquieu?",opts:["Checks and Balances — het stelsel waarbij machten elkaar controleren","Trias Politica — de scheiding der machten in drie onafhankelijke machten","Beide beginselen zijn door Montesquieu bedacht","Geen van beide is door Montesquieu bedacht"],ans:1,exp:"De scheiding der machten wordt ook wel de driemachtenleer of de Trias Politica genoemd en is bedacht door Montesquieu. Checks and Balances is het Nederlandse stelsel waarbij machten elkaar controleren, maar dat is niet door Montesquieu bedacht."},
+{cat:"Rechtsstaat",text:"Hoe zijn de machten in Nederland gescheiden?",opts:["Volgens de strikte leer van Trias Politica: elke macht staat volledig los van de andere","Volgens Checks and Balances: machten overlappen deels maar controleren en begrenzen elkaar","Beide stelsels worden in Nederland naast elkaar toegepast","Geen van beide: Nederland heeft geen formele machtenscheiding"],ans:1,exp:"In Nederland kennen we niet de strikte scheiding van machten zoals in de Trias Politica. Zo behoren ministers tot zowel de wetgevende als de uitvoerende macht. Wel controleren de machten elkaar en houden zij elkaar in balans — dit heet Checks and Balances."},
+{cat:"Rechtsstaat",text:"Tot welke 'macht' hoort de politie in Nederland?",opts:["Uitvoerende macht — de politie voert beleid uit als ondergeschikte van de minister","Wetgevende macht — de politie helpt wetten te handhaven die het parlement maakt","Rechterlijke macht — de politie zorgt voor rechtshandhaving net als rechters","De politie valt onder alle drie de machten tegelijk"],ans:0,exp:"De politie hoort bij de ambtenaren die ondergeschikt zijn aan de minister. Deze ambtenaren horen bij de uitvoerende macht. Rechtshandhaving is niet hetzelfde als rechterlijke macht — die bestaat uit rechters."},
+{cat:"Rechtsstaat",text:"Uit welke drie machten bestaat de Trias Politica?",opts:["Wetgevende, bestuurlijke en handhavende macht","Wetgevende, uitvoerende en rechterlijke macht","Politieke, justitiële en administratieve macht","Parlementaire, gouvernementele en juridische macht"],ans:1,exp:"De Trias Politica bestaat uit: (1) de wetgevende macht (1e/2e kamer, koning en ministers), (2) de uitvoerende macht (koning, ministers en ondergeschikte ambtenaren) en (3) de rechterlijke macht (rechters)."},
+{cat:"Rechtsstaat",text:"Stelling: Mensenrechten mogen soms worden beperkt.",opts:["Goed — de Grondwet kan toestaan dat een mensenrecht wordt beperkt","Fout — mensenrechten zijn absoluut en mogen nooit worden beperkt","Goed — maar alleen door de rechter, niet door de wetgever","Fout — alleen in oorlogstijd mogen mensenrechten tijdelijk worden opgeschort"],ans:0,exp:"Juist. De Grondwet kan toestaan dat een mensenrecht wordt beperkt (zie o.a. art. 10, 11, 12 en 15 GW). Er zijn dus geen absolute mensenrechten die nooit mogen worden ingeperkt."},
+{cat:"Rechtsstaat",text:"Stelling: De Grondwet kan worden gewijzigd.",opts:["Goed — de Grondwet kan worden gewijzigd, maar de procedure is strenger dan bij gewone wetten","Fout — de Grondwet is de hoogste wet en staat boven elke wijziging","Goed — de Grondwet kan net zo eenvoudig worden gewijzigd als andere wetten","Fout — alleen de Hoge Raad kan de Grondwet wijzigen bij bijzondere omstandigheden"],ans:0,exp:"Juist. De Grondwet kan worden gewijzigd. De procedure is wel strikter dan bij een 'normale' wetswijziging — er zijn twee lezingen in het parlement nodig, met daartussen Tweede Kamerverkiezingen."},
+{cat:"Rechtsstaat",text:"Stelling: Als je je mening geeft, kun je strafbaar zijn.",opts:["Goed — het geven van je mening kan leiden tot een strafbaar feit, bijvoorbeeld belediging","Fout — vrijheid van meningsuiting is een grondrecht dat nooit strafbaar is","Goed — elke mening die iemand kwetst is automatisch strafbaar","Fout — alleen schriftelijke meningen kunnen strafbaar zijn, mondelinge niet"],ans:0,exp:"Juist. Het geven van je mening kan ertoe leiden dat je een strafbaar feit pleegt, bijvoorbeeld belediging (art. 266 Sr). Vrijheid van meningsuiting is een grondrecht, maar is niet absoluut."},
+{cat:"Rechtsstaat",text:"Stelling: Het is toegestaan om in gelijke gevallen mensen anders te behandelen.",opts:["Goed — in bepaalde gevallen mag de overheid onderscheid maken","Fout — in gelijke gevallen moeten mensen altijd gelijk worden behandeld (art. 1 GW), zonder uitzonderingen","Goed — mits dit schriftelijk wordt gemotiveerd door de betreffende instantie","Fout — maar alleen als het om overheidsinstanties gaat, burgers mogen dit wel"],ans:1,exp:"Fout. In gelijke gevallen moeten mensen altijd gelijk worden behandeld. Hier zijn geen uitzonderingen op mogelijk (art. 1 GW). Dit is het gelijkheidsbeginsel."},
+{cat:"Rechtsstaat",text:"Stelling: In de Grondwet staat onder welke specifieke voorwaarden je inbreuk mag maken op een mensenrecht.",opts:["Goed — de Grondwet werkt de exacte voorwaarden voor inbreuk volledig uit","Fout — de Grondwet staat enkel of er inbreuk mag worden gemaakt; de voorwaarden staan in een andere wet","Goed — maar alleen voor de rechten in hoofdstuk 1 van de Grondwet","Fout — voorwaarden voor inbreuk staan helemaal nergens in de wet beschreven"],ans:1,exp:"Fout. In de Grondwet staat enkel óf er inbreuk gemaakt mag worden op een mensenrecht. Onder welke specifieke voorwaarden dit mag, wordt uitgewerkt in een andere (gewone) wet."},
+{cat:"Rechtsstaat",text:"Stelling: In de Grondwet staat of je inbreuk mag maken op een mensenrecht.",opts:["Goed — de Grondwet geeft per grondrecht aan of inbreuk is toegestaan","Fout — de Grondwet verbiedt altijd elke inbreuk op mensenrechten","Goed — en de Grondwet werkt ook de exacte voorwaarden voor inbreuk volledig uit","Fout — dit staat alleen in internationale verdragen, niet in de Grondwet"],ans:0,exp:"Juist. In de Grondwet staat óf inbreuk op een mensenrecht is toegestaan. De specifieke voorwaarden waaronder dat mag, worden dan uitgewerkt in een andere wet."},
+
+// ===== RECHT ALGEMEEN =====
+{cat:"Recht Algemeen",text:"Wat is een verdrag?",opts:["Een overeenkomst tussen burgers onderling, vastgelegd door een notaris","Een overeenkomst tussen staten, waaraan burgers rechten kunnen ontlenen","Een bindend besluit van de Europese Unie dat direct geldt in alle lidstaten","Een internationale rechterlijke uitspraak die voor iedereen bindend is"],ans:1,exp:"Een verdrag is een overeenkomst tussen staten. Aan zo'n verdrag kunnen burgers rechten ontlenen. Denk bijvoorbeeld aan het Europees Verdrag voor de Rechten van de Mens (EVRM)."},
+{cat:"Recht Algemeen",text:"Wat wordt bedoeld met jurisprudentie?",opts:["Alleen de uitspraken van de hoogste rechters, zoals de Hoge Raad","Alleen de uitspraken van lagere rechters zoals de rechtbanken","Alle rechterlijke uitspraken, van hoog tot laag","Uitsluitend de uitspraken van buitenlandse rechters over Nederlandse zaken"],ans:2,exp:"Met jurisprudentie worden alle rechterlijke uitspraken bedoeld — dus niet alleen die van de hoogste of de laagste rechter. Zowel uitspraken van rechtbanken, gerechtshoven als de Hoge Raad vallen hieronder."},
+{cat:"Recht Algemeen",text:"Wat is de hoogste Nederlandse rechter?",opts:["Het hooggerechtshof der Nederlanden","Het gerechtshof — dit behandelt hoger beroep en staat bovenaan","De Hoge Raad","De Hoogste Raad"],ans:2,exp:"De Hoge Raad is de hoogste Nederlandse rechter. Het hooggerechtshof der Nederlanden en de Hoogste Raad bestaan niet. Het gerechtshof zit tussen de rechtbanken en de Hoge Raad in en is dus de 'middelste' rechter."},
+{cat:"Recht Algemeen",text:"Een politieagent koopt in zijn vrije tijd een broodje bij de supermarkt. Welk (overkoepelend) rechtsgebied is van toepassing?",opts:["Privaatrecht — het gaat om een overeenkomst tussen twee partijen die niet als overheid optreden","Publiekrecht — de politieagent is ambtenaar dus altijd publiekrecht van toepassing","Strafrecht — de koop van een broodje kan een overtreding zijn","Bestuursrecht — de supermarkt heeft een vergunning van de gemeente"],ans:0,exp:"Privaatrecht is van toepassing. Dit is een overeenkomst tussen twee partijen die niet optreden als overheid. De politieagent treedt op als gewone burger en de supermarkt is een privaatrechtelijke instelling."},
+{cat:"Recht Algemeen",text:"Een politieagent houdt een persoon aan die een auto heeft vernield. Welk (overkoepelend) rechtsgebied is van toepassing?",opts:["Privaatrecht — de eigenaar van de auto kan de schade civiel verhalen","Publiekrecht — de overheid (politie) treedt op met strafvorderlijke bevoegdheden","Beide rechtsgebieden zijn gelijktijdig van toepassing in gelijke mate","Geen van beide: aanhouding valt onder het bestuursrecht"],ans:1,exp:"Publiekrecht is van toepassing. De overheid (de politie) is hier bij betrokken en er worden strafvorderlijke bevoegdheden ingezet. Het Wetboek van Strafvordering valt onder het publiekrecht, omdat het gaat over de verhouding tussen burgers en de overheid."},
+{cat:"Recht Algemeen",text:"Een grote supermarktketen koopt een grote hoeveelheid nieuwe kassa's bij een groothandel. Welk (overkoepelend) rechtsgebied is van toepassing?",opts:["Privaatrecht — het gaat om een overeenkomst tussen partijen die niet bij de overheid horen","Publiekrecht — grote aankopen zijn altijd onderworpen aan overheidstoezicht","Strafrecht — bij grote transacties geldt de Wet ter voorkoming van witwassen","Bestuursrecht — de supermarkt heeft een vergunning nodig van de gemeente"],ans:0,exp:"Privaatrecht is van toepassing, omdat het gaat om een overeenkomst tussen partijen die niet bij de overheid behoren. Zowel de supermarkt als de groothandel zijn privaatrechtelijke instellingen."},
+
+// ===== WETBOEK VAN STRAFRECHT =====
+{cat:"Wetboek van Strafrecht",text:"Hoeveel boeken heeft het Wetboek van Strafrecht?",opts:["2 — boek 1 misdrijven, boek 2 overtredingen","3 — boek 1 algemene bepalingen, boek 2 misdrijven, boek 3 overtredingen","4 — boek 1 algemeen, boek 2 strafuitsluiting, boek 3 misdrijven, boek 4 overtredingen","5 — verdeeld per type delict"],ans:1,exp:"Het Wetboek van Strafrecht bestaat uit drie boeken: boek 1 bevat de algemene bepalingen, boek 2 de misdrijven en boek 3 de overtredingen."},
+{cat:"Wetboek van Strafrecht",text:"Wat staat in boek I van het Wetboek van Strafrecht?",opts:["De overtredingen — lichte strafbare feiten met boetes","De misdrijven — zware strafbare feiten met gevangenisstraf","De algemene bepalingen, waaronder ook de strafuitsluitingsgronden","Alle bepalingen over de rechterlijke organisatie en bevoegdheden"],ans:2,exp:"In boek 1 van het Wetboek van Strafrecht staan de algemene bepalingen. Hieronder vallen ook de strafuitsluitingsgronden. Misdrijven staan in boek 2, overtredingen in boek 3."},
+{cat:"Wetboek van Strafrecht",text:"Stelling: Alleen in het Wetboek van Strafrecht staan strafbare feiten.",opts:["Goed — het WvSr is de enige wet met strafbare feiten","Fout — ook in andere wetten staan strafbare feiten, zoals de Wegenverkeerswet en de Opiumwet","Goed — andere wetten mogen alleen verwijzen naar strafbare feiten in het WvSr","Fout — maar alleen als een andere wet dit uitdrukkelijk bepaalt"],ans:1,exp:"Fout. Ook in andere wetten staan strafbare feiten, zoals de Wegenverkeerswet, de Opiumwet en de Wet Wapens en Munitie. Het WvSr is dus niet de enige bron van strafbare feiten."},
+{cat:"Wetboek van Strafrecht",text:"Stelling: Overmacht is een strafuitsluitingsgrond.",opts:["Goed — overmacht is één van de strafuitsluitingsgronden uit boek 1 van het WvSr","Fout — overmacht is geen strafuitsluitingsgrond maar een strafverminderende omstandigheid","Goed — maar overmacht staat in boek 2, niet in de algemene bepalingen","Fout — overmacht bestaat niet in het Nederlandse strafrecht"],ans:0,exp:"Juist. Overmacht is één van de strafuitsluitingsgronden uit boek 1 (algemene bepalingen) van het Wetboek van Strafrecht (art. 40 Sr)."},
+{cat:"Wetboek van Strafrecht",text:"In welk boek van het Wetboek van Strafrecht staan de strafuitsluitingsgronden?",opts:["Boek 1 — in de algemene bepalingen","Boek 2 — bij de misdrijven waarop ze van toepassing zijn","Boek 3 — bij de overtredingen","Alle boeken bevatten strafuitsluitingsgronden"],ans:0,exp:"Strafuitsluitingsgronden staan in de algemene bepalingen uit boek 1 van het Wetboek van Strafrecht. Ze gelden dus voor alle strafbare feiten, zowel misdrijven als overtredingen."},
+{cat:"Wetboek van Strafrecht",text:"Wat voor soort strafbaar feit is diefstal (art. 310 Sr)?",opts:["Een overtreding — diefstal staat in boek 3 van het WvSr","Een misdrijf — diefstal staat in boek 2 van het WvSr","Het kan zowel een misdrijf als een overtreding zijn, afhankelijk van het bedrag","Dit staat niet in het WvSr maar in het Wetboek van Strafvordering"],ans:1,exp:"Diefstal staat in boek 2 van het Wetboek van Strafrecht en is dus een misdrijf. Boek 2 bevat alle misdrijven; boek 3 bevat de overtredingen."},
+{cat:"Wetboek van Strafrecht",text:"Wat voor soort strafbaar feit is baldadigheid (art. 424 Sr)?",opts:["Een misdrijf — baldadigheid staat in boek 2 van het WvSr","Een overtreding — baldadigheid staat in boek 3 van het WvSr","Het is geen strafbaar feit maar een bestuursrechtelijke overtreding","Het kan zowel een misdrijf als overtreding zijn, afhankelijk van de ernst"],ans:1,exp:"Baldadigheid staat in boek 3 van het Wetboek van Strafrecht en is dus een overtreding. Overtredingen zijn lichtere strafbare feiten dan misdrijven en staan altijd in boek 3."},
+
+// ===== WETBOEK VAN STRAFVORDERING =====
+{cat:"Wetboek van Strafvordering",text:"Wat valt onder het legaliteitsbeginsel in het Wetboek van Strafvordering?",opts:["Geen feit is strafbaar zonder een voorafgaande wettelijke strafbepaling — dit is het strafrechtelijk legaliteitsbeginsel","De overheid mag de rechten van burgers alleen beperken als zij voldoet aan de wettelijke voorwaarden — strafvordering vindt slechts bij wet voorzien plaats","Beide omschrijvingen zijn correct en beschrijven hetzelfde legaliteitsbeginsel","Beide omschrijvingen zijn onjuist — het legaliteitsbeginsel gaat alleen over de rechten van verdachten"],ans:1,exp:"Het strafvorderlijk legaliteitsbeginsel (art. 1 WvSv) houdt in dat strafvordering alleen plaatsvindt 'bij de wet voorzien'. Dit betekent dat de overheid zich aan de wet houdt en burgers hun rechten alleen mag beperken als zij voldoet aan de wettelijke voorwaarden. De andere omschrijving is het strafrechtelijk legaliteitsbeginsel (art. 1 Sr) — dat is een ander artikel."},
+{cat:"Wetboek van Strafvordering",text:"Stelling: Alleen in het Wetboek van Strafvordering staan de regels waaraan de overheid zich moet houden.",opts:["Goed — het WvSv is de enige wet met procedurele regels voor de overheid","Fout — ook in andere wetten staan regels voor de overheid, zoals de Politiewet en de Opiumwet","Goed — andere wetten mogen alleen verwijzen naar het WvSv","Fout — maar alleen de Politiewet bevat aanvullende regels, de rest niet"],ans:1,exp:"Fout. Ook in andere wetten staan regels waaraan de overheid zich moet houden. Zo vind je deze regels onder andere in de Politiewet, de Wet Wapens en Munitie en de Opiumwet."},
+{cat:"Wetboek van Strafvordering",text:"Stelling: In boek 2 van het Wetboek van Strafvordering staan de misdrijven.",opts:["Goed — net zoals in het WvSr staan misdrijven in boek 2","Fout — misdrijven staan in boek 2 van het Wetboek van Strafrecht, niet van het Wetboek van Strafvordering","Goed — het WvSv en het WvSr hebben dezelfde indeling","Fout — het WvSv bevat helemaal geen indeling in boeken"],ans:1,exp:"Fout. Misdrijven staan in boek 2 van het Wetboek van Strafrecht (WvSr) en niet in het Wetboek van Strafvordering (WvSv). Het WvSv gaat over de procedure van opsporing en vervolging, niet over de strafbare feiten zelf."},
+{cat:"Wetboek van Strafvordering",text:"Wat is het doel van een proces-verbaal van bevindingen?",opts:["Uitsluitend bijdragen aan het bewijs in een strafzaak","Uitsluitend controleren of een opsporingsambtenaar rechtmatig heeft gehandeld","Zowel bijdragen aan het bewijs als controleren of de opsporingsambtenaar rechtmatig heeft gehandeld","Het vastleggen van de identiteit van de verdachte voor het dossier"],ans:2,exp:"Een proces-verbaal van bevindingen heeft meerdere functies. Twee van die functies zijn: (1) bijdragen aan het bewijs en (2) controleren of een opsporingsambtenaar rechtmatig heeft gehandeld. Alleen één van beide antwoorden kiezen is dus onvolledig."},
+{cat:"Wetboek van Strafvordering",text:"Waar werkt een hulpofficier van justitie?",opts:["Bij het openbaar ministerie — hij valt onder de OvJ","Bij de rechterlijke macht — hij ondersteunt de rechter bij strafzaken","Bij de politie — hij is een politieagent met meer strafvorderlijke bevoegdheden","Bij de rechtbank als griffier met speciale bevoegdheden"],ans:2,exp:"Een hulpofficier van justitie is een politieagent met meer strafvorderlijke bevoegdheden dan 'gewone' politieagenten. Hij werkt dus bij de politie, niet bij het OM of de rechterlijke macht, ondanks zijn naam."},
+{cat:"Wetboek van Strafvordering",text:"Stelling: Voordat iemand verdachte kan worden, moet hij eerst zijn veroordeeld door een rechter.",opts:["Goed — je bent pas verdachte na een rechterlijke uitspraak","Fout — een verdachte is juist nog niet veroordeeld door een rechter; na veroordeling word je dader","Goed — de wet onderscheidt 'mogelijke verdachte' en 'officiële verdachte' na veroordeling","Fout — maar bij ernstige misdrijven gelden andere regels voor de verdachtenstatus"],ans:1,exp:"Fout. Een verdachte is juist nog niet veroordeeld door een rechter. Als een verdachte wordt veroordeeld door een rechter, wordt hij dader. Verdachte zijn en veroordeeld zijn zijn dus twee verschillende statussen."},
+{cat:"Wetboek van Strafvordering",text:"Wat is een verschil tussen aanhouden en staande houden?",opts:["Staande houden is ingrijpender dan aanhouden, want je moet altijd mee naar het bureau","Aanhouden is ingrijpender dan staande houden — bij aanhouden wordt iemand van zijn vrijheid beroofd","Beide zijn even ingrijpend; het verschil zit alleen in wie de bevoegdheid heeft","Er is geen verschil: beide begrippen betekenen hetzelfde in de wet"],ans:1,exp:"Aanhouden is een ingrijpendere inbreuk op de rechten van een burger. Als iemand wordt aangehouden, wordt hij van zijn vrijheid beroofd en vaak in een politiecel geplaatst. Staande houden is minder ingrijpend en betekent slechts dat iemand gevraagd wordt te stoppen."},
+{cat:"Wetboek van Strafvordering",text:"Wie mag een fouillering in het lichaam (art. 56 lid 2 Sv) uitvoeren?",opts:["Een opsporingsambtenaar, mits hij hiervoor is opgeleid","Een officier van justitie of een hulpofficier van justitie na schriftelijk bevel","Een arts — onderzoek in het lichaam moet altijd door een arts plaatsvinden","Elke ambtenaar van politie mits een hulpofficier van justitie hiervoor toestemming geeft"],ans:2,exp:"Een onderzoek in het lichaam moet plaatsvinden door een arts (art. 56 lid 2 Sv). Dit geldt ongeacht wie het bevel geeft — de uitvoering is altijd voorbehouden aan een arts."},
+{cat:"Wetboek van Strafvordering",text:"Stelling: Om in beslag te nemen moet het goed vatbaar zijn voor inbeslagneming én de inbeslagnemer bevoegd zijn.",opts:["Goed — beide voorwaarden (vatbaarheid van het goed én bevoegdheid) zijn vereist","Fout — alleen de vatbaarheid van het goed is vereist; bevoegdheid speelt geen rol","Goed — maar dit geldt alleen bij misdrijven, niet bij overtredingen","Fout — inbeslagneming mag altijd, zolang het in het belang van het onderzoek is"],ans:0,exp:"Juist. Inbeslagneming is pas mogelijk als het goed vatbaar is voor inbeslagneming (zie o.a. art. 94 Sv) én de inbeslagnemer bevoegd is (zie o.a. art. 95 en 96 Sv). Beide voorwaarden moeten gelijktijdig zijn vervuld."},
+{cat:"Wetboek van Strafvordering",text:"Stelling: De Algemene Wet op het Binnentreden (Awbi) is van toepassing bij het betreden van alle plaatsen.",opts:["Goed — de Awbi geldt voor alle plaatsen die de politie wil betreden","Fout — de Awbi geldt alleen voor woningen, niet voor alle plaatsen","Goed — maar bij openbare plaatsen gelden er minder strenge voorwaarden","Fout — de Awbi geldt alleen voor het betreden van bedrijfspanden, niet van woningen"],ans:1,exp:"Fout. De Awbi geldt alleen voor woningen. Voor het betreden van andere plaatsen, zoals openbare ruimten of voertuigen, gelden andere regels (bijv. art. 96b WvSv voor vervoermiddelen)."},
+];
+
+// ===== SHUFFLE =====
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ===== STATE =====
+let deck=[], answers={}, reviewed=false, filterCat='Alles', randomMode=true, cur=0;
+const cats=[...new Set(Q.map(q=>q.cat))];
+
+function buildDeck(){
+  const base=filterCat==='Alles'?Q.map((_,i)=>i):Q.map((_,i)=>i).filter(i=>Q[i].cat===filterCat);
+  const cards=base.map(qIdx=>({qIdx,optOrder:Q[qIdx].opts.map((_,i)=>i),retryOf:undefined}));
+  if(randomMode){
+    const sh=shuffle(cards);
+    return sh.map(c=>({...c,optOrder:shuffle(c.optOrder)}));
+  }
+  return cards;
+}
+
+function initSession(){deck=buildDeck();answers={};reviewed=false;cur=0;}
+initSession();
+
+function expandDeck(pos){
+  const item=deck[pos];
+  const c1={qIdx:item.qIdx,optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)),retryOf:pos};
+  const c2={qIdx:item.qIdx,optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)),retryOf:pos};
+  const i1=Math.min(pos+3,deck.length);
+  deck.splice(i1,0,c1);
+  const i2=Math.min(pos+6,deck.length);
+  deck.splice(i2,0,c2);
+}
+
+function origTotal(){return deck.filter(d=>!d.retryOf).length;}
+function origCorrect(){
+  return deck.map((d,i)=>({d,i})).filter(({d})=>!d.retryOf).filter(({i})=>answers[i]&&answers[i].wasCorrect).length;
+}
+
+function render(){
+  const m=document.getElementById('main');
+  if(reviewed){renderResults(m);return;}
+  const total=deck.length;
+  const prog=Math.min(origCorrect()/Math.max(origTotal(),1)*100,100);
+  const item=deck[cur];
+  const q=Q[item.qIdx];
+  const ans=answers[cur];
+  const done=ans!==undefined;
+  const givenDisplay=done?ans.displayedOpt:undefined;
+  const givenOrig=done?item.optOrder[givenDisplay]:undefined;
+  const isRetry=item.retryOf!==undefined;
+
+  m.innerHTML=`
+<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${prog.toFixed(1)}%"></div></div>
+<div class="stats">
+  <div class="stat"><div class="stat-num">${origCorrect()}/${origTotal()}</div><div class="stat-lbl">Goed (origineel)</div></div>
+  <div class="stat"><div class="stat-num">${Math.round(prog)}%</div><div class="stat-lbl">Voortgang</div></div>
+  <div class="stat"><div class="stat-num">${deck.length-origTotal()}</div><div class="stat-lbl">Herkansingen</div></div>
+  <div class="stat"><div class="stat-num">${cur+1}/${total}</div><div class="stat-lbl">Kaart</div></div>
+</div>
+<div class="filter-bar">
+  <span style="font-size:12px;color:#888780;line-height:2;margin-right:4px">Volgorde:</span>
+  <button class="filter-btn${randomMode?' active':''}" onclick="setMode(true)">🔀 Willekeurig</button>
+  <button class="filter-btn${!randomMode?' active':''}" onclick="setMode(false)">📋 Op volgorde</button>
+  <span style="font-size:12px;color:#888780;line-height:2;margin-left:8px;margin-right:4px">Categorie:</span>
+  ${['Alles',...cats].map(c=>`<button class="filter-btn${filterCat===c?' active':''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`).join('')}
+</div>
+<div class="q-nav">${deck.map((it,pos)=>{
+  let cls='q-nav-btn';
+  if(pos===cur)cls+=' current';
+  else if(answers[pos]!==undefined)cls+=answers[pos].wasCorrect?' c-right':' c-wrong';
+  else cls+=' ';
+  return `<button class="${cls}" onclick="goTo(${pos})">${pos+1}${it.retryOf!==undefined?'↩':''}</button>`;
+}).join('')}</div>
+<div class="question-card">
+  <div class="q-meta">
+    <span class="q-tag">${q.cat}</span>
+    ${isRetry?`<span style="background:#faeeda;color:#633806;border-radius:4px;padding:2px 7px;font-size:11px">↩ Herkansing</span>`:''}
+    <span style="color:#888780;font-size:11px">Kaart ${cur+1}/${total}</span>
+  </div>
+  <div class="q-text">${q.text}</div>
+  <div class="options">${item.optOrder.map((origIdx,displayPos)=>{
+    const optText=q.opts[origIdx];
+    const isCorrect=origIdx===q.ans;
+    const isChosen=givenDisplay===displayPos;
+    let cls='opt';
+    if(done){if(isCorrect)cls+=' correct';else if(isChosen)cls+=' wrong';}
+    else if(isChosen)cls+=' selected';
+    const ltr=['A','B','C','D'][displayPos];
+    return `<button class="${cls}" ${done?'disabled':''} onclick="pick(${displayPos})"><span class="opt-letter">${ltr}</span><span>${optText}</span></button>`;
+  }).join('')}</div>
+  ${done?`<div class="feedback ${ans.wasCorrect?'correct':'wrong'}">
+    <strong>${ans.wasCorrect?'Correct!':'Helaas.'}</strong> ${q.exp}
+    ${!ans.wasCorrect?'<br><br><em style="font-size:12px">Deze vraag komt nog twee keer terug — je moet hem twee keer achter elkaar goed hebben.</em>':''}
+  </div>`:''}
+</div>
+<div class="nav">
+  ${cur>0?`<button class="nav-btn" onclick="goTo(${cur-1})">← Vorige</button>`:''}
+  ${cur<deck.length-1?`<button class="nav-btn primary" onclick="goTo(${cur+1})">Volgende →</button>`:''}
+  ${cur===deck.length-1&&answers[cur]!==undefined?`<button class="nav-btn primary" onclick="showResults()">Resultaten bekijken</button>`:''}
+  <button class="nav-btn" onclick="if(confirm('Alle antwoorden wissen en opnieuw beginnen?')){initSession();render();}" style="margin-left:auto;font-size:12px;color:#888780">Opnieuw</button>
+</div>`;
+}
+
+function renderResults(m){
+  const orig=deck.map((d,i)=>({d,i})).filter(({d})=>!d.retryOf);
+  const right=orig.filter(({i})=>answers[i]&&answers[i].wasCorrect).length;
+  const total=orig.length;
+  const pct=Math.round(right/total*100);
+  const pass=pct>=55;
+  const catScores={};
+  cats.forEach(c=>{
+    const items=deck.map((d,i)=>({d,i})).filter(({d})=>!d.retryOf&&Q[d.qIdx].cat===c);
+    const r=items.filter(({i})=>answers[i]&&answers[i].wasCorrect).length;
+    catScores[c]={right:r,total:items.length};
+  });
+  const retries=deck.filter(d=>d.retryOf!==undefined).length;
+
+  m.innerHTML=`
+<div class="result-card">
+  <div class="result-score">${right}/${total}</div>
+  <div class="result-pct">${pct}%</div>
+  <div class="result-pass ${pass?'pass':'fail'}">${pass?'Geslaagd ✓':'Gezakt ✗'} — Cesuur: 55%</div>
+  <p style="font-size:13px;color:#5f5e5a;margin-bottom:1rem">Herkansingen gemaakt: ${retries}</p>
+  <div class="cat-results">${cats.map(c=>{
+    const cs=catScores[c];
+    if(!cs||cs.total===0)return '';
+    const cp=Math.round(cs.right/cs.total*100);
+    return `<div class="cat-result"><div class="cat-result-name">${c}</div><div class="cat-result-score" style="color:${cp>=55?'#27500a':'#791f1f'}">${cs.right}/${cs.total} (${cp}%)</div></div>`;
+  }).join('')}</div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <button class="nav-btn primary" onclick="initSession();render()">Opnieuw oefenen</button>
+  </div>
+</div>
+${deck.filter((d,i)=>!d.retryOf&&answers[i]&&!answers[i].wasCorrect).length>0?`
+<div class="section-divider">Foute vragen (origineel)</div>
+<div>${deck.map((item,pos)=>{
+  if(item.retryOf!==undefined)return '';
+  const a=answers[pos];
+  if(!a||a.wasCorrect)return '';
+  const q=Q[item.qIdx];
+  return `<div class="question-card">
+  <div class="q-meta"><span class="q-tag">${q.cat}</span></div>
+  <div class="q-text">${q.text}</div>
+  <div class="options">${item.optOrder.map((origIdx,dp)=>{
+    let cls='opt';
+    if(origIdx===q.ans)cls+=' correct';
+    else if(a.displayedOpt===dp)cls+=' wrong';
+    return `<button class="${cls}" disabled><span class="opt-letter">${['A','B','C','D'][dp]}</span><span>${q.opts[origIdx]}</span></button>`;
+  }).join('')}</div>
+  <div class="feedback wrong">${q.exp}</div>
+</div>`;}).join('')}</div>`
+:'<p style="text-align:center;color:#27500a;padding:2rem;font-size:15px">Alle originele vragen goed beantwoord! Uitstekend!</p>'}`;
+}
+
+function pick(displayPos){
+  if(answers[cur]!==undefined)return;
+  const item=deck[cur];
+  const origIdx=item.optOrder[displayPos];
+  const wasCorrect=origIdx===Q[item.qIdx].ans;
+  answers[cur]={displayedOpt:displayPos,wasCorrect};
+  if(!wasCorrect)expandDeck(cur);
+  render();
+}
+function goTo(pos){cur=pos;render();}
+function setMode(rand){
+  if(randomMode===rand)return;
+  if(!confirm('Volgorde wijzigen wist je voortgang. Doorgaan?'))return;
+  randomMode=rand;initSession();render();
+}
+function setFilter(c){
+  if(filterCat===c)return;
+  if(Object.keys(answers).length>0&&!confirm('Categorie wijzigen wist je voortgang. Doorgaan?'))return;
+  filterCat=c;initSession();render();
+}
+function showResults(){reviewed=true;render();}
+render();
+</script>
+</body>
+</html>
