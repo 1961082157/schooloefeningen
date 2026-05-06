@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oefentoets Parate Kennis ESI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blauw: #003082;
+    --blauw-licht: #1a4fad;
+    --blauw-heel-licht: #e8eef8;
+    --oranje: #e8650a;
+    --oranje-licht: #fdf0e6;
+    --groen: #1a7a3c;
+    --groen-licht: #e6f4ec;
+    --rood: #c0392b;
+    --rood-licht: #fcecea;
+    --grijs: #f4f5f7;
+    --grijs-rand: #dde1e9;
+    --tekst: #1a1f2e;
+    --tekst-zacht: #5a6172;
+    --wit: #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: linear-gradient(160deg, #001a52 0%, #003082 40%, #0044b8 100%);
+    min-height: 100vh;
+    color: var(--tekst);
+    padding: 0 0 60px;
+  }
+
+  header {
+    background: rgba(0,0,0,0.25);
+    border-bottom: 2px solid rgba(232,101,10,0.6);
+    padding: 22px 32px 18px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .logo-badge {
+    width: 50px; height: 50px; background: var(--oranje); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 20px; font-weight: 700; color: white; letter-spacing: -1px;
+  }
+  header h1 { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 600; color: white; line-height: 1.2; }
+  header p  { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 28px 16px 0; }
+
+  /* ── SCOREBORD ── */
+  #scorebord {
+    background: var(--wit); border-radius: 14px;
+    padding: 14px 18px; margin-bottom: 22px;
+    border: 1.5px solid var(--grijs-rand);
+  }
+  .score-rij {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 11px; flex-wrap: wrap;
+  }
+  .score-pill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; flex-shrink: 0;
+  }
+  .pill-goed { background: var(--groen-licht); color: var(--groen); }
+  .pill-fout { background: var(--rood-licht);  color: var(--rood); }
+  .pill-rest { background: var(--blauw-heel-licht); color: var(--blauw); }
+  .pill-pct  { background: #fff7e0; color: #7a5000; border: 1px solid #f0d060; margin-left: auto; font-size: 14px; font-weight: 700; }
+  .score-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-goed { background: var(--groen); }
+  .dot-fout { background: var(--rood); }
+  .dot-rest { background: var(--blauw); }
+
+  .voortgang-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--tekst-zacht); margin-bottom: 5px; }
+  .voortgang-balk   { height: 10px; background: var(--grijs); border-radius: 5px; overflow: hidden; display: flex; }
+  .fill-goed { height: 100%; background: var(--groen); transition: width 0.35s ease; }
+  .fill-fout { height: 100%; background: var(--rood);  transition: width 0.35s ease; }
+
+  /* ── VRAAGKAART ── */
+  .vraag-kaart {
+    background: var(--wit); border-radius: 14px;
+    border: 1.5px solid var(--grijs-rand); margin-bottom: 24px; overflow: hidden;
+  }
+  .vraag-hoofd {
+    background: var(--blauw-heel-licht);
+    border-bottom: 1.5px solid var(--grijs-rand); padding: 18px 22px;
+  }
+  .vraag-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .vraag-nummer {
+    background: var(--blauw); color: white;
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+  }
+  .meerdere-badge {
+    background: var(--oranje-licht); color: var(--oranje);
+    border: 1px solid rgba(232,101,10,0.3);
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+  }
+  .casus {
+    font-size: 13.5px; color: var(--tekst-zacht); line-height: 1.6;
+    margin-bottom: 12px; padding: 11px 14px;
+    background: rgba(0,48,130,0.05);
+    border-left: 3px solid var(--blauw); border-radius: 0 8px 8px 0;
+    font-style: italic;
+  }
+  .vraag-tekst { font-family: 'Source Serif 4', serif; font-size: 15px; line-height: 1.65; color: var(--tekst); }
+
+  .vraag-lichaam { padding: 18px 22px 4px; }
+
+  /* ── OPTIES ── */
+  .antwoord-optie {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 11px 14px; border: 1.5px solid var(--grijs-rand);
+    border-radius: 10px; margin-bottom: 9px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .antwoord-optie:hover:not(.disabled) { border-color: var(--blauw-licht); background: var(--blauw-heel-licht); }
+  .antwoord-optie.geselecteerd:not(.disabled) { border-color: var(--blauw); background: var(--blauw-heel-licht); }
+  .antwoord-optie.correct { border-color: var(--groen); background: var(--groen-licht); animation: flashGoed 0.3s ease; }
+  .antwoord-optie.fout    { border-color: var(--rood);  background: var(--rood-licht);  animation: flashFout 0.32s ease; }
+  .antwoord-optie.gemist  { border-color: var(--groen); background: var(--groen-licht); opacity: 0.72; }
+  .antwoord-optie.disabled { cursor: default; }
+
+  @keyframes flashGoed { 0%{transform:scale(1)} 50%{transform:scale(1.013)} 100%{transform:scale(1)} }
+  @keyframes flashFout { 0%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} 100%{transform:translateX(0)} }
+
+  .optie-box {
+    width: 22px; height: 22px; border: 2px solid var(--grijs-rand);
+    border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-size: 13px; font-weight: 700;
+  }
+  .meerdere-check .optie-box { border-radius: 5px; }
+
+  .antwoord-optie.geselecteerd:not(.disabled) .optie-box { background: var(--blauw); border-color: var(--blauw); color: white; }
+  .antwoord-optie.correct .optie-box { background: var(--groen); border-color: var(--groen); color: white; }
+  .antwoord-optie.fout    .optie-box { background: var(--rood);  border-color: var(--rood);  color: white; }
+  .antwoord-optie.gemist  .optie-box { background: var(--groen); border-color: var(--groen); color: white; }
+
+  .optie-tekst { font-size: 14px; line-height: 1.5; color: var(--tekst); padding-top: 2px; }
+
+  /* ── FEEDBACK ── */
+  .feedback-banner {
+    margin: 4px 22px 0; padding: 13px 16px; border-radius: 10px;
+    font-size: 13.5px; line-height: 1.65; display: none;
+  }
+  .feedback-banner.zichtbaar { display: block; }
+  .feedback-banner.goed-banner { background: var(--groen-licht); border: 1.5px solid #a8d8b8; color: #0f4a24; }
+  .feedback-banner.fout-banner { background: #fff8f0; border: 1.5px solid #f0c890; color: #5a3200; }
+  .feedback-kop { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; font-weight: 700; }
+
+  /* ── VOET ── */
+  .vraag-voet { padding: 14px 22px 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 9px 20px; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-primair { background: var(--blauw); color: white; }
+  .btn-primair:hover { background: var(--blauw-licht); }
+  .btn-oranje { background: var(--oranje); color: white; }
+  .btn-oranje:hover { opacity: 0.88; }
+
+  /* ── EINDSCHERM ── */
+  #einde-scherm {
+    background: var(--wit); border-radius: 14px;
+    border: 1.5px solid var(--grijs-rand); padding: 40px 28px;
+    text-align: center; display: none;
+  }
+  #einde-scherm h2 { font-family: 'Source Serif 4', serif; font-size: 24px; color: var(--blauw); margin-bottom: 6px; }
+  .eindcijfer { font-size: 58px; font-weight: 700; color: var(--blauw); line-height: 1; margin: 14px 0 3px; }
+  .einde-pct  { font-size: 20px; font-weight: 600; color: var(--oranje); margin-bottom: 6px; }
+  .einde-stats { display: flex; justify-content: center; gap: 28px; margin: 18px 0 24px; }
+  .einde-stats .item { text-align: center; }
+  .einde-stats .item .num { font-size: 22px; font-weight: 700; }
+  .einde-stats .item .lbl { font-size: 11px; color: var(--tekst-zacht); text-transform: uppercase; letter-spacing: 0.4px; }
+  .einde-stats .item.g .num { color: var(--groen); }
+  .einde-stats .item.f .num { color: var(--rood); }
+  .einde-balk { height: 12px; background: var(--grijs); border-radius: 6px; overflow: hidden; margin: 0 auto 26px; max-width: 340px; display: flex; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">ESI</div>
+  <div>
+    <h1>Oefentoets Parate Kennis</h1>
+    <p>Opsporingsbevoegdheden &amp; Strafrecht — willekeurige volgorde</p>
+  </div>
+</header>
+
+<div class="container">
+  <div id="scorebord">
+    <div class="score-rij">
+      <div class="score-pill pill-goed"><span class="score-dot dot-goed"></span><span id="s-goed">0</span>&nbsp;goed</div>
+      <div class="score-pill pill-fout"><span class="score-dot dot-fout"></span><span id="s-fout">0</span>&nbsp;fout</div>
+      <div class="score-pill pill-rest"><span class="score-dot dot-rest"></span><span id="s-rest">20</span>&nbsp;resterend</div>
+      <div class="score-pill pill-pct" id="s-pct">— % correct</div>
+    </div>
+    <div>
+      <div class="voortgang-labels">
+        <span id="vl-links">Vraag 1 van 20</span>
+        <span id="vl-rechts">0% gedaan</span>
+      </div>
+      <div class="voortgang-balk">
+        <div class="fill-goed" id="fill-goed" style="width:0%"></div>
+        <div class="fill-fout" id="fill-fout" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="vragen-container"></div>
+
+  <div id="einde-scherm">
+    <h2>Toets afgerond!</h2>
+    <div class="eindcijfer" id="e-cijfer">—</div>
+    <div class="einde-pct" id="e-pct">—%</div>
+    <p style="color:var(--tekst-zacht);font-size:13px;margin-bottom:16px;">van de vragen correct beantwoord</p>
+    <div class="einde-balk">
+      <div class="fill-goed" id="e-fill-goed" style="width:0%"></div>
+      <div class="fill-fout" id="e-fill-fout" style="width:0%"></div>
+    </div>
+    <div class="einde-stats">
+      <div class="item g"><div class="num" id="e-goed">0</div><div class="lbl">Goed</div></div>
+      <div class="item f"><div class="num" id="e-fout">0</div><div class="lbl">Fout</div></div>
+    </div>
+    <button class="btn btn-primair" onclick="herstart(false)">Opnieuw — alle vragen</button><br>
+    <button class="btn btn-oranje" id="herhaal-knop" onclick="herstart(true)" style="margin-top:10px;display:none"></button>
+  </div>
+</div>
+
+<script>
+const alleVragen = [
+  {
+    casus:"Twee opsporingsambtenaren krijgen een melding dat een boer in zijn schuur ernstig gevallen is en hulp nodig heeft. Als de opsporingsambtenaren ter plaatse komen en de schuur in willen, merken zij dat de deur op slot zit. Zij zien door het raam dat de boer bloedend op de grond ligt.",
+    vraag:"Zijn de opsporingsambtenaren bevoegd de schuur ter hulpverlening te betreden?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, zij mogen de schuur betreden op grond van art. 7 Politiewet.",correct:true},
+      {tekst:"Ja, zij mogen de schuur betreden op grond van art. 3 Politiewet.",correct:false},
+      {tekst:"Nee, zij mogen de schuur niet betreden omdat de deur op slot zit.",correct:false},
+      {tekst:"Nee, zij hebben een bevel van de hovj nodig om de schuur te betreden.",correct:false}
+    ],
+    uitleg:"Art. 7 lid 2 Politiewet geeft de ambtenaar van de politie toegang tot elke plaats voor zover het voor het verlenen van hulp aan hen die het behoeven nodig is."
+  },
+  {
+    casus:"Tijdens hun surveillance worden opsporingsambtenaren aangesproken door een vrouw. De vrouw vertelt dat zij gisteren in het openbaar is beledigd door haar ex-vriend. Dit is gefilmd door een omstander. De vrouw toont de beelden en vertelt dat haar ex-vriend bij een café om de hoek zit. De opsporingsambtenaren zien bij het café een man die aan het signalement voldoet. Ze willen de man aanhouden voor belediging (in dit geval geen VH-misdrijf).",
+    vraag:"Zijn de opsporingsambtenaren bevoegd de man buiten heterdaad aan te houden voor belediging?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Nee, de bevoegdheid tot aanhouding buiten heterdaad komt toe aan de hovj.",correct:false},
+      {tekst:"Nee, aanhouden buiten heterdaad voor dit feit is nu niet mogelijk.",correct:true},
+      {tekst:"Ja, iedereen is bevoegd een verdachte van een strafbaar feit aan te houden.",correct:false},
+      {tekst:"Ja, nadat de ovj een bevel tot aanhouding buiten heterdaad heeft gegeven.",correct:false}
+    ],
+    uitleg:"In deze casus gaat het om een aanhouding buiten heterdaad (art. 54 Sv). De ovj kan een bevel geven bij een misdrijf waarvoor voorlopige hechtenis is toegelaten. Belediging (art. 266 Sr.) is geen VH-misdrijf (art. 67 lid 1 Sv)."
+  },
+  {
+    casus:"Wanneer een verdachte zijn auto wil instappen, wordt hij staande gehouden op verdenking van heling. De verdachte zegt geen identiteitsbewijs bij zich te hebben en weigert zijn persoonsgegevens op te geven. Na onderzoek aan de kleding blijkt hij inderdaad geen identiteitsbewijs bij zich te dragen. De opsporingsambtenaar wil het dashboardkastje van de auto onderzoeken. De identiteit kan niet op andere wijze worden vastgesteld.",
+    vraag:"Is de opsporingsambtenaar bevoegd het dashboardkastje van de auto te onderzoeken voor de vaststelling van de identiteit van de verdachte?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, er is sprake van een verdachte van een misdrijf en het onderzoek is noodzakelijk voor de vaststelling van zijn identiteit.",correct:false},
+      {tekst:"Ja, de verdachte is staande gehouden en het onderzoek is noodzakelijk voor de vaststelling van zijn identiteit.",correct:true},
+      {tekst:"Nee, de verdachte is staande gehouden en mag daarom alleen aan de kleding worden onderzocht.",correct:false},
+      {tekst:"Nee, alleen voorwerpen die de verdachte bij zich draagt mogen onderzocht worden.",correct:false}
+    ],
+    uitleg:"Art. 55b lid 1 Sv: een opsporingsambtenaar is bevoegd een staande gehouden verdachte aan zijn kleding te onderzoeken, alsmede voorwerpen die hij bij zich draagt of met zich voert. Een auto die de verdachte 'met zich voert' valt hieronder."
+  },
+  {
+    casus:"Een verdachte wordt een paar dagen na het derde verhoor voor de vierde keer verhoord over éénzelfde strafbaar feit. De verdachte is een veelpleger. De opsporingsambtenaar geeft de verdachte geen cautie.",
+    vraag:"Had de opsporingsambtenaar voor aanvang van het vierde verhoor de cautie moeten geven?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, de verdachte moet bij elke vorm van contact met een opsporingsambtenaar de cautie worden meegedeeld.",correct:false},
+      {tekst:"Ja, de verdachte moet voor ieder verhoor over een strafbaar feit de cautie worden meegedeeld.",correct:true},
+      {tekst:"Nee, de verdachte moet alleen voor het eerste verhoor over een strafbaar feit de cautie worden meegedeeld.",correct:false},
+      {tekst:"Nee, omdat de verdachte veelpleger is, mag aangenomen worden dat hij bekend is met zijn rechten.",correct:false}
+    ],
+    uitleg:"Aan de verdachte moet voor ieder verhoor medegedeeld worden dat hij niet verplicht is tot antwoorden (art. 29 lid 2 Sv). Onder verhoor wordt verstaan: alle vragen die een opsporingsambtenaar aan een verdachte stelt over diens betrokkenheid bij een strafbaar feit."
+  },
+  {
+    casus:"Een man wordt verdacht van het plegen van openlijke geweldpleging (art. 67 lid 1 Sv-misdrijf). Hij wordt uitgenodigd op het politiebureau voor een verhoor. De opsporingsambtenaar controleert de identiteit aan de hand van zijn paspoort. Over de identiteit bestaat geen twijfel.",
+    vraag:"Is de opsporingsambtenaar in dit geval verplicht ook foto's en vingerafdrukken te nemen van deze verdachte?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, want de verdachte wordt verhoord wegens een art. 67 lid 1 Sv-misdrijf.",correct:true},
+      {tekst:"Ja, want bij elk verdachtenverhoor dienen foto's en vingerafdrukken genomen te worden.",correct:false},
+      {tekst:"Nee, want de verdachte is nog niet aangehouden voor een strafbaar feit.",correct:false},
+      {tekst:"Nee, want over de identiteit van de verdachte bestaat geen twijfel.",correct:false}
+    ],
+    uitleg:"Op grond van art. 55c lid 2 Sv nemen opsporingsambtenaren van een verdachte die wordt verhoord wegens een art. 67 lid 1 Sv-misdrijf foto's en vingerafdrukken. Het woord 'nemen' houdt een verplichting in — geen vrijblijvende bevoegdheid."
+  },
+  {
+    casus:"Een vrouw meldt bij de politie dat haar ex-man haar woning is binnengedrongen via een openstaand raam. Ze heeft meerdere keren gezegd dat hij moet vertrekken. Hij wil niet luisteren en blijft roepen dat hij haar terug wil. De ex-man is eerder veroordeeld voor diefstal.",
+    vraag:"Pleegt de man een strafbaar feit?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, poging tot diefstal (art. 45 jo. art. 310 Sr).",correct:false},
+      {tekst:"Ja, huisvredebreuk (art. 138 Sr).",correct:true},
+      {tekst:"Ja, bedreiging (art. 285 Sr).",correct:false},
+      {tekst:"Nee, de man pleegt geen strafbaar feit.",correct:false}
+    ],
+    uitleg:"De man is tegen de wil van de vrouw ('wederrechtelijk') haar woning binnengedrongen door inklimming. Hij maakt zich daardoor schuldig aan huisvredebreuk (art. 138 Sr)."
+  },
+  {
+    casus:"Situatie 1: Een man slaat met een hamer op een autoruit om de tas op de achterbank te stelen.\n\nSituatie 2: Een vrouw zoekt via Google naar manieren hoe ze iemand met vergif kan doden.",
+    vraag:"In welke situatie(s) is sprake van 'een begin van uitvoering' zoals vereist voor een poging tot misdrijf?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Alleen in situatie 1.",correct:true},
+      {tekst:"Alleen in situatie 2.",correct:false},
+      {tekst:"In situatie 1 en 2.",correct:false},
+      {tekst:"In geen van beide situaties.",correct:false}
+    ],
+    uitleg:"Een poging tot misdrijf is strafbaar als de dader begonnen is met het uitvoeren van dat misdrijf (art. 45 lid 1 Sr). Met een hamer op een autoruit slaan is een begin van uitvoering van diefstal door middel van braak. Het zoeken naar informatie over vergif is geen begin van uitvoering."
+  },
+  {
+    casus:null,
+    vraag:"Wie is bevoegd tot het geven van een (schriftelijke) machtiging volgens de Algemene wet op het binnentreden?",
+    meerdere:true,
+    antwoorden:[
+      {tekst:"De hovj",correct:true},
+      {tekst:"De ovj",correct:true},
+      {tekst:"De r-c",correct:false},
+      {tekst:"De opsporingsambtenaar",correct:false}
+    ],
+    uitleg:"In art. 3 Awbi staat wie bevoegd is tot het geven van de schriftelijke machtiging. Naast de hovj en de ovj kan ook een advocaat-generaal bij ressortsparket dit doen. Bij binnentreden om andere redenen dan strafvordering is de burgemeester bevoegd (art. 3 Awbi lid 2)."
+  },
+  {
+    casus:null,
+    vraag:"Politiegegevens kunnen worden verwerkt met het oog op de uitvoering van de dagelijkse politietaak gedurende een periode van …",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Één jaar na de datum van de eerste verwerking.",correct:true},
+      {tekst:"Twee jaar na de datum van de eerste verwerking.",correct:false},
+      {tekst:"Vijf jaar na de datum van de eerste verwerking.",correct:false}
+    ],
+    uitleg:"Art. 8 lid 1 WPG: politiegegevens kunnen worden verwerkt met het oog op de uitvoering van de dagelijkse politietaak gedurende een periode van één jaar na de datum van de eerste verwerking."
+  },
+  {
+    casus:"Op een industrieterrein wordt de laatste weken veel ingebroken. Opsporingsambtenaar Anouschka ziet 's avonds een vrouw lopen door dit gebied. Anouschka vordert inzage van het identiteitsbewijs van de vrouw. De vrouw weigert en zegt dat zij niet hoeft mee te werken aan haar eigen veroordeling.",
+    vraag:"Welke van de onderstaande antwoorden is waar?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Het niet voldoen aan de vordering tot inzage van een identiteitsbewijs door de vrouw levert een strafbaar feit op.",correct:true},
+      {tekst:"Het niet voldoen aan de vordering tot inzage van een identiteitsbewijs door de vrouw levert geen strafbaar feit op.",correct:false},
+      {tekst:"De vrouw moet voor het voldoen aan de vordering eerst met een advocaat gesproken hebben.",correct:false}
+    ],
+    uitleg:"Een politieambtenaar aangesteld voor de uitvoering van de politietaak is bevoegd inzage te vorderen van een identiteitsbewijs (art. 1 WID). Het niet voldoen aan de vordering is strafbaar op grond van art. 447e Sr."
+  },
+  {
+    casus:"Bij het politiebureau meldt zich een vrouw die slachtoffer is geworden van zware mishandeling door haar man (art. 67 lid 1 Sv-misdrijf). Ze verklaart dat de man zich heeft verstopt in de woning van zijn ouders. Twee opsporingsambtenaren gaan naar deze woning en willen deze zonder toestemming doorzoeken ter aanhouding.",
+    vraag:"Zijn de opsporingsambtenaren bevoegd de woning te doorzoeken ter aanhouding?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, want de man wordt verdacht van een art. 67 lid 1 Sv-misdrijf.",correct:false},
+      {tekst:"Ja, want er zijn aanwijzingen dat de man een misdrijf heeft gepleegd.",correct:false},
+      {tekst:"Nee, want ze hebben een machtiging van de ovj nodig.",correct:true},
+      {tekst:"Nee, want de man bevindt zich niet in zijn eigen woning.",correct:false}
+    ],
+    uitleg:"Op grond van art. 55a lid 1 Sv zijn opsporingsambtenaren bij verdenking van een art. 67 lid 1 Sv-misdrijf bevoegd elke plaats te doorzoeken. Zij hebben daarvoor een machtiging van de ovj nodig, tenzij sprake is van dringende noodzakelijkheid — die blijkt niet uit de casus."
+  },
+  {
+    casus:"Twee opsporingsambtenaren ontvangen een melding van diefstal. Bij een pinautomaat zou een man de pinpas van een bejaarde vrouw gestolen hebben. Direct na de melding zien de opsporingsambtenaren een man die aan het signalement voldoet. Ze willen weten of hij de pinpas bij zich heeft.",
+    vraag:"Wat moeten de opsporingsambtenaren doen om door middel van een opsporingsfouillering zijn kleding te mogen onderzoeken?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"De man aanhouden.",correct:true},
+      {tekst:"Een bevel regelen van de ovj.",correct:false},
+      {tekst:"Een bevel regelen van de hovj.",correct:false},
+      {tekst:"De man staande houden.",correct:false}
+    ],
+    uitleg:"De opsporingsambtenaar is bevoegd de aangehouden verdachte tegen wie ernstige bezwaren bestaan aan zijn kleding te onderzoeken (art. 56 lid 4 Sv). De man moet dus eerst worden aangehouden."
+  },
+  {
+    casus:"Een bedrijfsleider en een beveiliger van een kledingwinkel houden op heterdaad een verdachte aan voor diefstal van een winterjas. Er komt een opsporingsambtenaar ter plaatse om de verdachte mee te nemen naar het politiebureau.",
+    vraag:"Wie is in dit geval bevoegd de winterjas in beslag te nemen?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"De bedrijfsleider.",correct:false},
+      {tekst:"De beveiliger.",correct:false},
+      {tekst:"De opsporingsambtenaar.",correct:true}
+    ],
+    uitleg:"Art. 95 Sv geeft een opsporingsambtenaar de bevoegdheid om in geval van aanhouding van een verdachte voor inbeslagneming vatbare voorwerpen in beslag te nemen. Burgers die een verdachte op heterdaad aanhouden (art. 53 Sv) zijn sinds 2017 niet bevoegd tot inbeslagneming (art. 53 lid 3 Sv)."
+  },
+  {
+    casus:"Twee opsporingsambtenaren zien een auto rijden met twee mannen die worden verdacht van grootschalige drugshandel (art. 67 lid 1 Sv-misdrijf). Ze willen de auto ter inbeslagneming doorzoeken en geven de bestuurder een stopteken.",
+    vraag:"Zijn de opsporingsambtenaren bevoegd deze auto ter inbeslagneming te doorzoeken?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, want de mannen worden verdacht van een art. 67 lid 1 Sv-misdrijf.",correct:true},
+      {tekst:"Nee, want de Opiumwet kent geen doorzoekingsbevoegdheid.",correct:false},
+      {tekst:"Nee, want de verdachten zijn nog niet aangehouden voor drugshandel.",correct:false}
+    ],
+    uitleg:"Omdat de mannen worden verdacht van een art. 67 lid 1 Sv-misdrijf zijn de opsporingsambtenaren bevoegd de auto ter inbeslagneming te doorzoeken (art. 96b lid 1 Sv). De verdachten hoeven niet eerst aangehouden te worden. De Opiumwet bevat geen doorzoekingsbevoegdheid."
+  },
+  {
+    casus:"Een man raakt in een kroeg een vrouw aan. Hij betast haar billen en borsten. De vrouw verstijft en zegt dat de man moet stoppen. De man gaat door met betasten.",
+    vraag:"Welke vorm van aanranding pleegt de man?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Opzetaanranding (art. 241 lid 1 Sr).",correct:true},
+      {tekst:"Schuldaanranding (art. 240 Sr).",correct:false}
+    ],
+    uitleg:"De vrouw verstijft en zegt dat de man moet stoppen. De man weet dus dat sprake is van seksueel contact tegen de wil van de vrouw. Hij negeert de duidelijk waarneembare signalen van de ontbrekende wil en gaat toch door: opzetaanranding (art. 241 lid 1 Sr)."
+  },
+  {
+    casus:"Een opsporingsambtenaar heeft een meerderjarige man staande gehouden en wil zijn identiteit vaststellen. De man overhandigt diverse documenten. Hij blijkt twee nationaliteiten te hebben.",
+    vraag:"Met welk document kan de identiteit van de man niet worden vastgesteld?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Een geldige persoonsgebonden OV-chipkaart.",correct:true},
+      {tekst:"Een geldig Nederlands rijbewijs.",correct:false},
+      {tekst:"Een geldig Nederlands identiteitsbewijs.",correct:false},
+      {tekst:"Een geldig Frans paspoort.",correct:false}
+    ],
+    uitleg:"Uit art. 1 Wet op de identificatieplicht volgt dat de identiteit niet kan worden vastgesteld met een geldige persoonsgebonden OV-chipkaart. Een geldig rijbewijs (4º), Nederlands identiteitsbewijs (1º) of Frans paspoort (3º) zijn wel toegestaan."
+  },
+  {
+    casus:"Ron heeft ruzie met Sem. Ze duwen en trekken een beetje aan elkaar. Dan haalt Sem uit: hij zwaait met zijn arm richting de arm van Ron. Ron kan deze klap net ontwijken en wordt niet geraakt.",
+    vraag:"Is deze uithaal van Sem een strafbare poging tot mishandeling?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, omdat Sem met zijn arm in de richting van de arm van Ron zwaaide.",correct:false},
+      {tekst:"Ja, omdat Ron en Sem voor de uithaal ook al aan het duwen en trekken waren.",correct:false},
+      {tekst:"Nee, omdat een poging tot mishandeling alleen strafbaar is als die in vereniging gepleegd wordt.",correct:false},
+      {tekst:"Nee, omdat het strafrecht een poging tot mishandeling niet strafbaar stelt.",correct:true}
+    ],
+    uitleg:"De uithaal is een poging tot mishandeling, maar dit is niet strafbaar (art. 300 lid 5 Sr). Let op: een poging tot zware mishandeling is wél strafbaar (art. 302 Sr)."
+  },
+  {
+    casus:"Jan vertelt Ilias dat hij de avondwinkel gaat overvallen. Hij heeft vervoer nodig en vraagt of Ilias hem met de auto af wil zetten bij de avondwinkel. Ilias doet dit.",
+    vraag:"Welke deelnemingsvorm is op Ilias van toepassing?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Medepleger.",correct:false},
+      {tekst:"Medeplichtige.",correct:true},
+      {tekst:"Uitlokker.",correct:false},
+      {tekst:"Samenspanner.",correct:false}
+    ],
+    uitleg:"Ilias vervult een kleine rol bij het plegen van het strafbare feit. Hij is behulpzaam door Jan af te zetten. Hij weet dat Jan een overval gaat plegen. Hierdoor maakt hij zich als medeplichtige schuldig (art. 48 onder 1º Sr jo. art. 312 Sr)."
+  },
+  {
+    casus:null,
+    vraag:"Welke van de onderstaande strafbare feiten is een absoluut klachtmisdrijf?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Eenvoudige mishandeling (art. 300 Sr).",correct:false},
+      {tekst:"Bedreiging (art. 285 Sr).",correct:false},
+      {tekst:"Eenvoudige belediging (art. 266 Sr).",correct:true},
+      {tekst:"Vernieling (art. 350 Sr).",correct:false}
+    ],
+    uitleg:"Eenvoudige belediging (art. 266 lid 1 Sr) is een absoluut klachtmisdrijf. Dit betekent dat eenvoudige belediging alleen vervolgd kan worden als er door het slachtoffer een klacht is gedaan (art. 269 lid 1 Sr)."
+  },
+  {
+    casus:"Opsporingsambtenaren John en Mavis hebben tijdens de briefing gehoord dat gisteren een speciaal model motorfiets gestolen is in de wijk. Tijdens surveillance kijken ze vanuit de brandgangen door de ramen van schuren op zoek naar de motorfiets.",
+    vraag:"Mogen opsporingsambtenaren John en Mavis door de ramen van deze schuren kijken?",
+    meerdere:false,
+    antwoorden:[
+      {tekst:"Ja, op grond van de politietaak (art. 3 Politiewet).",correct:true},
+      {tekst:"Ja, met voorafgaande toestemming van hovj.",correct:false},
+      {tekst:"Nee, niet zonder toestemming van de eigenaren.",correct:false},
+      {tekst:"Nee, alleen als dat nodig is voor hulpverlening (art. 7 Politiewet).",correct:false}
+    ],
+    uitleg:"Door op deze manier door het raam te kijken, maken zij een geringe inbreuk op de privacy van de eigenaren. De juridische basis hiervan is te vinden in de algemene omschrijving van de taakstelling van de politie (art. 3 Politiewet)."
+  }
+];
+
+// ── State ──
+let volgorde = [], huidigIndex = 0, aantalGoed = 0, aantalFout = 0, fouteVragen = [];
+
+function schudden(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function herstart(alleenFoute) {
+  document.getElementById('einde-scherm').style.display = 'none';
+  document.getElementById('vragen-container').innerHTML = '';
+  aantalGoed = 0; aantalFout = 0; huidigIndex = 0;
+  if (alleenFoute && fouteVragen.length > 0) {
+    volgorde = schudden([...fouteVragen]);
+    fouteVragen = [];
+  } else {
+    fouteVragen = [];
+    volgorde = schudden([...Array(alleVragen.length).keys()]);
+  }
+  updateScore();
+  toonVraag();
+}
+
+function updateScore() {
+  const totaal    = volgorde.length;
+  const behandeld = aantalGoed + aantalFout;          // alleen beantwoorde vragen
+  const resterend = totaal - behandeld;
+  document.getElementById('s-goed').textContent = aantalGoed;
+  document.getElementById('s-fout').textContent = aantalFout;
+  document.getElementById('s-rest').textContent = resterend;
+  // percentage correct = goed / beantwoord (niet goed / gepresenteerd)
+  const pctCorrect = behandeld > 0 ? Math.round(aantalGoed / behandeld * 100) : null;
+  document.getElementById('s-pct').textContent = pctCorrect !== null ? pctCorrect + '% correct' : '— % correct';
+  // voortgangslabel: hoeveel % van de toets is afgerond
+  const pctGedaan = totaal > 0 ? Math.round(behandeld / totaal * 100) : 0;
+  document.getElementById('vl-links').textContent = behandeld < totaal
+    ? 'Vraag ' + (huidigIndex + 1) + ' van ' + totaal
+    : 'Klaar!';
+  document.getElementById('vl-rechts').textContent = pctGedaan + '% gedaan';
+  // balk: groen = goed/totaal, rood = fout/totaal
+  document.getElementById('fill-goed').style.width = (aantalGoed / totaal * 100) + '%';
+  document.getElementById('fill-fout').style.width = (aantalFout / totaal * 100) + '%';
+}
+
+function toonVraag() {
+  if (huidigIndex >= volgorde.length) { toonEinde(); return; }
+  const vi = volgorde[huidigIndex];
+  const v  = alleVragen[vi];
+  const gemend = schudden(v.antwoorden.map((a, i) => ({ ...a, oi: i })));
+
+  const container = document.getElementById('vragen-container');
+  container.innerHTML = '';
+  const kaart = document.createElement('div');
+  kaart.className = 'vraag-kaart';
+
+  let casusTekst = '';
+  if (v.casus) {
+    casusTekst = v.casus.split('\n\n')
+      .map(r => `<div class="casus">${r.replace(/\n/g, '<br>')}</div>`)
+      .join('');
+  }
+  const mBadge = v.meerdere
+    ? `<span class="meerdere-badge">⚠️ Meerdere antwoorden mogelijk</span>` : '';
+
+  kaart.innerHTML = `
+    <div class="vraag-hoofd">
+      <div class="vraag-meta">
+        <span class="vraag-nummer">Vraag ${huidigIndex + 1} / ${volgorde.length}</span>${mBadge}
+      </div>
+      ${casusTekst}
+      <div class="vraag-tekst">${v.vraag}</div>
+    </div>
+    <div class="vraag-lichaam" id="opties-${vi}"></div>
+    <div class="feedback-banner" id="feedback-${vi}"></div>
+    <div class="vraag-voet" id="voet-${vi}">
+      <button class="btn btn-primair" id="controleer-btn-${vi}"
+        onclick="controleer(${vi}, ${JSON.stringify(gemend).replace(/"/g, '&quot;')})">
+        Controleer antwoord
+      </button>
+    </div>`;
+
+  const optiesEl = kaart.querySelector(`#opties-${vi}`);
+  gemend.forEach((ant, idx) => {
+    const div = document.createElement('div');
+    div.className = 'antwoord-optie' + (v.meerdere ? ' meerdere-check' : '');
+    div.dataset.idx = idx;
+    div.onclick = () => wisselSelectie(div, vi, v.meerdere);
+    div.innerHTML = `<div class="optie-box" id="box-${vi}-${idx}"></div>
+                     <div class="optie-tekst">${ant.tekst}</div>`;
+    optiesEl.appendChild(div);
+  });
+
+  container.appendChild(kaart);
+  kaart.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Selectie wisselen — werkt ALLEEN zolang de vraag nog niet beantwoord is
+function wisselSelectie(div, vi, meerdere) {
+  if (div.classList.contains('disabled')) return;
+
+  if (!meerdere) {
+    // deselect alle andere, selecteer deze
+    document.querySelectorAll(`#opties-${vi} .antwoord-optie`).forEach(d => {
+      d.classList.remove('geselecteerd');
+      d.querySelector('.optie-box').innerHTML = '';
+    });
+    div.classList.add('geselecteerd');
+    div.querySelector('.optie-box').innerHTML = '●';
+  } else {
+    div.classList.toggle('geselecteerd');
+    div.querySelector('.optie-box').innerHTML =
+      div.classList.contains('geselecteerd') ? '✓' : '';
+  }
+}
+
+// Eén controleer-functie voor zowel enkelvoudig als meerdere
+function controleer(vi, gemend) {
+  const v = alleVragen[vi];
+  const alleOpties = [...document.querySelectorAll(`#opties-${vi} .antwoord-optie`)];
+  const geselecteerd = alleOpties.filter(d => d.classList.contains('geselecteerd'));
+
+  if (geselecteerd.length === 0) {
+    alert('Selecteer eerst een antwoord.');
+    return;
+  }
+
+  // Vergrendel alle opties — niemand kan meer klikken
+  alleOpties.forEach(d => d.classList.add('disabled'));
+
+  const gesIdxs = geselecteerd.map(d => parseInt(d.dataset.idx));
+  let isGoed = true;
+
+  alleOpties.forEach((div, idx) => {
+    const ant = gemend[idx];
+    const wasGes = gesIdxs.includes(idx);
+    const box = div.querySelector('.optie-box');
+    div.classList.remove('geselecteerd');
+
+    if (wasGes && ant.correct)       { div.classList.add('correct'); box.innerHTML = '✓'; }
+    else if (wasGes && !ant.correct) { div.classList.add('fout');    box.innerHTML = '✗'; isGoed = false; }
+    else if (!wasGes && ant.correct) { div.classList.add('gemist');  box.innerHTML = '✓'; isGoed = false; }
+    else                             { box.innerHTML = ''; }
+  });
+
+  // Verberg controleer-knop, toon feedback + volgende-knop
+  const voet = document.getElementById(`voet-${vi}`);
+  voet.innerHTML = '';
+
+  const banner = document.getElementById(`feedback-${vi}`);
+  banner.className = 'feedback-banner zichtbaar ' + (isGoed ? 'goed-banner' : 'fout-banner');
+  banner.innerHTML = `<div class="feedback-kop">${isGoed ? '✓ Correct!' : '✗ Niet correct — zie toelichting'}</div>${v.uitleg}`;
+
+  const volgendeBtn = document.createElement('button');
+  volgendeBtn.className = 'btn btn-primair';
+  volgendeBtn.textContent = huidigIndex + 1 < volgorde.length ? 'Volgende vraag →' : 'Bekijk resultaat';
+  volgendeBtn.onclick = () => { huidigIndex++; toonVraag(); };
+  voet.appendChild(volgendeBtn);
+
+  // Score bijwerken NA het tonen van feedback
+  if (isGoed) { aantalGoed++; } else { aantalFout++; fouteVragen.push(vi); }
+  updateScore();
+
+  banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function toonEinde() {
+  document.getElementById('vragen-container').innerHTML = '';
+  const einde = document.getElementById('einde-scherm');
+  einde.style.display = 'block';
+  const totaal = volgorde.length;
+  const pct = totaal > 0 ? Math.round(aantalGoed / totaal * 100) : 0;
+  document.getElementById('e-cijfer').textContent = aantalGoed + '/' + totaal;
+  document.getElementById('e-pct').textContent = pct + '%';
+  document.getElementById('e-goed').textContent = aantalGoed;
+  document.getElementById('e-fout').textContent = aantalFout;
+  document.getElementById('e-fill-goed').style.width = (aantalGoed / totaal * 100) + '%';
+  document.getElementById('e-fill-fout').style.width = (aantalFout / totaal * 100) + '%';
+  const hBtn = document.getElementById('herhaal-knop');
+  if (fouteVragen.length > 0) {
+    hBtn.style.display = 'inline-block';
+    hBtn.textContent = 'Herhaal ' + fouteVragen.length + ' foute vraag' + (fouteVragen.length > 1 ? 'en' : '');
+  } else {
+    hBtn.style.display = 'none';
+  }
+  updateScore();
+  einde.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+herstart(false);
+</script>
+</body>
+</html>
