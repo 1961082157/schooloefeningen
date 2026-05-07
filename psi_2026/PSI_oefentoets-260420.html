@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kennistoets — Politieopleiding Staatsrecht</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #191c27;
+    --surface2: #21253a;
+    --border: rgba(255,255,255,0.07);
+    --accent: #4f8ef7;
+    --accent2: #7c5af6;
+    --gold: #f0b429;
+    --text: #e8eaf0;
+    --muted: #8890a8;
+    --correct: #2dce89;
+    --wrong: #f5365c;
+    --correct-bg: rgba(45,206,137,0.1);
+    --wrong-bg: rgba(245,54,92,0.1);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1324 0%, #111628 50%, #12101f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,142,247,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 30%, #a0b4e8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── CHAPTER NAV ── */
+  .chapter-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 28px 24px 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .chapter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .chapter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .chapter-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+    color: #fff;
+  }
+  .chapter-btn .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-left: 6px;
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .chapter-btn.done .status-dot { opacity: 1; }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ── CHAPTER SECTION ── */
+  .chapter-section { display: none; }
+  .chapter-section.visible { display: block; }
+
+  .chapter-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .chapter-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .chapter-meta {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── SCORE STRIP ── */
+  .score-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .score-info {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .score-info strong {
+    color: var(--text);
+    font-size: 20px;
+    margin-right: 4px;
+  }
+  .score-bar-wrap {
+    flex: 1;
+    min-width: 160px;
+    max-width: 260px;
+    height: 6px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover {
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .question-card.answered { border-color: rgba(255,255,255,0.12); }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.55;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: grid; gap: 10px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 13px 16px;
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+    text-align: left;
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: rgba(79,142,247,0.06);
+  }
+  .option.disabled { cursor: default; }
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(79,142,247,0.1);
+  }
+  .option.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .option.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+  }
+
+  .opt-letter {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.18s;
+  }
+  .option.selected .opt-letter { background: var(--accent); color: #fff; }
+  .option.correct .opt-letter { background: var(--correct); color: #fff; }
+  .option.wrong .opt-letter { background: var(--wrong); color: #fff; }
+
+  .opt-text {
+    font-size: 14.5px;
+    line-height: 1.45;
+    padding-top: 2px;
+    color: var(--text);
+  }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.correct-fb {
+    background: rgba(45,206,137,0.1);
+    border: 1px solid rgba(45,206,137,0.25);
+    color: #60e0a8;
+    display: block;
+  }
+  .feedback.wrong-fb {
+    background: rgba(245,54,92,0.1);
+    border: 1px solid rgba(245,54,92,0.2);
+    color: #f77;
+    display: block;
+  }
+  .feedback-icon { font-size: 16px; margin-right: 6px; }
+
+  /* ── CHAPTER RESULT ── */
+  .chapter-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    margin-top: 28px;
+    display: none;
+  }
+  .chapter-result.show { display: block; }
+  .result-emoji { font-size: 48px; margin-bottom: 12px; }
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .result-score {
+    font-size: 48px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .result-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .retry-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .retry-btn:hover { opacity: 0.88; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media(max-width:580px) {
+    .question-card { padding: 20px 16px; }
+    .q-text { font-size: 15px; }
+    .opt-text { font-size: 13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Politieopleiding • Staatsrecht &amp; Recht</div>
+  <h1>Kennistoets</h1>
+  <p>Test jouw kennis per hoofdstuk. Kies een antwoord — directe terugkoppeling.</p>
+</div>
+
+<!-- CHAPTER NAV -->
+<div class="chapter-nav" id="chapterNav"></div>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="mainContent"></div>
+
+<div class="footer">Gegenereerd op basis van de studiebundel Politieopleiding Deel 1</div>
+
+<script>
+// ─────────────────────────────────────────────
+// QUESTION DATA
+// ─────────────────────────────────────────────
+const CHAPTERS = [
+  {
+    id: 1,
+    title: "Het recht",
+    subtitle: "Omschrijving, doel, rechtsregels en rechtsbronnen",
+    questions: [
+      {
+        q: "Wat is de definitie van 'recht' zoals gehanteerd in de studiebundel?",
+        options: ["Het geheel van morele opvattingen in een samenleving", "Het geheel van regels dat op een bepaald moment in een samenleving geldt", "Alle uitspraken die rechters hebben gedaan", "De regels die door de Tweede Kamer zijn vastgesteld"],
+        correct: 1,
+        explain: "De studiebundel kiest voor de eenvoudige omschrijving: 'het geheel van regels dat op een bepaald moment in een samenleving geldt'."
+      },
+      {
+        q: "Wat is het primaire doel van het recht volgens de studiebundel?",
+        options: ["Het bestraffen van overtreders", "Het beschermen van eigendom", "Het ordenen van de samenleving", "Het bewaken van de grondrechten"],
+        correct: 2,
+        explain: "Het doel van het recht is 'het ordenen van de samenleving': mensen weten waar ze aan toe zijn en de rechten en plichten worden duidelijk gemaakt."
+      },
+      {
+        q: "Welk kenmerk onderscheidt juridisch recht van moreel recht?",
+        options: ["Juridisch recht is altijd rechtvaardig; moreel recht niet", "Juridisch recht kijkt naar de inhoud van de regel; moreel recht naar de procedure", "Juridisch recht is opgelegd door de overheid via een procedure; moreel recht betreft regels die burgers zichzelf opleggen", "Juridisch recht geldt alleen voor burgers, niet voor de overheid"],
+        correct: 2,
+        explain: "Bij juridisch recht gaat het om de procedure (officiële overheidsregels) terwijl moreel recht over de inhoud gaat: vinden we het als samenleving eerlijk?"
+      },
+      {
+        q: "Welke van de volgende uitspraken is NIET kenmerkend voor rechtsregels?",
+        options: ["Ze worden gemaakt door de overheid", "Ze zijn algemeen geldend", "Ze worden altijd na beraad van alle burgers vastgesteld", "Ze worden door de rechter gehandhaafd"],
+        correct: 2,
+        explain: "Rechtsregels worden gemaakt door de overheid, zijn algemeen geldend en worden door de rechter gehandhaafd. Betrokkenheid van alle burgers is geen kenmerk."
+      },
+      {
+        q: "Welke rechtsbron wordt aangeduid als de verzameling van alle rechterlijke uitspraken?",
+        options: ["De wet", "Het internationaal recht", "De gewoonte", "De jurisprudentie"],
+        correct: 3,
+        explain: "Jurisprudentie is de verzameling rechterlijke uitspraken. Daarin is te zien hoe rechters door de jaren heen de wet hebben uitgelegd."
+      },
+      {
+        q: "Welk van de vier rechtsbronnen komt het meest zelden voor als daadwerkelijke rechtsbron?",
+        options: ["De wet", "De jurisprudentie", "Het internationaal recht", "De gewoonte"],
+        correct: 3,
+        explain: "Gevallen waarin gewoonte als rechtsbron kan worden gezien, zijn 'uiterst zeldzaam' aldus de studiebundel."
+      },
+      {
+        q: "Een school hanteert de regel: 'Wie te laat komt, wacht tot de pauze.' Waarom is dit GEEN rechtsregel?",
+        options: ["De regel is niet schriftelijk vastgelegd", "De regel is niet door de overheid gemaakt en geldt niet algemeen voor heel Nederland", "De regel wordt niet gehandhaafd", "De regel is in strijd met moreel recht"],
+        correct: 1,
+        explain: "Een rechtsregel is gemaakt door de overheid, algemeen geldend en gehandhaafd door de rechter. Een schoolregel voldoet hier niet aan."
+      },
+      {
+        q: "Welk hoogste rechtscollege speelt een bijzondere rol bij de uitleg van de wet via jurisprudentie?",
+        options: ["Het Gerechtshof Amsterdam", "De Raad van State", "De Hoge Raad in Den Haag", "Het Europees Hof voor de Rechten van de Mens"],
+        correct: 2,
+        explain: "De arresten van de Hoge Raad in Den Haag worden veel gebruikt; het is ons hoogste rechtscollege."
+      },
+    ]
+  },
+  {
+    id: 2,
+    title: "Indelingen van het recht",
+    subtitle: "Rechtsgebieden, publiek- en privaatrecht, materieel en formeel recht",
+    questions: [
+      {
+        q: "Welk rechtsgebied regelt de organisatie van en de verhoudingen tussen overheidsorganen?",
+        options: ["Bestuursrecht", "Strafrecht", "Staatsrecht", "Burgerlijk recht"],
+        correct: 2,
+        explain: "Het staatsrecht regelt de organisatie van en verhoudingen tussen verschillende overheidsorganen en bepaalt de positie van de burger in de staat."
+      },
+      {
+        q: "Een caféhouder krijgt van de gemeente geen vergunning. Onder welk rechtsgebied valt dit?",
+        options: ["Burgerlijk recht", "Strafrecht", "Bestuursrecht", "Staatsrecht"],
+        correct: 2,
+        explain: "Het afgeven van vergunningen is een bestuurstaak van de overheid en valt onder het bestuursrecht."
+      },
+      {
+        q: "Wat is het fundamentele kenmerk dat publiekrecht onderscheidt van privaatrecht?",
+        options: ["Bij publiekrecht is er altijd sprake van een strafbaar feit", "Bij publiekrecht handelt de overheid vanuit een gezagspositie; bij privaatrecht niet", "Privaatrecht wordt gehandhaafd door de politie; publiekrecht door de rechter", "Publiekrecht geldt alleen voor bedrijven; privaatrecht voor burgers"],
+        correct: 1,
+        explain: "Bij publiekrecht heeft de overheid een gezagspositie ten opzichte van burgers. Bij privaatrecht is dat niet het geval (bijv. relaties tussen burgers onderling)."
+      },
+      {
+        q: "Olga steelt sieraden. Welk rechtsgebied is hierbij het meest relevant voor de politie?",
+        options: ["Burgerlijk recht", "Bestuursrecht", "Staatsrecht", "Strafrecht"],
+        correct: 3,
+        explain: "Diefstal is een strafbaar feit. Het strafrecht is voor de politie het belangrijkste rechtsgebied."
+      },
+      {
+        q: "Wat beschrijft het formeel recht?",
+        options: ["De inhoudelijke normen voor burgers en organisaties", "De procedures die gelden als materieel recht ter discussie staat", "De indeling van de rechtbanken", "De grondrechten van de burgers"],
+        correct: 1,
+        explain: "Formeel recht (ook procesrecht of procedureel recht) beschrijft hoe het materieel recht wordt gehandhaafd: procedures, bevoegdheden van politie, rol officier van justitie, etc."
+      },
+      {
+        q: "Welk van de volgende rechtsgebieden valt uitsluitend onder het privaatrecht?",
+        options: ["Strafrecht", "Bestuursrecht", "Staatsrecht", "Burgerlijk recht"],
+        correct: 3,
+        explain: "Onder het begrip 'privaatrecht' valt slechts één rechtsgebied: het burgerlijk recht."
+      },
+      {
+        q: "Wat wordt verstaan onder 'rechtstreekse werking' van internationaal recht?",
+        options: ["Internationale verdragen gelden alleen via een nationale wet", "Internationale verdragen waarvoor ons land zich heeft aangesloten, behoren direct tot onze nationale wetgeving", "Alleen EU-recht heeft rechtstreekse werking", "Rechtstreekse werking geldt alleen voor strafrecht"],
+        correct: 1,
+        explain: "Als ons land zich heeft aangesloten bij een verdrag, behoort de inhoud direct tot onze nationale wetgeving. Dit heet rechtstreekse werking."
+      },
+      {
+        q: "Welk wetboek beschrijft de bevoegdheden van de politie bij de opsporing van strafbare feiten?",
+        options: ["Het Burgerlijk Wetboek", "Het Wetboek van Strafrecht", "Het Wetboek van Strafvordering", "De Algemene wet bestuursrecht"],
+        correct: 2,
+        explain: "Het Wetboek van Strafvordering (formeel strafrecht) beschrijft wanneer een verdachte mag worden aangehouden, wanneer de politie een woning mag doorzoeken, etc."
+      },
+    ]
+  },
+  {
+    id: 3,
+    title: "Nederland, een democratie",
+    subtitle: "Kenmerken democratie, trias politica, de staat",
+    questions: [
+      {
+        q: "Welke drie kenmerken heeft onze democratie?",
+        options: ["Een gekozen staatshoofd, respect voor eigendomsrecht en vrije markt", "Een gekozen volksvertegenwoordiging, respect voor grondrechten en scheiding van overheidstaken", "Algemeen kiesrecht, onafhankelijke rechters en een grondwet", "Meerpartijenstelsel, vrijheid van pers en sociaal vangnet"],
+        correct: 1,
+        explain: "De drie kenmerken zijn: een gekozen volksvertegenwoordiging, respect voor de grondrechten en scheiding van overheidstaken (trias politica)."
+      },
+      {
+        q: "Wie formuleerde de leer van de scheiding der machten?",
+        options: ["Thorbecke", "Montesquieu", "Napoleon", "Locke"],
+        correct: 1,
+        explain: "De Franse filosoof en staatsrechtgeleerde Montesquieu beschreef de drie taken van de overheid en pleitte voor spreiding van macht over verschillende organen."
+      },
+      {
+        q: "Welke drie kenmerken heeft een staat?",
+        options: ["Een vlag, een volkslied en een regeringshoofd", "Een grondwet, een leger en een parlement", "Een afgebakend grondgebied, effectief overheidsgezag en burgers", "Soevereiniteit, handelsverdragen en een munt"],
+        correct: 2,
+        explain: "Een staat heeft: een afgebakend grondgebied, effectief overheidsgezag en burgers."
+      },
+      {
+        q: "Waarom wordt ons land een indirecte democratie genoemd?",
+        options: ["Burgers mogen niet rechtstreeks stemmen op wetten", "De inspraak van burgers loopt via een gekozen volksvertegenwoordiging", "Alleen geregistreerde kiesgerechtigden mogen meestemmen", "De koning heeft het laatste woord bij besluiten"],
+        correct: 1,
+        explain: "In een indirecte democratie loopt de inspraak via de gekozen volksvertegenwoordiging, niet rechtstreeks van alle burgers."
+      },
+      {
+        q: "Nederland is een eenheidsstaat. Wat betekent dat?",
+        options: ["Nederland heeft slechts één politieke partij", "Er is veel landelijk overheidsgezag; de onderdelen van de staat hebben weinig eigen gezag", "Nederland en België vormen samen één staat", "Er is één nationale wet voor alle gemeenten"],
+        correct: 1,
+        explain: "In een eenheidsstaat is er veel centraal gezag en hebben de onderdelen (provincies, gemeenten) weinig eigen onafhankelijk gezag."
+      },
+      {
+        q: "In welke wet zijn de basisregels van onze democratie vastgelegd?",
+        options: ["Het Burgerlijk Wetboek", "De Kieswet", "De Grondwet", "De Gemeentewet"],
+        correct: 2,
+        explain: "De Grondwet is de belangrijkste wet van ons land en bevat de basisregels van de democratie, inclusief 23 grondrechten."
+      },
+      {
+        q: "Welke liberale staatsman slaagde er in 1848 in de Grondwet zo aan te passen dat democratisch landsbestuur mogelijk werd?",
+        options: ["Thorbecke", "Montesquieu", "Balkenende", "Van der Linden"],
+        correct: 0,
+        explain: "De liberaal Thorbecke slaagde er in 1848 in de Grondwet te wijzigen, waardoor een democratisch landsbestuur mogelijk werd."
+      },
+    ]
+  },
+  {
+    id: 4,
+    title: "De volksvertegenwoordiging",
+    subtitle: "Politieke partijen, kiesrecht, Eerste en Tweede Kamer",
+    questions: [
+      {
+        q: "Wat is actief kiesrecht?",
+        options: ["Het recht om zelf gekozen te worden", "Het recht om te stemmen bij verkiezingen", "Het recht om een politieke partij op te richten", "Het recht om een motie in te dienen"],
+        correct: 1,
+        explain: "Actief kiesrecht (ook stemrecht) is het recht om mee te doen aan verkiezingen, dus het recht om te stemmen."
+      },
+      {
+        q: "Hoe worden de leden van de Eerste Kamer gekozen?",
+        options: ["Rechtstreeks door alle meerderjarige burgers", "Door de minister-president", "Door de leden van Provinciale Staten (getrapte verkiezingen)", "Door de Tweede Kamer"],
+        correct: 2,
+        explain: "De Eerste Kamer wordt getrapt gekozen: burgers kiezen Provinciale Staten, en die kiezen de leden van de Eerste Kamer."
+      },
+      {
+        q: "Welk recht stelt de Tweede Kamer in staat wijzigingen aan te brengen in een wetsvoorstel van de regering?",
+        options: ["Het enquêterecht", "Het budgetrecht", "Het recht van amendement", "Het recht van interpellatie"],
+        correct: 2,
+        explain: "Het recht van amendement geeft de Tweede Kamer de bevoegdheid om veranderingen aan te brengen in een ingediend wetsvoorstel."
+      },
+      {
+        q: "Hoeveel leden telt de Tweede Kamer?",
+        options: ["75", "100", "150", "200"],
+        correct: 2,
+        explain: "De Tweede Kamer bestaat uit 150 leden die voor vier jaar worden gekozen."
+      },
+      {
+        q: "Wat is een kiesdeler?",
+        options: ["Het minimum aantal stemmen voor een zetel", "Het aantal stemmen dat goed is voor één zetel in de volksvertegenwoordiging", "De grenswaarde voor deelname aan de verkiezingen", "De verhouding tussen kandidaten en beschikbare zetels"],
+        correct: 1,
+        explain: "De kiesdeler is het aantal stemmen dat goed is voor één zetel in de volksvertegenwoordiging; dit ligt doorgaans rond de 69.000 stemmen."
+      },
+      {
+        q: "Hoe heet de volksvertegenwoordiging wanneer Eerste en Tweede Kamer samen worden aangeduid?",
+        options: ["Het parlement / Staten-Generaal", "Het kabinet", "De ministerraad", "De Raad van State"],
+        correct: 0,
+        explain: "Eerste en Tweede Kamer samen worden met de plechtige term uit de Grondwet 'Staten-Generaal' of ook wel 'het parlement' genoemd."
+      },
+      {
+        q: "Welke stroming wil een bescheiden overheid die vooral kerntaken uitvoert en het eigen initiatief van burgers ruimte geeft?",
+        options: ["Het socialisme", "Het christendemocratisme", "Het liberalisme", "Het populisme"],
+        correct: 2,
+        explain: "De liberale stroming pleit voor een bescheiden overheid die kerntaken uitvoert (veiligheid, defensie) en het eigen initiatief van burgers stimuleert."
+      },
+      {
+        q: "Wat is het enquêterecht?",
+        options: ["Het recht van een Kamerlid om vragen te stellen aan een minister", "Het zwaarste controlemiddel van de Kamers: het recht een uitgebreid onderzoek in te stellen naar het regeringsbeleid", "Het recht de begroting goed of af te keuren", "Het recht een debat te openen over regeringsbeleid"],
+        correct: 1,
+        explain: "Het enquêterecht is het zwaarste controlemiddel van de Kamers en houdt het recht in om een uitgebreid parlementair onderzoek in te stellen."
+      },
+    ]
+  },
+  {
+    id: 5,
+    title: "De regering",
+    subtitle: "Kabinetsformatie, ministers, staatshoofd en parlementaire democratie",
+    questions: [
+      {
+        q: "Uit wie bestaat de regering volgens de Grondwet?",
+        options: ["Alleen de ministers", "De koning en de ministers", "De ministers en de staatssecretarissen", "De Tweede Kamer en de ministers"],
+        correct: 1,
+        explain: "Artikel 42 lid 1 Grondwet bepaalt dat de regering bestaat uit de koning en de ministers."
+      },
+      {
+        q: "Wat is het verschil tussen regering en kabinet?",
+        options: ["Ze zijn identiek", "De regering bestaat uit koning en ministers; het kabinet uit ministers en staatssecretarissen", "Het kabinet bestaat uit alle ambtenaren op de ministeries", "De regering verwijst naar de Tweede Kamer; het kabinet naar de uitvoerende macht"],
+        correct: 1,
+        explain: "De regering = koning + ministers. Het kabinet = ministers + staatssecretarissen. Begrippen worden soms door elkaar gebruikt, maar er is een formeel verschil."
+      },
+      {
+        q: "Wat betekent 'constitutionele monarchie'?",
+        options: ["Een monarchie zonder constitutie", "Een monarchie waarbij de positie van het staatshoofd is vastgelegd en beperkt in de Grondwet", "Een republiek met een tijdelijk staatshoofd", "Een monarchie waarbij het parlement geen rol speelt"],
+        correct: 1,
+        explain: "Constitutie is een ander woord voor Grondwet. Onze monarchie is 'constitutioneel' omdat de positie van de koning in de Grondwet is vastgelegd én beperkt (art. 42 lid 2)."
+      },
+      {
+        q: "De vertrouwensregel houdt in dat...",
+        options: ["Ministers nooit ontslagen kunnen worden", "Een minister zijn ontslag moet aanbieden als een Kamermeerderheid hem laat weten geen vertrouwen meer in zijn beleid te hebben", "De Eerste Kamer het vertrouwen in het kabinet moet uitspreken", "Burgers via referendum de ministers kunnen afzetten"],
+        correct: 1,
+        explain: "De vertrouwensregel is een ongeschreven regel: een bewindspersoon die een motie van wantrouwen krijgt, moet zijn ontslag aanbieden aan de koning."
+      },
+      {
+        q: "Welke twee taken heeft de regering?",
+        options: ["Rechtspreken en handhaven", "Wetgeven en rechtspreken", "Land besturen en wetten voorbereiden", "Belasting innen en burgers beschermen"],
+        correct: 2,
+        explain: "De twee hoofdtaken van de regering zijn: (1) het land besturen en (2) het voorbereiden van wetten."
+      },
+      {
+        q: "Waarom kan een Kamerlid dat minister wordt niet langer lid blijven van de Kamer?",
+        options: ["Dit is wettelijk verboden zonder speciale reden", "De Kamer controleert de regering en een minister zou zichzelf controleren", "Het is te druk om beide functies te combineren", "Ministers mogen geen politieke partij meer vertegenwoordigen"],
+        correct: 1,
+        explain: "De Kamer heeft als taak de regering te controleren. Als een minister ook Kamerlid zou zijn, zou hij zichzelf controleren, wat onwerkbaar is."
+      },
+      {
+        q: "Wie zit de ministerraad voor?",
+        options: ["De koning", "De minister van Justitie en Veiligheid", "De minister-president", "De voorzitter van de Tweede Kamer"],
+        correct: 2,
+        explain: "De minister-president is voorzitter van de ministerraad en leidt het ministerie van Algemene Zaken."
+      },
+    ]
+  },
+  {
+    id: 6,
+    title: "Wetgeving",
+    subtitle: "Wet in formele en materiële zin, gang van een wetsontwerp, rangorde",
+    questions: [
+      {
+        q: "Wat is een 'wet in formele zin'?",
+        options: ["Elke overheidsregel met algemene werking", "Elk besluit afkomstig van regering en Kamers samen, tot stand gekomen via de procedure uit de Grondwet", "Alleen strafwetgeving gemaakt door het parlement", "Elke wet die door de Hoge Raad is getoetst"],
+        correct: 1,
+        explain: "Een wet in formele zin is een besluit van de 'hoogste wetgever' (regering + Kamers samen) dat tot stand is gekomen volgens de procedure uit de Grondwet."
+      },
+      {
+        q: "Een gemeentelijke verordening is...",
+        options: ["Zowel wet in formele als in materiële zin", "Wet in formele zin maar niet in materiële zin", "Wet in materiële zin maar niet in formele zin", "Geen wet in enige zin"],
+        correct: 2,
+        explain: "Een gemeentelijke verordening heeft algemene werking (= wet in materiële zin), maar is niet gemaakt door regering + Kamers samen (= geen wet in formele zin)."
+      },
+      {
+        q: "Welk orgaan brengt een advies uit over een wetsvoorstel vóórdat het naar de Tweede Kamer gaat?",
+        options: ["De Hoge Raad", "De Nationale ombudsman", "De Raad van State", "De Rekenkamer"],
+        correct: 2,
+        explain: "Na goedkeuring in de ministerraad gaat een wetsvoorstel naar de Raad van State, het belangrijkste adviesorgaan van de regering."
+      },
+      {
+        q: "Wat is een Algemene Maatregel van Bestuur (AMvB)?",
+        options: ["Een wet gemaakt door de Tweede Kamer alleen", "Een overheidsregel met algemene werking gemaakt door de regering", "Een besluit van een individuele minister", "Een regeling van Provinciale Staten"],
+        correct: 1,
+        explain: "Een AMvB is een overheidsregel met algemene werking (wet in materiële zin) die is gemaakt door de regering (niet door de Kamers)."
+      },
+      {
+        q: "Waar worden wetten in formele zin en AMvB's bekendgemaakt?",
+        options: ["De Staatscourant", "Het Tractatenblad", "Het Staatsblad", "Het Gemeenteblad"],
+        correct: 2,
+        explain: "In het Staatsblad moeten alle wetten in formele zin en alle algemene maatregelen van bestuur bekendgemaakt worden."
+      },
+      {
+        q: "Welke uitzondering geldt voor de rechter bij de toetsing van hogere aan lagere regels?",
+        options: ["De rechter mag een AMvB nooit toetsen", "De rechter mag een wet in formele zin niet toetsen aan de Grondwet (art. 120 Grondwet)", "De rechter mag internationale verdragen niet toepassen", "De rechter mag gemeentelijke verordeningen niet toetsen"],
+        correct: 1,
+        explain: "Artikel 120 Grondwet verbiedt de rechter om wetten in formele zin te toetsen aan de Grondwet. Hij mag ze wel toetsen aan internationale verdragen."
+      },
+      {
+        q: "Hoeveel behandelingen zijn nodig bij een grondwetswijziging?",
+        options: ["Eén behandeling met een eenvoudige meerderheid", "Eén behandeling met twee derde meerderheid", "Twee behandelingen; bij de tweede lezing is een tweederde meerderheid vereist", "Drie behandelingen met elke keer eenvoudige meerderheid"],
+        correct: 2,
+        explain: "Voor een grondwetswijziging wordt de gewone procedure gevolgd, waarna een nieuwgekozen Tweede Kamer het voorstel in tweede lezing met tweederde meerderheid moet aannemen."
+      },
+    ]
+  },
+  {
+    id: 7,
+    title: "Rechtsstaat en rechtspraak",
+    subtitle: "Kenmerken rechtsstaat, rechterlijke organisatie, OM en ombudsman",
+    questions: [
+      {
+        q: "Welke drie kenmerken heeft een rechtsstaat?",
+        options: ["Vrije pers, sociale zekerheid en gewapende politie", "Overheid gebonden aan de wet, onafhankelijke rechters en respect voor grondrechten", "Scheiding der machten, kiesrecht en onafhankelijk leger", "Democratische verkiezingen, gratis rechtsbijstand en vrije media"],
+        correct: 1,
+        explain: "Een rechtsstaat: (1) overheid gebonden aan de wet, (2) onafhankelijke rechters beoordelen overheidsoptreden, (3) overheid respecteert grondrechten van burgers."
+      },
+      {
+        q: "Hoe is de onafhankelijkheid van rechters gegarandeerd?",
+        options: ["Rechters worden gekozen door de burgers", "Rechters worden voor het leven benoemd en hun salaris wordt bij wet geregeld", "De minister van Justitie wijst rechters aan na advies van de Kamer", "Rechters worden benoemd door de Hoge Raad voor 10 jaar"],
+        correct: 1,
+        explain: "Rechters worden 'voor het leven' benoemd (tot hun zeventigste jaar) en hun salaris is bij wet geregeld, zodat de regering geen druk op hen kan uitoefenen."
+      },
+      {
+        q: "Bij welk gerecht kunnen partijen in hoger beroep gaan tegen uitspraken van de rechtbank?",
+        options: ["De Hoge Raad", "Het Gerechtshof", "De Kantonrechter", "De Raad van State"],
+        correct: 1,
+        explain: "De vier gerechtshoven behandelen het hoger beroep tegen uitspraken van de kantonrechter en van de rechtbank."
+      },
+      {
+        q: "Wat behandelt de Hoge Raad in cassatie?",
+        options: ["Alle straf- en burgerlijke zaken opnieuw, inclusief de feiten", "Alleen rechtsvragen; de feiten laat de Hoge Raad rusten", "Alleen internationale geschillen", "Klachten over overheidsoptreden"],
+        correct: 1,
+        explain: "Typerend voor cassatie is dat de Hoge Raad alleen ingaat op rechtsvragen (juridisch-technische kwesties), niet op de feitenvaststelling."
+      },
+      {
+        q: "Welke sanctie kan een rechter opleggen als de politie bij een fouillering de wettelijke regels heeft geschonden?",
+        options: ["De zaak wordt automatisch overgedaan", "De politieagent wordt disciplinair gestraft", "Het op onrechtmatige wijze verkregen bewijs mag niet gebruikt worden", "De verdachte krijgt automatisch vrijspraak voor alle feiten"],
+        correct: 2,
+        explain: "Als politie/justitie zich niet aan de wettelijke regels houdt, kan de rechter besluiten het zo verkregen bewijs niet te gebruiken tegen de verdachte."
+      },
+      {
+        q: "Wat is de rol van de Nationale ombudsman?",
+        options: ["Hij spreekt recht over besluiten van de overheid", "Hij beoordeelt gedragingen van overheidsorganen en brengt een openbaar rapport uit", "Hij vervangt de bestuursrechter bij lichte zaken", "Hij bewaakt de uitvoering van wetten in formele zin"],
+        correct: 1,
+        explain: "De ombudsman oordeelt over gedragingen van de overheid (niet over besluiten), brengt een openbaar rapport uit en doet aanbevelingen. Zijn oordelen zijn niet bindend."
+      },
+      {
+        q: "Wie treden bij de rechtbank op namens het Openbaar Ministerie?",
+        options: ["Advocaten-generaal", "Procureurs-generaal", "Officieren van justitie", "Rechters-commissarissen"],
+        correct: 2,
+        explain: "Bij de rechtbank treden officieren van justitie op namens het OM; bij het gerechtshof zijn dit advocaten-generaal."
+      },
+    ]
+  },
+  {
+    id: 8,
+    title: "Gemeente, provincie en EU",
+    subtitle: "Gemeentebestuur, provinciebestuur en organen van de Europese Unie",
+    questions: [
+      {
+        q: "Wie staat feitelijk aan het hoofd van de gemeente?",
+        options: ["De burgemeester", "De gemeentesecretaris", "De gemeenteraad", "Het college van B en W"],
+        correct: 2,
+        explain: "Aan het hoofd van de gemeente staat de gemeenteraad, de volksvertegenwoordiging van de gemeente. Veel mensen denken ten onrechte dat dit de burgemeester is."
+      },
+      {
+        q: "Hoe wordt de burgemeester aangesteld?",
+        options: ["Gekozen door de gemeenteraad", "Gekozen door alle burgers van de gemeente", "Benoemd door de regering na inspraak van de gemeenteraad", "Benoemd door de Commissaris van de Koning"],
+        correct: 2,
+        explain: "De burgemeester wordt, na inspraak van de gemeenteraad, benoemd door de regering."
+      },
+      {
+        q: "Wat is de APV?",
+        options: ["De Algemene Procedure Verordening voor de rechtbank", "De Algemene Plaatselijke Verordening: een bundeling van gemeentelijke strafbepalingen", "De officiële naam voor het college van B en W", "Een Europees verdrag over privacy"],
+        correct: 1,
+        explain: "De APV (Algemene Plaatselijke Verordening) bundelt gemeentelijke verordeningen met strafbepalingen. De maximale straf is drie maanden hechtenis of een geldboete van de 2e categorie."
+      },
+      {
+        q: "Welk orgaan is het hoogste orgaan van de EU en bestaat uit staatshoofden en regeringsleiders?",
+        options: ["De Europese Commissie", "Het Europees Parlement", "De Raad van de Europese Unie", "De Europese Raad"],
+        correct: 3,
+        explain: "De Europese Raad is het hoogste orgaan van de EU en bestaat uit alle staatshoofden en regeringsleiders van de lidstaten."
+      },
+      {
+        q: "Wat is de taak van de Europese Commissie?",
+        options: ["Het vaststellen van de hoofdlijnen van het EU-beleid", "Het dagelijks bestuur van de EU: uitvoering van Europese wetgeving en wetsvoorstellen maken", "Het rechtspreken op basis van Europees recht", "Vertegenwoordigen van de EU-burgers via directe verkiezingen"],
+        correct: 1,
+        explain: "De Europese Commissie is het dagelijks bestuur van de EU, heeft een uitvoerende en toezichthoudende taak en kan wetsvoorstellen maken."
+      },
+      {
+        q: "Hoe worden de leden van het Europees Parlement gekozen?",
+        options: ["Door de nationale parlementen van de lidstaten", "Door de regeringsleiders van de lidstaten", "Rechtstreeks door de kiesgerechtigde burgers van alle lidstaten", "Door de Europese Commissie"],
+        correct: 2,
+        explain: "Het Europees Parlement wordt iedere vijf jaar rechtstreeks gekozen door de kiesgerechtigde burgers van alle lidstaten."
+      },
+      {
+        q: "Wie vormen Gedeputeerde Staten?",
+        options: ["De burgemeester en wethouders van alle gemeenten in de provincie", "De gedeputeerden en de Commissaris van de Koning", "De leden van Provinciale Staten en de CdK", "De staatssecretarissen van de provinciale ministeries"],
+        correct: 1,
+        explain: "Gedeputeerde Staten bestaan uit de gedeputeerden (gekozen door Provinciale Staten) en de Commissaris van de Koning als voorzitter."
+      },
+    ]
+  },
+  {
+    id: 9,
+    title: "De grondrechten",
+    subtitle: "Klassieke en sociale grondrechten, EVRM, horizontale werking, beperking",
+    questions: [
+      {
+        q: "Wat is het belangrijkste verschil tussen klassieke en sociale grondrechten?",
+        options: ["Klassieke rechten gelden alleen voor Nederlanders; sociale voor iedereen", "Klassieke rechten zijn vrijheidsrechten die via de rechter afdwingbaar zijn; sociale rechten leggen de overheid een plicht op maar zijn niet afdwingbaar via de rechter", "Sociale rechten zijn ouder dan klassieke rechten", "Klassieke rechten staan in de Grondwet; sociale rechten alleen in verdragen"],
+        correct: 1,
+        explain: "Klassieke grondrechten zijn vrijheidsrechten en juridisch afdwingbaar bij de rechter. Sociale grondrechten leggen de overheid een taak op (zorgplicht), maar zijn niet via de rechter af te dwingen."
+      },
+      {
+        q: "Wat staat er in artikel 1 van de Grondwet?",
+        options: ["De vrijheid van meningsuiting", "Het recht op privéleven", "Het gelijkheidsbeginsel en het verbod op discriminatie", "De vrijheid van godsdienst"],
+        correct: 2,
+        explain: "Artikel 1 Grondwet bevat het gelijkheidsbeginsel: gelijke gevallen worden gelijk behandeld, en discriminatie op welke grond dan ook is verboden."
+      },
+      {
+        q: "Wat wordt bedoeld met de 'horizontale werking' van grondrechten?",
+        options: ["Grondrechten gelden op alle niveaus van de overheid", "Grondrechten kunnen ook doorwerken in de verhouding tussen burgers onderling, niet alleen tussen burger en overheid", "Grondrechten gelden in alle landen die het verdrag hebben ondertekend", "Grondrechten werken ook voor rechtspersonen"],
+        correct: 1,
+        explain: "Grondrechten zijn primair bedoeld voor de verticale verhouding burger-overheid, maar kunnen ook horizontaal werken: tussen burgers onderling."
+      },
+      {
+        q: "Wat is het legaliteitsbeginsel (artikel 16 Grondwet)?",
+        options: ["Alle wetten moeten gepubliceerd worden voor ze gelden", "Niemand kan gestraft worden voor een daad die niet al via een wet strafbaar was gesteld vóórdat hij die daad pleegde", "Elke burger heeft recht op een raadsman", "De rechter moet zijn vonnis altijd motiveren"],
+        correct: 1,
+        explain: "Het legaliteitsbeginsel (nulla-poena-beginsel) garandeert dat burgers alleen gestraft kunnen worden voor gedragingen die al wettelijk strafbaar waren gesteld vóór het plegen ervan."
+      },
+      {
+        q: "Welk internationaal verdrag kent een eigen rechter in Straatsburg waar individuele burgers terecht kunnen?",
+        options: ["Het VN-Handvest", "Het Internationaal Verdrag inzake Burgerrechten en Politieke Rechten", "Het Europees Verdrag tot bescherming van de Rechten van de Mens (EVRM)", "Het Verdrag van Maastricht"],
+        correct: 2,
+        explain: "Het EVRM heeft zijn eigen rechter: het Europees Hof voor de Rechten van de Mens in Straatsburg. Individuele burgers kunnen er terecht als ze menen dat hun verdragsrechten zijn geschonden."
+      },
+      {
+        q: "Wat geldt wanneer twee grondrechten met elkaar botsen?",
+        options: ["Het grondrecht dat als eerste in de Grondwet staat, wint altijd", "Klassieke grondrechten gaan altijd voor sociale grondrechten", "Alle grondrechten zijn gelijk; de rechter beslist per individueel geval welk grondrecht de doorslag geeft", "De wetgever bepaalt vooraf de rangorde per situatie"],
+        correct: 2,
+        explain: "Alle grondrechten zijn gelijk. Er is geen algemene rangorde. De rechter beoordeelt per individueel geval welk grondrecht de doorslag geeft."
+      },
+      {
+        q: "Welk grondrecht beschermt de onaantastbaarheid van het menselijk lichaam?",
+        options: ["Artikel 10 (privacy)", "Artikel 11 (onaantastbaarheid van het lichaam)", "Artikel 12 (huisrecht)", "Artikel 13 (briefgeheim)"],
+        correct: 1,
+        explain: "Artikel 11 richt zich op de onaantastbaarheid van het lichaam. Dit recht kan bij wet worden beperkt, zoals in art. 56 WvSv (fouillering van verdachten)."
+      },
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const state = {};
+CHAPTERS.forEach(ch => {
+  state[ch.id] = { answers: {}, current: null };
+});
+
+let activeChapter = CHAPTERS[0].id;
+
+// ─────────────────────────────────────────────
+// BUILD UI
+// ─────────────────────────────────────────────
+function buildNav() {
+  const nav = document.getElementById('chapterNav');
+  CHAPTERS.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'chapter-btn' + (ch.id === activeChapter ? ' active' : '');
+    btn.dataset.id = ch.id;
+    btn.innerHTML = `H${ch.id} ${ch.title}<span class="status-dot"></span>`;
+    btn.addEventListener('click', () => switchChapter(ch.id));
+    nav.appendChild(btn);
+  });
+}
+
+function buildContent() {
+  const main = document.getElementById('mainContent');
+  CHAPTERS.forEach(ch => {
+    const section = document.createElement('div');
+    section.className = 'chapter-section' + (ch.id === activeChapter ? ' visible' : '');
+    section.id = `chapter-${ch.id}`;
+    section.innerHTML = buildChapterHTML(ch);
+    main.appendChild(section);
+  });
+}
+
+function buildChapterHTML(ch) {
+  const totalQ = ch.questions.length;
+  return `
+    <div class="chapter-header">
+      <div class="chapter-label">Hoofdstuk ${ch.id}</div>
+      <div class="chapter-title">${ch.title}</div>
+      <div class="chapter-meta">${ch.subtitle} &mdash; ${totalQ} vragen</div>
+    </div>
+    <div class="score-strip" id="score-strip-${ch.id}">
+      <div class="score-info">Beantwoord: <strong id="answered-${ch.id}">0</strong>/ ${totalQ}</div>
+      <div class="score-bar-wrap"><div class="score-bar-fill" id="bar-${ch.id}"></div></div>
+      <div class="score-info">Goed: <strong id="correct-count-${ch.id}">0</strong></div>
+      <button class="reset-btn" onclick="resetChapter(${ch.id})">↺ Opnieuw</button>
+    </div>
+    ${ch.questions.map((q, i) => buildQuestionHTML(ch.id, q, i)).join('')}
+    <div class="chapter-result" id="result-${ch.id}">
+      <div class="result-emoji" id="result-emoji-${ch.id}">🎉</div>
+      <div class="result-title">Hoofdstuk voltooid!</div>
+      <div class="result-score" id="result-score-${ch.id}">0/${ch.questions.length}</div>
+      <div class="result-sub" id="result-sub-${ch.id}">Bekijk de uitleg hieronder.</div>
+      <button class="retry-btn" onclick="resetChapter(${ch.id})">Opnieuw proberen</button>
+    </div>
+  `;
+}
+
+function buildQuestionHTML(chId, q, idx) {
+  const letters = ['A','B','C','D'];
+  const optionsHTML = q.options.map((opt, oi) => `
+    <div class="option" id="opt-${chId}-${idx}-${oi}" onclick="selectAnswer(${chId},${idx},${oi})">
+      <div class="opt-letter">${letters[oi]}</div>
+      <div class="opt-text">${opt}</div>
+    </div>
+  `).join('');
+  return `
+    <div class="question-card" id="qcard-${chId}-${idx}">
+      <div class="q-number">Vraag ${idx + 1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optionsHTML}</div>
+      <div class="feedback" id="feedback-${chId}-${idx}"></div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// LOGIC
+// ─────────────────────────────────────────────
+function switchChapter(id) {
+  activeChapter = id;
+  document.querySelectorAll('.chapter-section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(`chapter-${id}`).classList.add('visible');
+  document.querySelectorAll('.chapter-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.id) === id);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectAnswer(chId, qIdx, optIdx) {
+  const chState = state[chId];
+  if (chState.answers[qIdx] !== undefined) return; // already answered
+
+  chState.answers[qIdx] = optIdx;
+  const ch = CHAPTERS.find(c => c.id === chId);
+  const q = ch.questions[qIdx];
+  const isCorrect = optIdx === q.correct;
+
+  // Style options
+  const allOpts = document.querySelectorAll(`[id^="opt-${chId}-${qIdx}-"]`);
+  allOpts.forEach(opt => opt.classList.add('disabled'));
+
+  const selectedOpt = document.getElementById(`opt-${chId}-${qIdx}-${optIdx}`);
+  const correctOpt = document.getElementById(`opt-${chId}-${qIdx}-${q.correct}`);
+
+  selectedOpt.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) correctOpt.classList.add('correct');
+
+  document.getElementById(`qcard-${chId}-${qIdx}`).classList.add('answered');
+
+  // Feedback
+  const fb = document.getElementById(`feedback-${chId}-${qIdx}`);
+  fb.className = 'feedback ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = `<span class="feedback-icon">${isCorrect ? '✓' : '✗'}</span> ${q.explain}`;
+
+  updateScore(chId, ch.questions.length);
+}
+
+function updateScore(chId, totalQ) {
+  const chState = state[chId];
+  const answered = Object.keys(chState.answers).length;
+  const ch = CHAPTERS.find(c => c.id === chId);
+  const correct = Object.entries(chState.answers).filter(([qi, ai]) => {
+    return ch.questions[parseInt(qi)].correct === ai;
+  }).length;
+
+  document.getElementById(`answered-${chId}`).textContent = answered;
+  document.getElementById(`correct-count-${chId}`).textContent = correct;
+  document.getElementById(`bar-${chId}`).style.width = `${(answered / totalQ) * 100}%`;
+
+  // Mark chapter done in nav
+  if (answered === totalQ) {
+    document.querySelectorAll('.chapter-btn').forEach(b => {
+      if (parseInt(b.dataset.id) === chId) b.classList.add('done');
+    });
+    showResult(chId, correct, totalQ);
+  }
+}
+
+function showResult(chId, correct, total) {
+  const pct = correct / total;
+  const emoji = pct >= 0.8 ? '🏆' : pct >= 0.6 ? '👍' : '📚';
+  const msg = pct >= 0.8 ? 'Uitstekend werk!' : pct >= 0.6 ? 'Goed gedaan, bijna!' : 'Probeer het nog eens.';
+  document.getElementById(`result-emoji-${chId}`).textContent = emoji;
+  document.getElementById(`result-score-${chId}`).textContent = `${correct}/${total}`;
+  document.getElementById(`result-sub-${chId}`).textContent = msg + ' Bekijk de uitleg bij de vragen.';
+  document.getElementById(`result-${chId}`).classList.add('show');
+}
+
+function resetChapter(chId) {
+  state[chId].answers = {};
+  const ch = CHAPTERS.find(c => c.id === chId);
+  const totalQ = ch.questions.length;
+
+  // Reset all question cards
+  ch.questions.forEach((q, qi) => {
+    const card = document.getElementById(`qcard-${chId}-${qi}`);
+    card.classList.remove('answered');
+    for (let oi = 0; oi < q.options.length; oi++) {
+      const opt = document.getElementById(`opt-${chId}-${qi}-${oi}`);
+      opt.classList.remove('disabled','selected','correct','wrong');
+    }
+    const fb = document.getElementById(`feedback-${chId}-${qi}`);
+    fb.className = 'feedback';
+    fb.textContent = '';
+  });
+
+  // Reset score
+  document.getElementById(`answered-${chId}`).textContent = '0';
+  document.getElementById(`correct-count-${chId}`).textContent = '0';
+  document.getElementById(`bar-${chId}`).style.width = '0%';
+
+  // Hide result
+  document.getElementById(`result-${chId}`).classList.remove('show');
+
+  // Remove done from nav btn
+  document.querySelectorAll('.chapter-btn').forEach(b => {
+    if (parseInt(b.dataset.id) === chId) b.classList.remove('done');
+  });
+
+  window.scrollTo({ top: document.getElementById(`chapter-${chId}`).offsetTop - 20, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+buildNav();
+buildContent();
+</script>
+</body>
+</html>

@@ -3,34 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSI Theorietoets — Uitgebreide Oefenvragen</title>
+<title>PSI 2026 Oefenvragen</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18;padding:1rem}
-#app{max-width:720px;margin:0 auto;padding:1rem 0}
-.header{margin-bottom:1.5rem}
-.header h1{font-size:22px;font-weight:500;margin-bottom:4px}
-.header p{font-size:13px;color:#5f5e5a}
-.progress-bar-bg{height:4px;background:#d3d1c7;border-radius:2px;margin-bottom:1.25rem}
+body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18}
+#app{max-width:720px;margin:0 auto;padding:1rem}
+
+/* YEAR WARNING */
+#yw{display:none;background:#fef9ec;border:1px solid #d4920a;border-radius:8px;padding:12px 14px;margin-bottom:1rem;align-items:center;gap:10px;flex-wrap:wrap}
+#yw span{font-size:13px;color:#5a3a00;flex:1}
+#yw button{background:#d4920a;color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;padding-top:0.25rem}
+.header h1{font-size:20px;font-weight:600;color:#1a1a18}
+.gear-btn{background:none;border:0.5px solid #b4b2a9;border-radius:8px;padding:7px 10px;font-size:18px;cursor:pointer;color:#5f5e5a;line-height:1;flex-shrink:0}
+.gear-btn:hover{background:#e8e8e4}
+
+/* SETTINGS OVERLAY */
+#settings-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;padding:1rem}
+#settings-overlay.open{display:flex}
+.settings-panel{background:#fff;border-radius:14px;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.settings-panel h2{font-size:17px;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+.settings-panel h2 button{background:none;border:none;font-size:20px;cursor:pointer;color:#888780;line-height:1;padding:2px 6px}
+.settings-section{margin-bottom:1.25rem}
+.settings-label{font-size:12px;font-weight:600;color:#888780;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.settings-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.s-btn{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:6px;padding:6px 12px;font-size:13px;color:#5f5e5a;font-family:inherit;transition:background 0.15s}
+.s-btn:hover{background:#f1efe8}
+.s-btn.active{background:#378ADD;border-color:#378ADD;color:#fff}
+.settings-count-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.settings-count-row input{width:72px;border:0.5px solid #b4b2a9;border-radius:6px;padding:6px 8px;font-size:14px;font-family:inherit;background:#f9f9f7;outline:none}
+.settings-count-row input:focus{border-color:#378ADD}
+.s-apply{background:#378ADD;border:none;color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:7px 16px;border-radius:6px;cursor:pointer}
+.s-apply:hover{background:#185fa5}
+.s-all{background:transparent;border:0.5px solid #b4b2a9;color:#5f5e5a;font-family:inherit;font-size:13px;padding:7px 14px;border-radius:6px;cursor:pointer}
+.s-all:hover{background:#f1efe8}
+.s-count-info{font-size:12px;color:#888780;width:100%;margin-top:4px}
+.settings-danger{border-top:1px solid #e8e8e4;padding-top:1rem;margin-top:1rem}
+.s-wipe{background:none;border:0.5px solid #b4b2a9;color:#888780;font-family:inherit;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer}
+.s-wipe:hover{border-color:#a32d2d;color:#a32d2d}
+
+/* PROGRESS BAR */
+.progress-bar-bg{height:4px;background:#d3d1c7;border-radius:2px;margin-bottom:1rem}
 .progress-bar-fill{height:4px;background:#378ADD;border-radius:2px;transition:width 0.3s}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
-.stat{background:#e8e8e4;border-radius:8px;padding:10px;text-align:center}
-.stat-num{font-size:20px;font-weight:500}
-.stat-lbl{font-size:11px;color:#5f5e5a;margin-top:2px}
-.q-nav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:1.25rem}
-.q-nav-btn{width:30px;height:30px;border-radius:6px;font-size:11px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:0.5px solid #b4b2a9;background:transparent;color:#1a1a18;font-family:inherit}
-.q-nav-btn.answered{background:#b5d4f4;border-color:#378ADD;color:#0c447c}
+
+/* NAV BUTTONS */
+.q-nav-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1rem;scrollbar-width:thin;scrollbar-color:#c8c6be transparent}
+.q-nav-wrap::-webkit-scrollbar{height:4px}
+.q-nav-wrap::-webkit-scrollbar-thumb{background:#c8c6be;border-radius:2px}
+.q-nav{display:flex;gap:5px;min-width:max-content;padding-bottom:4px}
+.q-nav-btn{width:30px;height:30px;border-radius:6px;font-size:11px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;border:0.5px solid #b4b2a9;background:transparent;color:#1a1a18;font-family:inherit;transition:background 0.12s}
 .q-nav-btn.current{background:#378ADD;border-color:#378ADD;color:#fff}
 .q-nav-btn.c-right{background:#c0dd97;border-color:#639922;color:#27500a}
 .q-nav-btn.c-wrong{background:#f7c1c1;border-color:#a32d2d;color:#791f1f}
+
+/* QUESTION CARD */
 .question-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
 .q-meta{font-size:11px;color:#5f5e5a;margin-bottom:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .q-tag{display:inline-block;background:#e6f1fb;color:#185fa5;border-radius:4px;padding:2px 7px;font-size:11px}
-.q-art{color:#888780;font-size:11px}
 .q-level{font-size:10px;padding:2px 6px;border-radius:4px}
 .q-level.K{background:#eaf3de;color:#27500a}
 .q-level.B{background:#faeeda;color:#633806}
 .q-level.T{background:#fbeaf0;color:#4b1528}
+.q-multi-hint{font-size:12px;color:#d4920a;font-weight:600;background:#fef9ec;border:1px solid #d4920a;border-radius:5px;padding:3px 9px}
+.q-casus{background:#f1efe8;border-left:3px solid #b4b2a9;padding:10px 12px;font-size:13px;line-height:1.6;color:#3a3a35;margin-bottom:12px;border-radius:0 6px 6px 0;font-style:italic}
 .q-text{font-size:15px;line-height:1.6;margin-bottom:1rem;color:#1a1a18}
 .options{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:0.5px solid #d3d1c7;border-radius:8px;cursor:pointer;transition:background 0.15s;font-size:14px;color:#1a1a18;line-height:1.5;text-align:left;width:100%;background:transparent;font-family:inherit}
@@ -38,15 +75,32 @@ body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a18;padding:1
 .opt.selected{border-color:#378ADD;background:#e6f1fb}
 .opt.correct{border-color:#3b6d11;background:#eaf3de;color:#27500a}
 .opt.wrong{border-color:#a32d2d;background:#fcebeb;color:#791f1f}
+.opt.missed{border-color:#d4920a;background:#fef9ec;color:#5a3a00}
 .opt-letter{font-weight:500;min-width:18px;flex-shrink:0}
+.multi-submit{margin-top:10px;background:#378ADD;border:none;color:#fff;font-family:inherit;font-size:14px;font-weight:600;padding:10px 20px;border-radius:8px;cursor:pointer;width:100%}
+.multi-submit:disabled{opacity:0.45;cursor:default}
+.multi-submit:not(:disabled):hover{background:#185fa5}
 .feedback{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.6}
 .feedback.correct{background:#eaf3de;color:#27500a;border:0.5px solid #639922}
 .feedback.wrong{background:#fcebeb;color:#791f1f;border:0.5px solid #a32d2d}
+
+/* NAV BUTTONS */
 .nav{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
 button.nav-btn{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:8px;padding:8px 16px;font-size:14px;color:#1a1a18;font-family:inherit}
 button.nav-btn:hover{background:#f1efe8}
 button.nav-btn.primary{background:#378ADD;border-color:#378ADD;color:#fff}
 button.nav-btn.primary:hover{background:#185fa5}
+
+/* STATS (below nav) */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1.25rem}
+.stat{background:#e8e8e4;border-radius:8px;padding:10px;text-align:center}
+.stat-num{font-size:18px;font-weight:500}
+.stat-lbl{font-size:11px;color:#5f5e5a;margin-top:2px}
+
+/* FOOTER TEXT */
+.footer-text{font-size:12px;color:#888780;text-align:center;margin-top:1rem;padding-bottom:1.5rem}
+
+/* RESULT SCREEN */
 .result-card{background:#fff;border:0.5px solid #d3d1c7;border-radius:12px;padding:2rem;text-align:center;margin-bottom:1.5rem}
 .result-score{font-size:52px;font-weight:500}
 .result-pct{font-size:20px;color:#5f5e5a;margin-bottom:0.5rem}
@@ -57,22 +111,55 @@ button.nav-btn.primary:hover{background:#185fa5}
 .cat-result{background:#f1efe8;border-radius:8px;padding:10px 12px;font-size:13px}
 .cat-result-name{color:#5f5e5a;margin-bottom:2px;font-size:12px}
 .cat-result-score{font-weight:500;font-size:15px}
-.filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
-.filter-btn{cursor:pointer;background:transparent;border:0.5px solid #b4b2a9;border-radius:6px;padding:5px 10px;font-size:12px;color:#5f5e5a;font-family:inherit}
-.filter-btn:hover{background:#f1efe8}
-.filter-btn.active{background:#378ADD;border-color:#378ADD;color:#fff}
 .section-divider{font-size:12px;color:#888780;padding:6px 0 4px;font-weight:500;border-bottom:0.5px solid #d3d1c7;margin-bottom:8px}
 @media(max-width:500px){.stats{grid-template-columns:repeat(2,1fr)}.cat-results{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="app">
-<div class="header">
-<h1>PSI Theorietoets — Uitgebreide Oefenvragen</h1>
-<p>Alle artikelen uit de toetsmatrijs · Spaced repetition · Cesuur ≈ 55%</p>
+
+<!-- YEAR WARNING (2027+) -->
+<div id="yw">
+  <span>&#9888; <strong>Let op:</strong> Deze quiz is gebaseerd op gegevens van vóór 2027. Controleer of de informatie nog actueel is.</span>
+  <button onclick="document.getElementById('yw').style.display='none';sessionStorage.setItem('yw','1')">OK</button>
 </div>
+
+<!-- SETTINGS OVERLAY -->
+<div id="settings-overlay">
+  <div class="settings-panel">
+    <h2>⚙️ Instellingen <button onclick="closeSettings()">✕</button></h2>
+    <div class="settings-section">
+      <div class="settings-label">Volgorde</div>
+      <div class="settings-row" id="s-mode-row"></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">Categorie</div>
+      <div class="settings-row" id="s-cat-row"></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-label">Aantal vragen</div>
+      <div class="settings-count-row">
+        <input type="number" id="s-n" min="1" value="10">
+        <button class="s-apply" onclick="applySettings()">Toepassen</button>
+        <button class="s-all" onclick="resetLimit()">Alle vragen</button>
+      </div>
+      <div class="s-count-info" id="s-count-info"></div>
+    </div>
+    <div class="settings-danger">
+      <button class="s-wipe" onclick="wipeProgress()">🗑 Voortgang wissen</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>PSI 2026 Oefenvragen</h1>
+  <button class="gear-btn" onclick="openSettings()" title="Instellingen">⚙️</button>
+</div>
+
 <div id="main"></div>
 </div>
+
 <script>
 const Q=[
 // ========== GRONDWET ==========
@@ -177,156 +264,406 @@ const Q=[
 {cat:"Wet Identificatieplicht",art:"Art. 2",lvl:"K",text:"Vanaf welke leeftijd ben je verplicht een identiteitsbewijs te tonen op vordering van een bevoegde ambtenaar?",opts:["12 jaar — de leeftijd van strafrechtelijke verantwoordelijkheid","16 jaar — de leeftijd van arbeidsrecht en bepaalde bevoegdheden","14 jaar","18 jaar — de meerderjarigheidsgrens"],ans:2,exp:"Art. 2 WID: vanaf 14 jaar ben je verplicht een geldig identiteitsbewijs te tonen op eerste vordering. Dit is een andere grens dan 12 jaar (strafrechtelijke aansprakelijkheid) en 18 jaar (meerderjarigheid). Kinderen onder de 14 hoeven geen ID te tonen."},
 // ========== AWBI ==========
 {cat:"Awbi",art:"Art. 1/2",lvl:"K",text:"Wat zijn de verplichtingen van een ambtenaar die een woning betreedt (art. 1 Awbi)?",opts:["Hij hoeft zich alleen te legitimeren als de bewoner hierom vraagt","Hij is verplicht zich vooraf te legitimeren én het doel van zijn komst mee te delen; bij meerdere ambtenaren geldt dit alleen voor de leidinggevende","Hij mag zonder legitimatie binnentreden als er spoed is en de omstandigheden dit vereisen","Hij hoeft alleen het wettelijke artikel te noemen waarop hij zijn binnentreden baseert"],ans:1,exp:"Art. 1 Awbi: de ambtenaar die een woning betreedt is altijd verplicht zich vooraf te legitimeren én het doel mee te delen — ook bij spoed en ook als de bewoner er niet om vraagt. Bij een team geldt dit voor de leidinggevende. Spoed ontslaat niet van de legitimatieplicht, tenzij dit onmogelijk is door de aard van de situatie."},
-{cat:"Awbi",art:"Art. 2/3",lvl:"K",text:"Wie is bevoegd een machtiging tot binnentreden af te geven?",opts:["Elke opsporingsambtenaar kan zichzelf een schriftelijke machtiging geven als de OvJ niet bereikbaar is","Alleen de rechter-commissaris, omdat binnentreden een inbreuk op een grondrecht is","De advocaat-generaal bij het hof, de OvJ, de HOvJ, en (voor niet-opsporingstaken) de burgemeester","De minister van Justitie en Veiligheid als eindverantwoordelijke voor de politie"],ans:2,exp:"Art. 3 Awbi: de machtiging kan worden afgegeven door: advocaat-generaal bij het hof, OvJ, HOvJ, en voor niet-opsporingstaken door de burgemeester. Opsporingsambtenaren kunnen zichzelf geen machtiging afgeven. De RC geeft geen machtiging conform de Awbi — die bevoegdheid geldt voor de RC bij doorzoekingen ex WvSv."},
+{cat:"Awbi",art:"Art. 2/3",lvl:"K",text:"Wie is bevoegd een machtiging tot binnentreden af te geven? ⚠️ Meerdere antwoorden mogelijk.",opts:["De hulpofficier van justitie (hovj)","De officier van justitie (ovj)","De advocaat-generaal bij het ressortsparket","De rechter-commissaris","De opsporingsambtenaar zelf bij dringende noodzaak","De minister van Justitie en Veiligheid"],ans:[0,1,2],multi:true,exp:"Art. 3 Awbi: de machtiging kan worden afgegeven door de hovj, de ovj én de advocaat-generaal bij het ressortsparket. Voor niet-opsporingstaken is de burgemeester bevoegd (art. 3 lid 2 Awbi). De RC, de opsporingsambtenaar zelf en de minister zijn niet bevoegd een Awbi-machtiging te geven."},
 {cat:"Awbi",art:"Art. 2",lvl:"K",text:"Wanneer is een schriftelijke machtiging voor binnentreden niet vereist?",opts:["Nooit: een machtiging is altijd verplicht, ook bij acuut levensgevaar","Als de bewoner mondeling toestemming geeft — mondelinge toestemming vervangt de machtiging","Bij ernstig en onmiddellijk gevaar voor personen of goederen waarbij direct binnentreden noodzakelijk is","Als de OvJ telefonisch toestemming geeft en dit achteraf schriftelijk bevestigt"],ans:2,exp:"Art. 2 lid 3 Awbi: een machtiging is niet vereist bij ernstig en onmiddellijk gevaar voor personen of goederen waarbij onmiddellijk binnentreden noodzakelijk is. Mondelinge toestemming van de bewoner (niet: de OvJ) maakt ook een machtiging overbodig, want dan is er überhaupt geen 'zonder toestemming'."},
 {cat:"Awbi",art:"Art. 7",lvl:"K",text:"Onder welke voorwaarden mag een woning tussen middernacht en 06:00 worden betreden zonder toestemming van de bewoner?",opts:["Altijd bij verdenking van een art. 67-feit, mits de agent zich legitimeert","Na mondelinge toestemming van de OvJ via de meldkamer","Alleen bij dringende noodzakelijkheid én de machtiging moet dit uitdrukkelijk vermelden","Na schriftelijke toestemming van de rechter-commissaris, ook als dat een paar uur duurt"],ans:2,exp:"Art. 7 Awbi: nachtelijk binnentreden (tussen middernacht en 06:00) vereist (1) dringende noodzakelijkheid én (2) de machtiging moet uitdrukkelijk vermelden dat nachtelijk binnentreden is toegestaan. Mondelinge OvJ-toestemming volstaat niet; het moet in de machtiging staan."},
 {cat:"Awbi",art:"Art. 9",lvl:"T",text:"Een opsporingsambtenaar is rechtmatig een woning binnengetreden maar de bewoner blokkeert de toegang tot de slaapkamer. Wat mag de agent doen?",opts:["Niets: hij mag geen kracht gebruiken want hij is al binnen — verdere dwang vereist een nieuwe machtiging","Hij mag de bewoner overtuigen maar niet dwingen; bij weigering moet hij de RC raadplegen","Hij mag zich de toegang of doorgang verschaffen voor zover dit redelijkerwijs nodig is voor het doel (art. 9 Awbi), en kan de sterke arm inroepen","Hij mag alleen de hulp van collega's inroepen maar geen fysieke kracht gebruiken"],ans:2,exp:"Art. 9 Awbi: de bevoegde ambtenaar mag zich de toegang of doorgang in de woning verschaffen voor zover dit redelijkerwijs nodig is voor het doel van het binnentreden. Hij kan daarvoor de hulp van de sterke arm (fysiek geweld/hulp van collega's) inroepen. Eén machtiging dekt ook dit."}
+,
+// ========== ESI PARATE KENNIS ==========
+{cat:"ESI Parate Kennis",art:"Art. 7 lid 2 Politiewet",lvl:"T",casus:"Twee opsporingsambtenaren krijgen een melding dat een boer in zijn schuur ernstig gevallen is en hulp nodig heeft. Als de opsporingsambtenaren ter plaatse komen en de schuur in willen, merken zij dat de deur op slot zit. Zij zien door het raam dat de boer bloedend op de grond ligt.",text:"Zijn de opsporingsambtenaren bevoegd de schuur ter hulpverlening te betreden?",opts:["Ja, zij mogen de schuur betreden op grond van art. 7 Politiewet.", "Ja, zij mogen de schuur betreden op grond van art. 3 Politiewet.", "Nee, zij mogen de schuur niet betreden omdat de deur op slot zit.", "Nee, zij hebben een bevel van de hovj nodig om de schuur te betreden."],ans:0,exp:"Art. 7 lid 2 Politiewet geeft de ambtenaar van de politie toegang tot elke plaats voor zover het voor het verlenen van hulp aan hen die het behoeven nodig is."},
+{cat:"ESI Parate Kennis",art:"art. 54 Sv",lvl:"T",casus:"Tijdens hun surveillance worden opsporingsambtenaren aangesproken door een vrouw. De vrouw vertelt dat zij gisteren in het openbaar is beledigd door haar ex-vriend. Dit is gefilmd door een omstander. De vrouw toont de beelden en vertelt dat haar ex-vriend bij een caf\u00e9 om de hoek zit. De opsporingsambtenaren zien bij het caf\u00e9 een man die aan het signalement voldoet. Ze willen de man aanhouden voor belediging (in dit geval geen VH-misdrijf).",text:"Zijn de opsporingsambtenaren bevoegd de man buiten heterdaad aan te houden voor belediging?",opts:["Nee, de bevoegdheid tot aanhouding buiten heterdaad komt toe aan de hovj.", "Nee, aanhouden buiten heterdaad voor dit feit is nu niet mogelijk.", "Ja, iedereen is bevoegd een verdachte van een strafbaar feit aan te houden.", "Ja, nadat de ovj een bevel tot aanhouding buiten heterdaad heeft gegeven."],ans:1,exp:"In deze casus gaat het om een aanhouding buiten heterdaad (art. 54 Sv). De ovj kan een bevel geven bij een misdrijf waarvoor voorlopige hechtenis is toegelaten. Belediging (art. 266 Sr.) is geen VH-misdrijf (art. 67 lid 1 Sv)."},
+{cat:"ESI Parate Kennis",art:"Art. 55b lid 1 Sv",lvl:"T",casus:"Wanneer een verdachte zijn auto wil instappen, wordt hij staande gehouden op verdenking van heling. De verdachte zegt geen identiteitsbewijs bij zich te hebben en weigert zijn persoonsgegevens op te geven. Na onderzoek aan de kleding blijkt hij inderdaad geen identiteitsbewijs bij zich te dragen. De opsporingsambtenaar wil het dashboardkastje van de auto onderzoeken. De identiteit kan niet op andere wijze worden vastgesteld.",text:"Is de opsporingsambtenaar bevoegd het dashboardkastje van de auto te onderzoeken voor de vaststelling van de identiteit van de verdachte?",opts:["Ja, er is sprake van een verdachte van een misdrijf en het onderzoek is noodzakelijk voor de vaststelling van zijn identiteit.", "Ja, de verdachte is staande gehouden en het onderzoek is noodzakelijk voor de vaststelling van zijn identiteit.", "Nee, de verdachte is staande gehouden en mag daarom alleen aan de kleding worden onderzocht.", "Nee, alleen voorwerpen die de verdachte bij zich draagt mogen onderzocht worden."],ans:1,exp:"Art. 55b lid 1 Sv: een opsporingsambtenaar is bevoegd een staande gehouden verdachte aan zijn kleding te onderzoeken, alsmede voorwerpen die hij bij zich draagt of met zich voert. Een auto die de verdachte 'met zich voert' valt hieronder."},
+{cat:"ESI Parate Kennis",art:"art. 29 lid 2 Sv",lvl:"T",casus:"Een verdachte wordt een paar dagen na het derde verhoor voor de vierde keer verhoord over \u00e9\u00e9nzelfde strafbaar feit. De verdachte is een veelpleger. De opsporingsambtenaar geeft de verdachte geen cautie.",text:"Had de opsporingsambtenaar voor aanvang van het vierde verhoor de cautie moeten geven?",opts:["Ja, de verdachte moet bij elke vorm van contact met een opsporingsambtenaar de cautie worden meegedeeld.", "Ja, de verdachte moet voor ieder verhoor over een strafbaar feit de cautie worden meegedeeld.", "Nee, de verdachte moet alleen voor het eerste verhoor over een strafbaar feit de cautie worden meegedeeld.", "Nee, omdat de verdachte veelpleger is, mag aangenomen worden dat hij bekend is met zijn rechten."],ans:1,exp:"Aan de verdachte moet voor ieder verhoor medegedeeld worden dat hij niet verplicht is tot antwoorden (art. 29 lid 2 Sv). Onder verhoor wordt verstaan: alle vragen die een opsporingsambtenaar aan een verdachte stelt over diens betrokkenheid bij een strafbaar feit."},
+{cat:"ESI Parate Kennis",art:"art. 55c lid 2 Sv",lvl:"T",casus:"Een man wordt verdacht van het plegen van openlijke geweldpleging (art. 67 lid 1 Sv-misdrijf). Hij wordt uitgenodigd op het politiebureau voor een verhoor. De opsporingsambtenaar controleert de identiteit aan de hand van zijn paspoort. Over de identiteit bestaat geen twijfel.",text:"Is de opsporingsambtenaar in dit geval verplicht ook foto's en vingerafdrukken te nemen van deze verdachte?",opts:["Ja, want de verdachte wordt verhoord wegens een art. 67 lid 1 Sv-misdrijf.", "Ja, want bij elk verdachtenverhoor dienen foto's en vingerafdrukken genomen te worden.", "Nee, want de verdachte is nog niet aangehouden voor een strafbaar feit.", "Nee, want over de identiteit van de verdachte bestaat geen twijfel."],ans:0,exp:"Op grond van art. 55c lid 2 Sv nemen opsporingsambtenaren van een verdachte die wordt verhoord wegens een art. 67 lid 1 Sv-misdrijf foto's en vingerafdrukken. Het woord 'nemen' houdt een verplichting in \u2014 geen vrijblijvende bevoegdheid."},
+{cat:"ESI Parate Kennis",art:"art. 138 Sr",lvl:"T",casus:"Een vrouw meldt bij de politie dat haar ex-man haar woning is binnengedrongen via een openstaand raam. Ze heeft meerdere keren gezegd dat hij moet vertrekken. Hij wil niet luisteren en blijft roepen dat hij haar terug wil. De ex-man is eerder veroordeeld voor diefstal.",text:"Pleegt de man een strafbaar feit?",opts:["Ja, poging tot diefstal (art. 45 jo. art. 310 Sr).", "Ja, huisvredebreuk (art. 138 Sr).", "Ja, bedreiging (art. 285 Sr).", "Nee, de man pleegt geen strafbaar feit."],ans:1,exp:"De man is tegen de wil van de vrouw ('wederrechtelijk') haar woning binnengedrongen door inklimming. Hij maakt zich daardoor schuldig aan huisvredebreuk (art. 138 Sr)."},
+{cat:"ESI Parate Kennis",art:"art. 45 lid 1 Sr",lvl:"T",casus:"Situatie 1: Een man slaat met een hamer op een autoruit om de tas op de achterbank te stelen.\n\nSituatie 2: Een vrouw zoekt via Google naar manieren hoe ze iemand met vergif kan doden.",text:"In welke situatie(s) is sprake van 'een begin van uitvoering' zoals vereist voor een poging tot misdrijf?",opts:["Alleen in situatie 1.", "Alleen in situatie 2.", "In situatie 1 en 2.", "In geen van beide situaties."],ans:0,exp:"Een poging tot misdrijf is strafbaar als de dader begonnen is met het uitvoeren van dat misdrijf (art. 45 lid 1 Sr). Met een hamer op een autoruit slaan is een begin van uitvoering van diefstal door middel van braak. Het zoeken naar informatie over vergif is geen begin van uitvoering."},
+{cat:"ESI Parate Kennis",art:"art. 3 Awbi",lvl:"T",text:"Wie is bevoegd tot het geven van een (schriftelijke) machtiging volgens de Algemene wet op het binnentreden?",opts:["De hovj", "De ovj", "De r-c", "De opsporingsambtenaar"],ans:[0, 1],multi:true,exp:"In art. 3 Awbi staat wie bevoegd is tot het geven van de schriftelijke machtiging. Naast de hovj en de ovj kan ook een advocaat-generaal bij ressortsparket dit doen. Bij binnentreden om andere redenen dan strafvordering is de burgemeester bevoegd (art. 3 Awbi lid 2)."},
+{cat:"ESI Parate Kennis",art:"Art. 8 lid 1 WPG",lvl:"T",text:"Politiegegevens kunnen worden verwerkt met het oog op de uitvoering van de dagelijkse politietaak gedurende een periode van \u2026",opts:["\u00c9\u00e9n jaar na de datum van de eerste verwerking.", "Twee jaar na de datum van de eerste verwerking.", "Vijf jaar na de datum van de eerste verwerking."],ans:0,exp:"Art. 8 lid 1 WPG: politiegegevens kunnen worden verwerkt met het oog op de uitvoering van de dagelijkse politietaak gedurende een periode van \u00e9\u00e9n jaar na de datum van de eerste verwerking."},
+{cat:"ESI Parate Kennis",art:"art. 1 WID",lvl:"T",casus:"Op een industrieterrein wordt de laatste weken veel ingebroken. Opsporingsambtenaar Anouschka ziet 's avonds een vrouw lopen door dit gebied. Anouschka vordert inzage van het identiteitsbewijs van de vrouw. De vrouw weigert en zegt dat zij niet hoeft mee te werken aan haar eigen veroordeling.",text:"Welke van de onderstaande antwoorden is waar?",opts:["Het niet voldoen aan de vordering tot inzage van een identiteitsbewijs door de vrouw levert een strafbaar feit op.", "Het niet voldoen aan de vordering tot inzage van een identiteitsbewijs door de vrouw levert geen strafbaar feit op.", "De vrouw moet voor het voldoen aan de vordering eerst met een advocaat gesproken hebben."],ans:0,exp:"Een politieambtenaar aangesteld voor de uitvoering van de politietaak is bevoegd inzage te vorderen van een identiteitsbewijs (art. 1 WID). Het niet voldoen aan de vordering is strafbaar op grond van art. 447e Sr."},
+{cat:"ESI Parate Kennis",art:"art. 55a lid 1 Sv",lvl:"T",casus:"Bij het politiebureau meldt zich een vrouw die slachtoffer is geworden van zware mishandeling door haar man (art. 67 lid 1 Sv-misdrijf). Ze verklaart dat de man zich heeft verstopt in de woning van zijn ouders. Twee opsporingsambtenaren gaan naar deze woning en willen deze zonder toestemming doorzoeken ter aanhouding.",text:"Zijn de opsporingsambtenaren bevoegd de woning te doorzoeken ter aanhouding?",opts:["Ja, want de man wordt verdacht van een art. 67 lid 1 Sv-misdrijf.", "Ja, want er zijn aanwijzingen dat de man een misdrijf heeft gepleegd.", "Nee, want ze hebben een machtiging van de ovj nodig.", "Nee, want de man bevindt zich niet in zijn eigen woning."],ans:2,exp:"Op grond van art. 55a lid 1 Sv zijn opsporingsambtenaren bij verdenking van een art. 67 lid 1 Sv-misdrijf bevoegd elke plaats te doorzoeken. Zij hebben daarvoor een machtiging van de ovj nodig, tenzij sprake is van dringende noodzakelijkheid \u2014 die blijkt niet uit de casus."},
+{cat:"ESI Parate Kennis",art:"art. 56 lid 4 Sv",lvl:"T",casus:"Twee opsporingsambtenaren ontvangen een melding van diefstal. Bij een pinautomaat zou een man de pinpas van een bejaarde vrouw gestolen hebben. Direct na de melding zien de opsporingsambtenaren een man die aan het signalement voldoet. Ze willen weten of hij de pinpas bij zich heeft.",text:"Wat moeten de opsporingsambtenaren doen om door middel van een opsporingsfouillering zijn kleding te mogen onderzoeken?",opts:["De man aanhouden.", "Een bevel regelen van de ovj.", "Een bevel regelen van de hovj.", "De man staande houden."],ans:0,exp:"De opsporingsambtenaar is bevoegd de aangehouden verdachte tegen wie ernstige bezwaren bestaan aan zijn kleding te onderzoeken (art. 56 lid 4 Sv). De man moet dus eerst worden aangehouden."},
+{cat:"ESI Parate Kennis",art:"Art. 95 Sv",lvl:"T",casus:"Een bedrijfsleider en een beveiliger van een kledingwinkel houden op heterdaad een verdachte aan voor diefstal van een winterjas. Er komt een opsporingsambtenaar ter plaatse om de verdachte mee te nemen naar het politiebureau.",text:"Wie is in dit geval bevoegd de winterjas in beslag te nemen?",opts:["De bedrijfsleider.", "De beveiliger.", "De opsporingsambtenaar."],ans:2,exp:"Art. 95 Sv geeft een opsporingsambtenaar de bevoegdheid om in geval van aanhouding van een verdachte voor inbeslagneming vatbare voorwerpen in beslag te nemen. Burgers die een verdachte op heterdaad aanhouden (art. 53 Sv) zijn sinds 2017 niet bevoegd tot inbeslagneming (art. 53 lid 3 Sv)."},
+{cat:"ESI Parate Kennis",art:"art. 67 lid 1 Sv",lvl:"T",casus:"Twee opsporingsambtenaren zien een auto rijden met twee mannen die worden verdacht van grootschalige drugshandel (art. 67 lid 1 Sv-misdrijf). Ze willen de auto ter inbeslagneming doorzoeken en geven de bestuurder een stopteken.",text:"Zijn de opsporingsambtenaren bevoegd deze auto ter inbeslagneming te doorzoeken?",opts:["Ja, want de mannen worden verdacht van een art. 67 lid 1 Sv-misdrijf.", "Nee, want de Opiumwet kent geen doorzoekingsbevoegdheid.", "Nee, want de verdachten zijn nog niet aangehouden voor drugshandel."],ans:0,exp:"Omdat de mannen worden verdacht van een art. 67 lid 1 Sv-misdrijf zijn de opsporingsambtenaren bevoegd de auto ter inbeslagneming te doorzoeken (art. 96b lid 1 Sv). De verdachten hoeven niet eerst aangehouden te worden. De Opiumwet bevat geen doorzoekingsbevoegdheid."},
+{cat:"ESI Parate Kennis",art:"art. 241 lid 1 Sr",lvl:"T",casus:"Een man raakt in een kroeg een vrouw aan. Hij betast haar billen en borsten. De vrouw verstijft en zegt dat de man moet stoppen. De man gaat door met betasten.",text:"Welke vorm van aanranding pleegt de man?",opts:["Opzetaanranding (art. 241 lid 1 Sr).", "Schuldaanranding (art. 240 Sr)."],ans:0,exp:"De vrouw verstijft en zegt dat de man moet stoppen. De man weet dus dat sprake is van seksueel contact tegen de wil van de vrouw. Hij negeert de duidelijk waarneembare signalen van de ontbrekende wil en gaat toch door: opzetaanranding (art. 241 lid 1 Sr)."},
+{cat:"ESI Parate Kennis",art:"art. 1",lvl:"T",casus:"Een opsporingsambtenaar heeft een meerderjarige man staande gehouden en wil zijn identiteit vaststellen. De man overhandigt diverse documenten. Hij blijkt twee nationaliteiten te hebben.",text:"Met welk document kan de identiteit van de man niet worden vastgesteld?",opts:["Een geldige persoonsgebonden OV-chipkaart.", "Een geldig Nederlands rijbewijs.", "Een geldig Nederlands identiteitsbewijs.", "Een geldig Frans paspoort."],ans:0,exp:"Uit art. 1 Wet op de identificatieplicht volgt dat de identiteit niet kan worden vastgesteld met een geldige persoonsgebonden OV-chipkaart. Een geldig rijbewijs (4\u00ba), Nederlands identiteitsbewijs (1\u00ba) of Frans paspoort (3\u00ba) zijn wel toegestaan."},
+{cat:"ESI Parate Kennis",art:"art. 300 lid 5 Sr",lvl:"T",casus:"Ron heeft ruzie met Sem. Ze duwen en trekken een beetje aan elkaar. Dan haalt Sem uit: hij zwaait met zijn arm richting de arm van Ron. Ron kan deze klap net ontwijken en wordt niet geraakt.",text:"Is deze uithaal van Sem een strafbare poging tot mishandeling?",opts:["Ja, omdat Sem met zijn arm in de richting van de arm van Ron zwaaide.", "Ja, omdat Ron en Sem voor de uithaal ook al aan het duwen en trekken waren.", "Nee, omdat een poging tot mishandeling alleen strafbaar is als die in vereniging gepleegd wordt.", "Nee, omdat het strafrecht een poging tot mishandeling niet strafbaar stelt."],ans:3,exp:"De uithaal is een poging tot mishandeling, maar dit is niet strafbaar (art. 300 lid 5 Sr). Let op: een poging tot zware mishandeling is w\u00e9l strafbaar (art. 302 Sr)."},
+{cat:"ESI Parate Kennis",art:"art. 48",lvl:"T",casus:"Jan vertelt Ilias dat hij de avondwinkel gaat overvallen. Hij heeft vervoer nodig en vraagt of Ilias hem met de auto af wil zetten bij de avondwinkel. Ilias doet dit.",text:"Welke deelnemingsvorm is op Ilias van toepassing?",opts:["Medepleger.", "Medeplichtige.", "Uitlokker.", "Samenspanner."],ans:1,exp:"Ilias vervult een kleine rol bij het plegen van het strafbare feit. Hij is behulpzaam door Jan af te zetten. Hij weet dat Jan een overval gaat plegen. Hierdoor maakt hij zich als medeplichtige schuldig (art. 48 onder 1\u00ba Sr jo. art. 312 Sr)."},
+{cat:"ESI Parate Kennis",art:"art. 266 lid 1 Sr",lvl:"T",text:"Welke van de onderstaande strafbare feiten is een absoluut klachtmisdrijf?",opts:["Eenvoudige mishandeling (art. 300 Sr).", "Bedreiging (art. 285 Sr).", "Eenvoudige belediging (art. 266 Sr).", "Vernieling (art. 350 Sr)."],ans:2,exp:"Eenvoudige belediging (art. 266 lid 1 Sr) is een absoluut klachtmisdrijf. Dit betekent dat eenvoudige belediging alleen vervolgd kan worden als er door het slachtoffer een klacht is gedaan (art. 269 lid 1 Sr)."},
+{cat:"ESI Parate Kennis",art:"art. 3 Politiewet",lvl:"T",casus:"Opsporingsambtenaren John en Mavis hebben tijdens de briefing gehoord dat gisteren een speciaal model motorfiets gestolen is in de wijk. Tijdens surveillance kijken ze vanuit de brandgangen door de ramen van schuren op zoek naar de motorfiets.",text:"Mogen opsporingsambtenaren John en Mavis door de ramen van deze schuren kijken?",opts:["Ja, op grond van de politietaak (art. 3 Politiewet).", "Ja, met voorafgaande toestemming van hovj.", "Nee, niet zonder toestemming van de eigenaren.", "Nee, alleen als dat nodig is voor hulpverlening (art. 7 Politiewet)."],ans:0,exp:"Door op deze manier door het raam te kijken, maken zij een geringe inbreuk op de privacy van de eigenaren. De juridische basis hiervan is te vinden in de algemene omschrijving van de taakstelling van de politie (art. 3 Politiewet)."},
+// ========== S&DK BOEK 1 ==========
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat verstaan we onder het begrip 'recht'?",opts:["Het geheel van regels dat op een bepaald moment in een samenleving geldt.", "Wetboek van Strafrecht, internationaal recht, de gewoonte en jurisprudentie.", "Het geheel van normen dat op een bepaald moment in een samenleving geldt.", "Alle regels die worden opgelegd door de overheid."],ans:0,exp:"Onder het begrip 'recht' verstaan we het geheel van regels dat op een bepaald moment in een samenleving geldt."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Voetgangers hebben voorrang op het zebrapad is een voorbeeld van:",opts:["Staatsrecht", "Moreel recht", "Juridisch recht", "Burgerlijk recht"],ans:2,exp:"Dit is een voorbeeld van juridisch recht. Deze regel is opgelegd door de overheid."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat verstaan we onder 'doel van het recht'?",opts:["Het beschrijven van de samenleving.", "Het ordenen van de samenleving.", "Het opleggen van regels aan de samenleving.", "Het verbeteren van de samenleving."],ans:1,exp:"Doel van het recht is het ordenen van de samenleving. Het maakt duidelijk wat voor rechten en plichten de burgers hebben en wat ze van elkaar en van de overheid mogen verwachten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn kenmerken van rechtsregels?",opts:["Ze worden gehandhaafd door de rechter.", "Ze worden door de overheid gemaakt.", "Ze zijn algemeen geldend.", "Al deze antwoorden zijn juist."],ans:3,exp:"Alle drie kenmerken zijn juist: rechtsregels worden gehandhaafd door de rechter, door de overheid gemaakt en zijn algemeen geldend."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn de vier rechtsbronnen die worden genoemd in het studieboek?",opts:["De wet, jurisprudentie, internationaal recht en de gewoonte.", "Wetboek van Strafrecht, internationaal recht, de gewoonte en jurisprudentie.", "Moreel recht, de gewoonte, jurisprudentie en de wet.", "Juridisch recht, de gewoonte, jurisprudentie en internationaal recht."],ans:0,exp:"De vier rechtsbronnen zijn: de wet, jurisprudentie, internationaal recht en de gewoonte."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn de vier rechtsgebieden van het recht?",opts:["Juridisch recht, bestuursrecht, staatsrecht en strafrecht", "Bestuursrecht, burgerlijk recht, formeel recht en staatsrecht", "Staatsrecht, bestuursrecht, strafrecht en burgerlijk recht", "Internationaal recht, nationaal recht, staatsrecht en bestuursrecht"],ans:2,exp:"De vier rechtsgebieden van het recht zijn: staatsrecht, bestuursrecht, strafrecht en burgerlijk recht."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Martina en Edwin gaan trouwen. Met welk rechtsgebied krijgen ze vooral te maken?",opts:["Het Staatsrecht", "Het Bestuursrecht", "Het Strafrecht", "Het Burgerlijk recht"],ans:3,exp:"De belangrijkste wet van het burgerlijk recht is het Burgerlijk Wetboek. Daarin staan o.a. de regels over trouwen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"De familie De Vries wil zelf een huis laten bouwen en vraagt een bouwvergunning aan. Met welk rechtsgebied krijgen ze te maken?",opts:["Het staatsrecht", "Het bestuursrecht", "Het strafrecht", "Het burgerlijk recht"],ans:1,exp:"Het verlenen van een bouwvergunning is een typische overheidstaak en valt onder het bestuursrecht."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welk rechtsgebied is voor de politie het belangrijkst?",opts:["Het staatsrecht", "Het bestuursrecht", "Het strafrecht", "Het burgerlijk recht"],ans:2,exp:"Het strafrecht is het belangrijkste rechtsgebied voor de politie. Het strafrecht geeft de overheid het recht om straf op te leggen aan personen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"De politie van Noord-Brabant bestelt bij de fabrikant een aantal nieuwe computers. Hier is sprake van:",opts:["Staatsrecht", "Bestuursrecht", "Strafrecht", "Burgerlijk recht"],ans:3,exp:"Er is hier sprake van burgerlijk recht. De politie treedt hier op als gewone koper, net als iedere andere partij."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Formeel recht wordt ook wel procesrecht of procedureel recht genoemd. Welke vraag valt onder formeel recht?",opts:["Welke soorten drugs zijn strafbaar?", "Wat zijn de openingstijden van het politiebureau?", "Welke rechten heeft de verdachte?", "Wat wordt verstaan onder 'verduistering'?"],ans:2,exp:"Het formeel recht beschrijft hoe het materieel recht wordt gehandhaafd. De rechten van de verdachte zijn een typisch voorbeeld: het gaat over handhaving van rechten en plichten van mensen en instellingen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Het nationaal recht geldt:",opts:["Tussen staten onderling", "Alleen in de Europese Unie", "Alleen in eigen land", "Het nationaal recht kan ook buiten de landsgrenzen van kracht zijn"],ans:3,exp:"Het nationaal recht kan ook buiten de landsgrenzen van kracht zijn."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn drie kenmerken van een democratie?",opts:["Respect voor het staatsrecht, scheiding van overheidstaken en een gekozen volksvertegenwoordiging.", "Een gekozen volksvertegenwoordiging, respect voor de grondrechten en scheiding van overheidstaken.", "Een gekozen burgemeester, respect voor de grondrechten en scheiding van overheidstaken.", "Inspraak over wetgeving, een gekozen volksvertegenwoordiging en scheiding van overheidstaken."],ans:1,exp:"De drie kenmerken van democratie zijn: een gekozen volksvertegenwoordiging, respect voor de grondrechten en scheiding van overheidstaken."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de kern van de leer van de scheiding der machten (trias politica)?",opts:["Een scheiding in de wetgevende taak, de uitvoerende taak en in de rechtsprekende taak.", "Een scheiding in de uitvoerende taak, de lesgevende taak en in de rechtsprekende taak.", "Een scheiding in de wetgevende taak, de rechtsprekende taak en in de beslissende taak.", "Een scheiding in de rechtsprekende taak, de wet opvolgende taak en in de uitvoerende taak."],ans:0,exp:"De kern van de leer van de scheiding der machten is: een scheiding in de wetgevende taak, de uitvoerende taak en in de rechtsprekende taak."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"De basisregels van onze democratie zijn vastgelegd in:",opts:["Het Wetboek van Strafrecht", "Het Burgerlijk Wetboek", "De Grondwet", "De Algemene wet bestuursrecht"],ans:2,exp:"De basisregels van onze democratie zijn vastgelegd in de Grondwet."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn drie kenmerken van een staat?",opts:["Douane bij de grenzen, burgers en effectief overheidsgezag", "Burgers, lokaal bestuur en douane bij de grenzen", "Effectief overheidsgezag, lokaal bestuur en burgers", "Een afgebakend grondgebied, effectief overheidsgezag en burgers"],ans:3,exp:"De kenmerken van een staat zijn: een afgebakend grondgebied, effectief overheidsgezag en burgers."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een eenheidsstaat?",opts:["Een staat met veel landelijk overheidsgezag en waar de onderdelen van de staat weinig eigen gezag hebben.", "Een staat waar de onderdelen van de staat veel meer macht hebben dan de centrale overheid.", "Een staat met evenwicht tussen het gezag van de onderdelen van de staat en dat van de landelijke overheid.", "Een staat waar eenheid is tussen de staten."],ans:0,exp:"Een eenheidsstaat is een staat met veel landelijk overheidsgezag en waar de onderdelen van de staat weinig eigen gezag hebben. Nederland is een eenheidsstaat."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een bondsstaat?",opts:["Een staat met veel landelijk overheidsgezag en waar de onderdelen van de staat weinig eigen gezag hebben.", "Een staat waar de onderdelen van de staat veel meer macht hebben dan de centrale overheid.", "Een staat met evenwicht tussen het gezag van de onderdelen van de staat en dat van de landelijke overheid.", "Een staat waar eenheid is tussen de staten."],ans:2,exp:"Een bondsstaat is een staat met evenwicht tussen het gezag van de onderdelen van de staat en dat van de landelijke overheid. Een voorbeeld is Duitsland."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een statenbond?",opts:["Een staat met veel landelijk overheidsgezag en waar de onderdelen van de staat weinig eigen gezag hebben.", "Een staat waar de onderdelen van de staat veel meer macht hebben dan de centrale overheid.", "Een staat met evenwicht tussen het gezag van de onderdelen van de staat en dat van de landelijke overheid.", "Een staat waar eenheid is tussen de staten."],ans:1,exp:"Een statenbond is een samenwerkingsverband waarbij de onderdelen (staten) veel meer eigen macht hebben dan de centrale overheid. De centrale overheid heeft weinig zeggenschap."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving van christendemocratie?",opts:["Een sterke overheid die veel grip heeft op de samenleving en de burgers haar regels oplegt.", "Een bescheiden rol van de overheid, met veel ruimte voor eigen initiatief van de burgers.", "Een aanwezige overheid met veel aandacht voor de bescherming van het menselijk leven.", "Een mengeling van A en B met daarbij veel aandacht voor de bescherming van de natuur."],ans:2,exp:"De idealen van de christendemocratie bestaan uit een mengeling van een sterke \u00e9n een bescheiden overheid, met daarnaast bijzondere aandacht voor de bescherming van het menselijk leven."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving van liberalisme?",opts:["Een sterke overheid die veel grip heeft op de samenleving.", "Een bescheiden rol van de overheid, met veel ruimte voor eigen initiatief van de burgers.", "Een mengeling van sterk en bescheiden met daarbij veel aandacht voor de bescherming van het menselijk leven.", "Een mengeling van sterk en bescheiden met daarbij veel aandacht voor de bescherming van de natuur."],ans:1,exp:"De idealen van de liberalen bestaan uit een bescheiden rol van de overheid, met veel ruimte voor eigen initiatief van de burgers."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving van socialisme?",opts:["Een sterke overheid die veel grip heeft op de samenleving.", "Een bescheiden rol van de overheid, met veel ruimte voor eigen initiatief van de burgers.", "Een mengeling van sterk en bescheiden met veel aandacht voor het menselijk leven.", "Een mengeling van sterk en bescheiden met veel aandacht voor de natuur."],ans:0,exp:"De socialisten willen een sterke overheid met veel grip op de samenleving. De overheid stuurt de economie en zorgt voor herverdeling van welvaart."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Tot welke stroming behoort de VVD?",opts:["De socialistische stroming", "De liberale stroming", "De christendemocratische stroming", "De progressieve stroming"],ans:1,exp:"De VVD behoort tot de liberale stroming. De partij staat voor een bescheiden overheid en veel eigen initiatief voor burgers en bedrijven."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Tot welke stroming behoort GroenLinks?",opts:["De socialistische stroming", "De liberale stroming", "De christendemocratische stroming", "De conservatieve stroming"],ans:0,exp:"GroenLinks behoort tot de socialistische stroming, met extra nadruk op milieu en duurzaamheid."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een kiesdeler?",opts:["Het aantal stemmen dat genoeg is voor een zetel in de Tweede Kamer.", "Het aantal zetels dat genoeg is om in de Tweede Kamer te komen.", "Het totaal aantal zetels in de Tweede Kamer.", "Het aantal stemmen gedeeld door het aantal kiezers."],ans:0,exp:"De kiesdeler is het aantal stemmen dat genoeg is voor een zetel in de Tweede Kamer. Dit getal verschilt per verkiezing afhankelijk van de opkomst."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke taak/taken heeft de Tweede Kamer?",opts:["De Tweede Kamer controleert de wetgeving.", "De Tweede Kamer controleert de regering en maakt samen met de regering wetten.", "De Tweede Kamer bestuurt het land en controleert de wetgeving.", "De Tweede Kamer bestuurt het land."],ans:1,exp:"De Tweede Kamer heeft twee hoofdtaken: de regering controleren en samen met de regering wetten maken (medewetgever zijn)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Door wie worden de leden van de Eerste Kamer gekozen?",opts:["Door de leden van de regering", "Door de leden van Provinciale Staten", "Door de leden van de Tweede Kamer", "Door de leden van de Staten-Generaal"],ans:1,exp:"De leden van de Eerste Kamer worden indirect gekozen door de leden van Provinciale Staten. Dit heet getrapte verkiezingen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke rechten hebben zowel de Eerste als de Tweede Kamer?",opts:["Het vragenrecht, het recht van amendement, het budgetrecht en het enqu\u00eaterecht.", "Het vragenrecht, het recht van interpellatie, het budgetrecht en het recht van initiatief.", "Het vragenrecht, het recht van initiatief, het budgetrecht en het enqu\u00eaterecht.", "Het vragenrecht, het recht van interpellatie, het budgetrecht en het enqu\u00eaterecht."],ans:3,exp:"De Eerste en de Tweede Kamer hebben gezamenlijk: het vragenrecht, het recht van interpellatie, het budgetrecht en het enqu\u00eaterecht. Het recht van amendement en het recht van initiatief zijn alleen voor de Tweede Kamer."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt het recht van amendement in?",opts:["Het recht om een minister of een staatssecretaris voor een debat naar de Kamer te halen.", "Het recht om vragen te stellen aan een minister of een staatssecretaris.", "Het recht om veranderingen aan te brengen in een wetsvoorstel dat de regering heeft ingediend.", "Het recht om uitgebreid onderzoek in te stellen naar het regeringsbeleid."],ans:2,exp:"Het recht van amendement is het recht om veranderingen aan te brengen in een wetsvoorstel dat de regering heeft ingediend. Dit recht heeft alleen de Tweede Kamer, niet de Eerste."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Hoe noemen we volmondig het Nederlandse stelsel?",opts:["Constitutionele monarchie met een directe democratie", "Constitutionele republiek met een directe democratie", "Constitutionele monarchie met een parlementair stelsel", "Constitutionele republiek met een parlementair stelsel"],ans:2,exp:"Nederland is een constitutionele monarchie met een parlementair stelsel. Constitutioneel betekent dat de macht van de monarch in de Grondwet is vastgelegd en beperkt. Parlementair betekent dat de politieke macht berust bij een gekozen parlement \u2014 dit is een indirecte democratie, geen directe."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat wordt bedoeld met een wet in formele zin?",opts:["Iedere overheidsregel met algemene werking.", "Ieder besluit dat afkomstig is van regering en Kamers samen en dat tot stand is gekomen volgens de procedure uit de Grondwet.", "Ieder besluit dat afkomstig is van regering en Kamers samen.", "Ieder besluit dat afkomstig is van de Kamers en dat tot stand is gekomen volgens de procedure uit de Grondwet."],ans:1,exp:"Een wet in formele zin houdt in: ieder besluit dat afkomstig is van de regering \u00e9n de Kamers samen, \u00e9n tot stand is gekomen via de procedure uit de Grondwet. Beide elementen zijn vereist."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste volgorde van de gang van een wetsontwerp?",opts:["Voorbereiding door ambtenaren \u2013 Ministerraad \u2013 Tweede Kamer \u2013 Eerste Kamer \u2013 Raad van State.", "Tweede Kamer \u2013 Voorbereiding door ambtenaren \u2013 Ministerraad \u2013 Raad van State \u2013 Eerste Kamer.", "Voorbereiding door ambtenaren \u2013 Raad van State \u2013 Ministerraad \u2013 Tweede Kamer \u2013 Eerste Kamer.", "Voorbereiding door ambtenaren \u2013 Ministerraad \u2013 Raad van State \u2013 Tweede Kamer \u2013 Eerste Kamer."],ans:3,exp:"De juiste volgorde is: Voorbereiding door ambtenaren \u2192 Ministerraad \u2192 Raad van State (advies) \u2192 Tweede Kamer \u2192 Eerste Kamer."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Binnen de regelgeving wordt een rangorde aangehouden. Kies de juiste rangorde.",opts:["Europees verdrag \u2013 Grondwet \u2013 AMvB.", "Grondwet \u2013 AMvB \u2013 wet in formele zin.", "Ministeri\u00eble regeling \u2013 Grondwet \u2013 provinciale verordening.", "AMvB \u2013 gemeentelijke verordening \u2013 provinciale verordening."],ans:0,exp:"De juiste rangorde is: Europees verdrag \u2192 Grondwet \u2192 AMvB. Europees recht staat boven de Grondwet; de Grondwet boven lagere regelgeving zoals AMvB's."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een kenmerk van een rechtsstaat?",opts:["De overheid staat boven de wet.", "De overheid kiest de rechterlijke macht.", "De overheid heeft respect voor de grondrechten van haar burgers.", "De overheid heeft zoveel mogelijk in wettelijke regels vastgelegd."],ans:2,exp:"Kenmerken van een rechtsstaat zijn: de overheid is gebonden aan de wet, onafhankelijke rechters beoordelen het optreden van de overheid, en de overheid heeft respect voor de grondrechten van haar burgers."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn vier kenmerken van de rechtspraak?",opts:["De openbaarheid van de rechtszittingen, de verplichting van rechters om uitspraken goed te motiveren, de mogelijkheden van hoger beroep en cassatie en het beginsel van hoor en wederhoor.", "De openbaarheid van de rechtszittingen, de verplichting van rechters om uitspraken op te schrijven, de mogelijkheden van hoger beroep en cassatie en het beginsel van hoor en wederhoor.", "De geslotenheid van de rechtszittingen, de verplichting van rechters om uitspraken goed te motiveren, de mogelijkheden van hoger beroep en cassatie en het beginsel van hoor en wederhoor.", "De openbaarheid van de rechtszittingen, de verplichting van rechters om uitspraken goed te motiveren, de mogelijkheden van hoger beroep en cassatie en het beginsel van trias politica."],ans:0,exp:"De vier kenmerken van rechtspraak zijn: openbaarheid van rechtszittingen, verplichting tot motiveren van uitspraken, mogelijkheid van hoger beroep en cassatie, en het beginsel van hoor en wederhoor."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt hoor en wederhoor in?",opts:["De rechter spreekt het vonnis uit en daarna worden betrokken partijen in de gelegenheid gesteld om hun visie op de zaak te geven.", "Iedereen aanwezig in de rechtszaal wordt in de gelegenheid gesteld om hun visie te geven op de zaak.", "De rechter spreekt het vonnis uit en daarna wordt iedereen in de rechtszaal in de gelegenheid gesteld om hun visie op de zaak te geven.", "De rechter wacht met het uitspreken van het vonnis totdat alle betrokken partijen in de gelegenheid zijn gesteld hun visie op de zaak te geven."],ans:3,exp:"Hoor en wederhoor houdt in dat de rechter wacht met het uitspreken van het vonnis totdat \u00e1lle betrokken partijen hun visie hebben kunnen geven. Niemand wordt veroordeeld zonder gehoord te zijn."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Waar kan in strafzaken en burgerlijke zaken cassatie ingesteld worden?",opts:["Bij het gerechtshof", "Bij de Hoge Raad", "Bij de rechtbank", "Bij de sector Kanton"],ans:1,exp:"Cassatie kan ingesteld worden bij de Hoge Raad in Den Haag. Bij cassatie wordt niet de zaak opnieuw inhoudelijk beoordeeld, maar getoetst of het recht correct is toegepast."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Maarten wordt verdacht van het stelen van een auto en moet voor de rechter verschijnen. Met welke rechtspraak hebben we hier te maken?",opts:["Bestuursrechtspraak", "Burgerlijke rechtspraak", "Strafrechtszaak", "Kantonrechtszaak"],ans:2,exp:"Dit is een strafrechtszaak: het OM en de verdachte staan tegenover elkaar. Diefstal is een strafbaar feit dat door het OM wordt vervolgd."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Susan heeft een conflict met haar huisbaas over de huur en legt de zaak aan de rechter voor. Met welke rechtspraak hebben we hier te maken?",opts:["Bestuursrechtspraak", "Burgerlijke rechtspraak", "Strafrechtszaak", "Kantonrechtszaak"],ans:1,exp:"Dit is burgerlijke rechtspraak: twee burgers (huurder en verhuurder) staan tegenover elkaar. Huurgeschillen vallen onder het burgerlijk recht."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Bert ontvangt sinds twee maanden geen uitkering meer. Hij is het daar niet mee eens en legt het geval voor aan de rechter. Met welke rechtspraak hebben we hier te maken?",opts:["Bestuursrechtspraak", "Burgerlijke rechtspraak", "Strafrechtszaak", "Kantonrechtszaak"],ans:0,exp:"Dit is bestuursrechtspraak: de burger en een overheidsorgaan (uitkeringsinstantie) zijn het oneens over een overheidsbesluit. De bestuursrechter toetst het besluit."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welk geval kunnen burgers de Nationale ombudsman inschakelen?",opts:["Als de burger het niet eens is met de overheid.", "Als de burger het niet eens is met een besluit van de overheid.", "Als de burger het niet eens is met het gedrag van de overheid.", "Als de burger het niet eens is met de werkzaamheden van de overheid."],ans:2,exp:"De Nationale ombudsman kan onderzoek instellen naar de gedragingen (het gedrag) van overheidsorganen. Bij besluiten is de bestuursrechter de aangewezen weg; de ombudsman richt zich op gedragingen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wie staat er aan het hoofd van de gemeente?",opts:["De provincie", "De gemeenteraad", "De burgemeester", "Het College van B&W"],ans:1,exp:"De gemeenteraad staat aan het hoofd van de gemeente. De gemeenteraad is de volksvertegenwoordiging op gemeentelijk niveau en stelt de kaders vast."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wie staat er aan het hoofd van de provincie?",opts:["Provinciale Staten", "Gedeputeerde Staten", "De Commissaris van de Koning", "Het College van B&W"],ans:0,exp:"Provinciale Staten staat aan het hoofd van de provincie. Provinciale Staten is de volksvertegenwoordiging op provinciaal niveau, vergelijkbaar met de gemeenteraad op gemeentelijk niveau."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wie zit er namens Nederland in de Europese Raad?",opts:["De Minister van Buitenlandse Zaken", "Welke minister deelneemt, is afhankelijk van het onderwerp.", "De minister-president", "Nederland is uitgesloten van de Europese Raad."],ans:2,exp:"De minister-president zit namens Nederland in de Europese Raad. De Europese Raad bestaat uit de staatshoofden en regeringsleiders van alle EU-lidstaten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wie vormt het dagelijks bestuur van de Europese Unie?",opts:["De Europese Commissie", "De Europese Raad", "De Raad van de Europese Unie", "De Raad van Europa"],ans:0,exp:"De Europese Commissie vormt het dagelijks bestuur van de EU. Zij bewaakt de naleving van EU-verdragen en doet wetsvoorstellen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wie controleert de Europese Commissie?",opts:["De Europese Raad", "De Raad van de Europese Unie", "De Raad van Europa", "Het Europees Parlement"],ans:3,exp:"Het Europees Parlement controleert de Europese Commissie. Het EP wordt rechtstreeks gekozen door de Europese burgers."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Waar gaat artikel 1 van de Grondwet over?",opts:["De vrijheid van vereniging", "Het gelijkheidsbeginsel", "De vrijheid van meningsuiting", "De vrijheid van godsdienst"],ans:1,exp:"Artikel 1 van de Grondwet gaat over het gelijkheidsbeginsel: allen die zich in Nederland bevinden worden in gelijke gevallen gelijk behandeld. Discriminatie is verboden."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke rechten vallen allemaal onder klassieke grondrechten?",opts:["Recht op privacy, briefgeheim, vrijheid van onderwijs", "Recht van petitie, sociale zekerheid, rechtsbijstand", "Volksgezondheid, kiesrecht, gelijkheidsbeginsel", "Vrijheid van meningsuiting, gelijkheidsbeginsel, milieubescherming"],ans:0,exp:"Klassieke grondrechten zijn vrijheidsrechten die de overheid beperken in haar optreden jegens de burger: recht op privacy, briefgeheim en vrijheid van onderwijs zijn klassieke grondrechten. Sociale zekerheid, volksgezondheid en milieubescherming zijn sociale grondrechten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Grondrechten zijn in de eerste plaats bedoeld om de verhouding tussen de overheid en haar burgers te regelen. Hoe noemen we dit?",opts:["De horizontale werking van grondrechten", "De verticale werking van grondrechten", "Klassieke grondrechten", "Sociale grondrechten"],ans:1,exp:"De verticale werking van grondrechten regelt de verhouding tussen de overheid (boven) en de burger (onder). Horizontale werking slaat op de werking van grondrechten tussen burgers onderling."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Tot welke rechtsvorm behoort het strafrecht?",opts:["Publiekrecht", "Internationaal recht", "Privaatrecht", "Grondrecht"],ans:0,exp:"Strafrecht valt onder het publiekrecht. Bij publiekrecht is de overheid altijd \u00e9\u00e9n van de partijen en treedt zij op met gezag jegens de burger."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt het materieel strafrecht in?",opts:["Het deel van het strafrecht dat beschreven staat in het Wetboek van Strafvordering.", "Een beschrijving van de strafbare gedragingen, de algemene regels over die strafbare gedragingen en de straffen en maatregelen die kunnen worden opgelegd.", "Een beschrijving van de voorwaarden waaraan B&W zich bestuurlijk moeten houden.", "De regels over de wijze waarop de straf ten uitvoer wordt gelegd."],ans:1,exp:"Het materieel strafrecht beschrijft welke gedragingen strafbaar zijn, de algemene regels over die gedragingen en welke straffen en maatregelen kunnen worden opgelegd. Het Wetboek van Strafrecht is de belangrijkste bron."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke rechtsbronnen heeft het strafrecht?",opts:["De Grondwet, Wetboek van Strafrecht, 'lagere' wetten en jurisprudentie.", "De Grondwet, wetten in vormelijke zin, 'lagere' wetten en jurisprudentie.", "Wetboek van Strafrecht, Wetboek van Strafvordering, jurisprudentie en de Grondwet.", "De Grondwet, wetten in formele zin, 'lagere' wetten en jurisprudentie."],ans:3,exp:"De rechtsbronnen van het strafrecht zijn: de Grondwet, wetten in formele zin (zoals het WvSr), 'lagere' wetten (zoals de Opiumwet) en jurisprudentie."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Uit welke drie boeken bestaat het Wetboek van Strafrecht?",opts:["Algemene voorwaarden, misdrijven en overtredingen.", "Algemene voorwaarden, overtredingen en boetes.", "Algemene bepalingen, boetes en misdrijven.", "Algemene bepalingen, misdrijven en overtredingen."],ans:3,exp:"Het Wetboek van Strafrecht bestaat uit drie boeken: Boek 1 Algemene bepalingen, Boek 2 Misdrijven en Boek 3 Overtredingen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welk boek van het Wetboek van Strafrecht staan de overtredingen?",opts:["Boek 1", "Boek 2", "Boek 3", "Boek 4"],ans:2,exp:"De overtredingen staan in Boek 3 van het Wetboek van Strafrecht. Overtredingen zijn minder ernstig dan misdrijven en worden lichter bestraft."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"De strafbepaling van artikel 310 diefstal bestaat uit drie delen. Welke zijn dat?",opts:["Kwalificatie, boeteomschrijving en sanctienorm.", "Sanctienorm, delictsomschrijving en boeteomschrijving.", "Delictsomschrijving, kwalificatie en sanctienorm.", "Sanctienorm, delictsomschrijving en kwalificatie."],ans:2,exp:"Alle strafbepalingen bevatten: een delictsomschrijving (wat is verboden?), een kwalificatie (hoe heet het feit?) en een sanctienorm (welke straf staat erop?)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Hoe kan artikel 1 WvSr kortweg worden samengevat?",opts:["Geen strafbaar feit zonder straf en geen wet zonder straf.", "Geen strafbaar feit zonder wet en geen wet zonder straf.", "Geen strafbaar feit zonder straf en geen straf zonder wet.", "Geen strafbaar feit zonder wet en geen straf zonder wet."],ans:3,exp:"Art. 1 WvSr wordt ook wel samengevat als: geen strafbaar feit zonder wet (nullum crimen sine lege) en geen straf zonder wet (nulla poena sine lege). Dit is het legaliteitsbeginsel."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat staat er in artikel 2 WvSr?",opts:["Ons strafrecht geldt ook aan boord van Nederlandse schepen en vliegtuigen als zij zich in het buitenland bevinden.", "Ons strafrecht is toepasselijk op ieder die zich in Nederland aan enig strafbaar feit schuldig maakt.", "Ons strafrecht is van toepassing op een aantal misdrijven, waar ter wereld ze ook worden gepleegd.", "Ons strafrecht maakt het mogelijk dat Nederlanders die in het buitenland een misdrijf plegen worden vervolgd."],ans:1,exp:"In art. 2 WvSr staat dat ons strafrecht toepasselijk is op ieder die zich in Nederland aan enig strafbaar feit schuldig maakt. Dit is het territorialiteitsbeginsel."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een beperking van de werking naar plaats (immuniteit) geldt NIET voor:",opts:["Buitenlandse ministers en hun meereizende gezinsleden tijdens vakantie in ons land.", "Buitenlandse ministers en hun meereizende gezinsleden tijdens offici\u00eble bezoeken aan ons land.", "Buitenlandse gezanten die in ons land zijn toegelaten en hun tot ons land toegelaten personeel.", "Buitenlandse staatshoofden en hun meereizende gezinsleden."],ans:0,exp:"Het voorrecht van immuniteit geldt niet voor priv\u00e9bezoeken zoals vakanties. Immuniteit geldt wel voor offici\u00eble bezoeken, buitenlandse gezanten en staatshoofden in functie."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke van de volgende situaties valt NIET onder staatsrechtelijke immuniteit?",opts:["Gemeenteraadsleden kunnen niet vervolgd worden voor wat ze tijdens vergaderingen zeggen.", "Gemeenteraadsleden kunnen niet vervolgd worden voor wat ze tijdens zakelijke diners zeggen.", "Ons staatshoofd is niet strafrechtelijk vervolgbaar.", "Leden van de Eerste Kamer kunnen niet vervolgd worden voor wat ze door middel van schriftelijke stukken aan de orde stellen."],ans:1,exp:"Gemeenteraadsleden genieten immuniteit voor uitspraken tijdens offici\u00eble vergaderingen, maar niet voor uitspraken gedaan tijdens zakelijke diners. Dat is een priv\u00e9situatie buiten de formele vergadering."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn de vier belangrijkste strafdoelen?",opts:["Hechtenis, preventie, resocialisatie en voorkomen van eigenrichting", "Vergelding, hechtenis, resocialisatie en voorkomen van eigenrichting", "Vergelding, preventie, resocialisatie en voorkomen van eigenrichting", "Hechtenis, preventie, resocialisatie en vergelding"],ans:2,exp:"De vier belangrijkste strafdoelen zijn: vergelding (leed voor leed), preventie (afschrikking), resocialisatie (terugkeer in de maatschappij) en voorkomen van eigenrichting (de staat neemt het over)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Hoe noemen we het als de rechter iemand wel veroordeelt maar geen straf oplegt?",opts:["Terbeschikkingstelling", "Gratie", "Kwijtschelding", "Rechterlijk pardon"],ans:3,exp:"Rechterlijk pardon is de situatie waarbij de rechter iemand wel schuldig verklaart en veroordeelt, maar besluit geen straf op te leggen, bijvoorbeeld bij een bagateldelict of bijzondere omstandigheden."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is in Nederland geen hoofdstraf voor meerderjarigen?",opts:["Een taakstraf", "Een gevangenisstraf", "Een geldboete", "Het verbeurd verklaren van goederen"],ans:3,exp:"Het verbeurd verklaren van goederen is een bijkomende straf, geen hoofdstraf. De drie hoofdstraffen voor meerderjarigen zijn: gevangenisstraf, hechtenis, taakstraf en geldboete."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een veroordeelde krijgt een veroordeling van vier maanden gevangenisstraf, waarvan twee voorwaardelijk met een proeftijd van een halfjaar. Hoe lang wordt deze veroordeelde feitelijk van zijn vrijheid beroofd?",opts:["Vier maanden", "Twee maanden", "Een halfjaar", "Acht maanden"],ans:1,exp:"Twee maanden zijn onvoorwaardelijk (moet worden uitgezeten) en twee maanden zijn voorwaardelijk (hoeft niet als hij zich gedraagt). Feitelijke vrijheidsberoving: twee maanden."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Er zijn drie vormen van opzet. Welk antwoord is GEEN vorm van opzet?",opts:["Opzet als winstmerk", "Opzet als oogmerk", "Opzet bij noodzakelijkheidsbewustzijn", "Opzet bij mogelijkheidsbewustzijn"],ans:0,exp:"Opzet als winstmerk bestaat niet. De drie vormen van opzet zijn: opzet als oogmerk (bewust willen), opzet bij noodzakelijkheidsbewustzijn (de gevolgen zijn onvermijdelijk) en opzet bij mogelijkheidsbewustzijn (de kans op gevolgen wordt voor lief genomen)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Kettingroker Teun steekt zonder nadenken een sigaret op in een benzineopslagplaats. Aan de wand hangt een bord 'verboden te roken'. Er volgt een explosie en een ander wordt gedood. Waar gaat het hier om?",opts:["Bewuste schuld", "Onbewuste schuld", "Opzet als mogelijkheidsbewustzijn", "Opzet als noodzakelijkheidsbewustzijn"],ans:1,exp:"Dit is onbewuste schuld: Teun heeft zich de gevaarlijke gevolgen niet gerealiseerd, maar had dit wel kunnen en moeten doen. Bij bewuste schuld beseft de dader het gevaar wel, maar denkt dat het goed gaat."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een lasser werkt in een ruimte waar benzine is opgeslagen. Hij weet dit en neemt voorzorgsmaatregelen. Er breekt toch een felle brand uit. Waar gaat het hier om?",opts:["Bewuste schuld", "Onbewuste schuld", "Opzet als mogelijkheidsbewustzijn", "Opzet als noodzakelijkheidsbewustzijn"],ans:0,exp:"Dit is bewuste schuld: de lasser was zich bewust van het gevaar (vandaar de voorzorgsmaatregelen), maar schatte in dat het goed zou gaan. Hij heeft het risico onderschat."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In schuldmisdrijven tref je meestal het woord 'schuld' aan, maar soms ook andere woorden die op schuld wijzen. Welk woord hoort daar NIET bij?",opts:["Onachtzaamheid", "Bedachtzaamheid", "Redelijkerwijs kan vermoeden", "Redelijkerwijs moest vermoeden"],ans:1,exp:"Bedachtzaamheid wijst juist op zorgvuldigheid, niet op schuld. Schuld-aanduidingen zijn: onachtzaamheid, nalatigheid, redelijkerwijs kan/moest vermoeden, en roekeloosheid."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een voorwaarde voor een strafbare poging?",opts:["De dader moet een voornemen hebben om een misdrijf te plegen.", "De dader moet feitelijk al begonnen zijn met de uitvoering van zijn misdrijf.", "Er mag geen sprake zijn van een vrijwillige terugtred.", "Alle genoemde voorwaarden zijn juist."],ans:3,exp:"Voor een strafbare poging gelden drie cumulatieve voorwaarden: (1) voornemen om een misdrijf te plegen, (2) begin van uitvoering en (3) geen vrijwillige terugtred. Alle drie zijn vereist."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welk geval is er sprake van een ondeugdelijke poging?\n(a) Een man probeert zijn vrouw te vergiftigen maar schept suiker in plaats van gif.\n(b) Een man schiet op een agent die een kogelvrij vest draagt.\n(c) Een dief legt gestolen geld na berouw terug.\n(d) Een man schiet een persoon neer die al uren eerder aan een hartstilstand was gestorven.",opts:["In geval (a)", "In geval (b)", "In geval (c)", "In geval (d)"],ans:0,exp:"In geval (a) is sprake van een absoluut ondeugdelijk middel (suiker kan niemand vergiftigen). Bij (b) is het middel relatief ondeugdelijk (het wapen werkt normaal wel). Bij (c) gaat het om vrijwillige terugtred. Bij (d) om een absoluut ondeugdelijk object."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In artikel 46 WvSr zijn voorbereidingshandelingen bij ernstige misdrijven strafbaar gesteld. Wat is GEEN handeling die op voorbereiding wijst?",opts:["Invoeren", "Bijvoeren", "Uitvoeren", "Doorvoeren"],ans:1,exp:"'Bijvoeren' is geen wettelijke term voor voorbereidingshandelingen. De wet noemt: invoeren, uitvoeren, doorvoeren, vervaardigen, verwerven, bewaren etc. als mogelijke voorbereidingshandelingen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke voorbereidingshandelingen zijn NIET strafbaar?\n(a) Loods huren ter voorbereiding van verduistering.\n(b) Auto huren ter voorbereiding van een roofoverval.\n(c) Plattegrond maken voor gewapende bankoverval.\n(d) Gedetailleerde plattegrond van een verzekeringsmaatschappij thuis hebben.",opts:["(a) en (b)", "(b) en (c)", "(c) en (d)", "(a) en (d)"],ans:3,exp:"Voorbereidingshandelingen zijn alleen strafbaar bij misdrijven met een maximum van 8 jaar of meer. Verduistering (a) en het bezit van een plattegrond zonder concreet plan (d) halen die drempel niet. Roofoverval (b) en gewapende bankroof (c) hebben wel een maximum van 8 jaar of meer."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een man pakt een portemonnee uit iemands jaszak terwijl zijn maat de eigenaar 'per ongeluk' afleidt. Waarvan is hier sprake?",opts:["Plegen", "Medeplegen", "Doen plegen", "Uitlokken"],ans:1,exp:"Dit is medeplegen: twee personen werken bewust en nauw samen bij het uitvoeren van het strafbare feit. Beiden zijn volledig dader."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een medewerker verkoopt melk aangelengd met water, zonder dat hij dit weet. Zijn baas mengt de melk stiekem. Waarvan is hier sprake?",opts:["Plegen", "Medeplegen", "Doen plegen", "Uitlokken"],ans:2,exp:"Dit is doen plegen: de baas laat de medewerker een strafbaar feit uitvoeren terwijl de medewerker zelf niet strafbaar is (hij wist van niets). De baas is de dader."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Medeplichtigheid aan een overtreding is:",opts:["Wel strafbaar", "Niet strafbaar", "Soms strafbaar", "Alleen strafbaar als de overtreding bewust werd geholpen"],ans:1,exp:"Medeplichtigheid aan een overtreding is niet strafbaar. Medeplichtigheid is alleen strafbaar bij misdrijven (art. 48 WvSr)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke ondernemingsvorm valt NIET onder rechtspersonen als bedoeld in artikel 51 WvSr?",opts:["Vennootschap onder firma", "Stichting", "Naamloze vennootschap", "Eenmanszaak"],ans:3,exp:"De eenmanszaak is geen rechtspersoon en valt daarmee niet onder art. 51 WvSr. De eigenaar van een eenmanszaak is persoonlijk aansprakelijk en wordt zelf strafrechtelijk vervolgd."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Strafuitsluitingsgronden zijn verdeeld in rechtvaardigingsgronden en schulduitsluitingsgronden. In welk geval spreken we van een rechtvaardigingsgrond?",opts:["Noodweerexces", "Noodweer", "Ontoerekenbaarheid", "Psychische overmacht"],ans:1,exp:"Noodweer (art. 41 lid 1 Sr) is een rechtvaardigingsgrond: het feit is begaan maar het was gerechtvaardigd. Noodweerexces, ontoerekenbaarheid en psychische overmacht zijn schulduitsluitingsgronden: het feit is wederrechtelijk maar de dader treft geen verwijt."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving voor 'een zo heftige, van buiten komende druk dat de dader daaraan redelijkerwijs geen weerstand kan bieden'?",opts:["Avas", "Ontoerekenbaarheid", "Overmacht als noodtoestand", "Psychische overmacht"],ans:3,exp:"Dit is de omschrijving van psychische overmacht: de dader wordt van buitenaf zodanig onder druk gezet dat hij redelijkerwijs niet anders kon handelen. De druk komt van buiten (bijv. een bedreiging)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is eendaadse samenloop?",opts:["Dat is als \u00e9\u00e9n handeling onder meer strafbepalingen valt.", "Dat is als een dader, nadat hij is veroordeeld, opnieuw een strafbaar feit pleegt.", "Dat is als iemand een aantal strafbare feiten pleegt die in \u00e9\u00e9n keer berecht worden.", "Dat is als een persoon twee of meer gelijksoortige strafbare feiten pleegt die duidelijk met elkaar in verband staan."],ans:0,exp:"Eendaadse samenloop: \u00e9\u00e9n handeling valt onder meerdere strafbepalingen tegelijk (bijv. iemand rijdt dronken, zonder rijbewijs en door rood)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is meerdaadse samenloop?",opts:["Dat is als \u00e9\u00e9n handeling onder meer strafbepalingen valt.", "Dat is als een dader, nadat hij is veroordeeld, opnieuw een strafbaar feit pleegt.", "Dat is als iemand een aantal strafbare feiten pleegt die in \u00e9\u00e9n keer berecht worden.", "Dat is als een persoon twee of meer gelijksoortige strafbare feiten pleegt die duidelijk met elkaar in verband staan."],ans:2,exp:"Meerdaadse samenloop: iemand heeft meerdere (verschillende) strafbare feiten gepleegd die in \u00e9\u00e9n zitting worden berecht."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een dader levert op \u00e9\u00e9n dag op vijf adressen in totaal meer dan 30 gram hasj af. Waarvan is hier sprake?",opts:["Herhaling", "Meerdaadse samenloop", "Voortgezette handeling", "Eendaadse samenloop"],ans:2,exp:"Dit is een voortgezette handeling (art. 56 WvSr): meerdere gelijksoortige feiten op basis van \u00e9\u00e9n wilsbesluit, die als \u00e9\u00e9n delict worden berecht met maximaal het hoogste strafmaximum van de afzonderlijke feiten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de definitie van een klacht (klachtdelict)?",opts:["Een aangifte met de plicht om te vervolgen", "De plicht om een verzoek te vervolgen", "Een aangifte met het verzoek om te vervolgen", "Het verzoek om een aangifte te vervolgen"],ans:2,exp:"Een klacht is een aangifte met het verzoek om te vervolgen. Zonder deze klacht mag het OM bij klachtdelicten niet vervolgen, ook al weet het van het feit."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Er zijn twee soorten klachtdelicten. Welke zijn dat?",opts:["Absolute en beroepsmatige klachtdelicten", "Eenvoudige en lasterlijke klachtdelicten", "Relatieve en beroepsmatige klachtdelicten", "Absolute en relatieve klachtdelicten"],ans:3,exp:"Er zijn absolute klachtdelicten (vervolging alleen als er een klacht is, ongeacht de relatie tussen dader en slachtoffer) en relatieve klachtdelicten (afhankelijk van de relatie, bijv. familieleden)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke termijn geldt voor het indienen van een klacht bij een klachtdelict?",opts:["Acht dagen", "Een maand", "Twee maanden", "Drie maanden"],ans:3,exp:"Voor het indienen van een klacht geldt een termijn van drie maanden. Na die drie maanden vervalt het recht om een klacht in te dienen en kan er niet meer vervolgd worden."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Welke omstandigheid wordt NIET gezien als verzwarend bij diefstal?",opts:["Diefstal bij gelegenheid van oproer.", "Inbraak in een woning.", "Diefstal uit een woning waar de dief te gast is.", "Diefstal met een valse sleutel."],ans:2,exp:"Diefstal in een woning door iemand die er door de rechthebbende zelf is uitgenodigd, is geen verzwarende omstandigheid. De andere opties zijn w\u00e9l verzwarend (art. 311 Sr)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Artikel 312 WvSr stelt strafbaar diefstal door middel van geweld. Wat valt hier precies onder?",opts:["Diefstal door middel van geweld of bedreiging met geweld tegen personen.", "Diefstal door middel van of voorafgegaan door geweld.", "Diefstal voorafgegaan, vergezeld of gevolgd door geweld.", "Diefstal voorafgegaan, vergezeld of gevolgd door geweld of bedreiging met geweld tegen personen."],ans:3,exp:"Art. 312 Sr: diefstal voorafgegaan, vergezeld of gevolgd door geweld of bedreiging met geweld tegen personen. Alle drie tijdsmomenten (voor, tijdens, na) zijn gedekt."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Sleutelbegrip in artikel 312 WvSr is geweld. Wat valt NIET onder geweld als bedoeld in artikel 312 WvSr?",opts:["Geweld gericht tegen \u00e9\u00e9n of meer personen.", "Het dreigen met geweld.", "Het brengen in een staat van bewusteloosheid.", "Het met geweld intrappen van een deur."],ans:3,exp:"Artikel 312 WvSr spreekt uitsluitend over geweld of bedreiging tegen personen. Het intrappen van een deur is geweld tegen een zaak, niet tegen een persoon, en valt daarom niet onder dit artikel."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welk geval is diefstal of stroperij vervolgbaar ook zonder klacht?",opts:["Als twee mensen een geregistreerd partnerschap hebben.", "Als de echtgenoten gescheiden zijn van tafel en bed.", "Als een kleinzoon zijn opa heeft bestolen (bloedverwanten in de rechte lijn).", "Als een zus haar broer heeft bestolen (bloedverwanten in de zijlijn)."],ans:1,exp:"Diefstal en stroperij zijn strafrechtelijk vervolgbaar zonder klacht als de betrokkenen gescheiden zijn van tafel en bed. In de andere gevallen (geregistreerd partnerschap, bloedverwanten) geldt het klachtvereiste."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is GEEN vermogensdelict?",opts:["Flessentrekkerij", "Afdreiging", "Inklimming", "Verduistering"],ans:2,exp:"Inklimming is een techniek om ergens in te komen (een middel), geen zelfstandig vermogensdelict. Flessentrekkerij, afdreiging en verduistering zijn alle drie vermogensdelicten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Twee mannen dringen een winkel binnen, houden de winkelier onder schot en dwingen hem zijn geld af te geven. Waarvan is hier sprake?",opts:["Diefstal", "Afdreiging", "Oplichting", "Afpersing"],ans:3,exp:"Dit is afpersing (art. 317 Sr): door geweld of bedreiging wordt het slachtoffer gedwongen zelf iets af te geven. Bij diefstal neemt de dader het zelf weg; bij afpersing geeft het slachtoffer het zelf af onder dwang."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is GEEN doel van afpersing?",opts:["Het tenietdoen van een schuld", "Het tenietdoen van een inschuld", "Het aangaan van een schuld", "De afgifte van een goed"],ans:0,exp:"Het tenietdoen van een schuld is geen doel van afpersing. Afpersing richt zich op de afgifte van goederen, het aangaan van schulden of het tenietdoen van inschulden (vorderingen op de afperser)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt afdreiging NIET in?",opts:["Smaad", "Afpersing", "Chantage", "Openbaarmaking van een geheim"],ans:1,exp:"Afdreiging (art. 318 Sr) betreft het dreigen met smaad, chantage of openbaarmaking van een geheim om iemand iets af te dwingen. Afpersing is een apart delict waarbij geweld of bedreiging daarmee wordt gebruikt."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is het kenmerkende verschil tussen diefstal en verduistering?",opts:["Opzettelijk", "Enig goed dat geheel of ten dele aan een ander toebehoort.", "Anders dan door misdrijf onder zich hebben.", "Wederrechtelijk"],ans:2,exp:"Het kenmerkende verschil is 'anders dan door misdrijf onder zich hebben': bij verduistering heeft de dader het goed eerst rechtmatig verkregen (bijv. als huurder of werknemer) en gedraagt hij zich daarna als eigenaar."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is GEEN middel om iemand op te lichten?",opts:["Een leugentje om bestwil.", "Een valse naam aannemen.", "Listige kunstgrepen toepassen.", "Een valse functie of positie aannemen."],ans:0,exp:"Bij oplichting (art. 326 Sr) moet sprake zijn van een samenweefsel van verdichtsels \u2014 meer dan \u00e9\u00e9n leugen of misleidingshandeling. Een enkele kleine leugen ('leugentje om bestwil') is onvoldoende."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt flessentrekkerij in?",opts:["Het stelen van goederen door geweld te gebruiken.", "Iemand onder dwang zijn goederen laten afstaan.", "In de supermarkt lege flessen inleveren zonder ze gekocht te hebben.", "Het een beroep of gewoonte maken van het kopen van goederen zonder deze (volledig) te betalen."],ans:3,exp:"Flessentrekkerij (art. 326a Sr) is het er een beroep of gewoonte van maken om goederen of diensten af te nemen zonder ze (volledig) te betalen, met het opzet om niet te betalen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welke titel van het Wetboek van Strafrecht is heling te vinden?",opts:["Afpersing en afdreiging (Titel 23)", "Bedrog (Titel 25)", "Begunstiging (Titel 30)", "Witwassen (Titel 30A)"],ans:2,exp:"Heling is te vinden in Titel 30 'Begunstiging' van het WvSr. Naast heling valt ook witwassen (Titel 30A) onder verwante vermogensdelicten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Het strafrecht kent drie soorten heling. Welke soort is GEEN strafbepaling in het WvSr?",opts:["Afzetheling", "Gewoonteheling", "Opzetheling", "Schuldheling"],ans:0,exp:"Afzetheling bestaat niet als strafbepaling in het WvSr. De drie vormen van heling zijn: opzetheling (art. 416 Sr), schuldheling (art. 417bis Sr) en gewoonteheling (art. 417 Sr)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat geldt voor alle helingdelicten?",opts:["De goederen zijn afkomstig van een overtreding", "De goederen zijn afkomstig van een misdrijf", "De goederen zijn nooit door de dader zelf door misdrijf verkregen", "De goederen zijn altijd tweedehands"],ans:1,exp:"Voor alle helingdelicten geldt dat de goederen afkomstig zijn van een misdrijf. Goederen afkomstig van een overtreding kunnen niet worden geheeld in de zin van de wet."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat wordt bedoeld met 'ongeregelde goederen' in de administratieplicht voor handelaren?",opts:["Tweedehands goederen", "Gestolen goederen", "Nieuwe goederen", "Partijverkoop"],ans:3,exp:"Met 'ongeregelde goederen' wordt partijverkoop bedoeld: goederen die in grote hoeveelheden en met korting worden verkocht, vaak zonder duidelijke herkomst. Handelaren moeten hiervan administratie bijhouden."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is het juiste woord voor het binnendringen in kantoren van de overheid?",opts:["Huisvredebreuk", "Lokaalvredebreuk", "Ambtelijke huisvredebreuk", "Computervredebreuk"],ans:1,exp:"Lokaalvredebreuk (art. 139 Sr) ziet op het wederrechtelijk binnendringen of verblijven in voor de openbare dienst bestemde lokalen, zoals overheidskantoren of rechtbanken."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is het juiste woord voor het binnendringen van een woning door een politiefunctionaris die daartoe niet bevoegd is?",opts:["Huisvredebreuk", "Lokaalvredebreuk", "Ambtelijke huisvredebreuk", "Computervredebreuk"],ans:2,exp:"Ambtelijke huisvredebreuk (art. 370 Sr): een ambtenaar (zoals een agent) die een woning betreedt met overschrijding van zijn bevoegdheid of zonder de wettelijk voorgeschreven vormen in acht te nemen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"In welk artikel staat het verbod om aanwezig te zijn op de grond van een ander terwijl duidelijk is dat die ander dat niet wil?",opts:["Artikel 461 WvSr", "Artikel 138 WvSr", "Artikel 370 WvSr", "Dat staat niet in het Wetboek van Strafrecht"],ans:0,exp:"De bekende 'verboden toegang'-bepaling staat in art. 461 WvSr. Dit betreft het betreden van andermans grond terwijl duidelijk is dat de rechthebbende dat niet wil (bijv. via een bord of omheining)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat wordt NIET verstaan onder vernieling?",opts:["Wegmaken van een goed", "Doorverkopen van een goed", "Beschadigen van een goed", "Onbruikbaar maken van een goed"],ans:1,exp:"Doorverkopen van een goed valt niet onder vernieling. Vernieling (art. 350 Sr) betreft het opzettelijk en wederrechtelijk beschadigen, wegmaken of onbruikbaar maken van een goed dat aan een ander toebehoort."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat zijn werken van openbaar nut?",opts:["Zaken die nuttig zijn voor alle bewoners van een gemeente", "Openbare zaken waar burgers gebruik van kunnen maken", "Gebouwen met een hoge waarde", "Zaken waarvan we als samenleving allemaal afhankelijk zijn, zoals waterleiding"],ans:3,exp:"Werken van openbaar nut zijn zaken waarvan de samenleving als geheel afhankelijk is, zoals waterleidingen, elektriciteitsnetten, rioleringen en wegen. Vernieling hiervan is zwaarder bestraft."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is opruiing?",opts:["Een ontploffing teweegbrengen", "Het beschadigen van goederen van een ander", "Het aanzetten tot iets ongeoorloofds", "Baldadigheid"],ans:2,exp:"Opruiing (art. 131 Sr) is een ander in het openbaar aanzetten tot het plegen van een strafbaar feit of tot gewelddadig optreden tegen het openbaar gezag. Denk aan het publiekelijk oproepen tot rellen."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Is het omkopen van een ambtenaar door middel van een gift of een belofte strafbaar?",opts:["Nee, alleen als hij iets onrechtmatigs voor de dader gaat doen.", "Nee, alleen als hij steekpenningen aanneemt.", "Ja, dat is altijd strafbaar.", "Ja, mits de ambtenaar daadwerkelijk wordt beloond."],ans:2,exp:"Het omkopen van een ambtenaar (art. 177 Sr) is altijd strafbaar, ongeacht of de ambtenaar iets onrechtmatigs doet of niet. Ook wanneer het gaat om een handeling die de ambtenaar sowieso zou mogen uitvoeren, is de gift of belofte strafbaar."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat wordt in artikel 177 WvSr bedoeld met 'in zijn bediening'?",opts:["Een gift of belofte doen.", "Een dienst verlenen of aanbieden.", "Iets vragen aan een ambtenaar wat in strijd is met zijn plicht.", "Iets vragen waartoe de ambtenaar door zijn functie in staat is."],ans:3,exp:"'In zijn bediening' betekent: iets vragen waartoe de ambtenaar door zijn functie in staat is. Het hoeft dus niet in strijd te zijn met zijn plicht \u2014 ook voor reguliere handelingen is een gift strafbaar."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een vrouw biedt een gemeenteambtenaar \u20ac50 om grof vuil die dag op te halen in plaats van na twee weken wachten. De ambtenaar neemt het geld aan en haalt het vuil op. Wie pleegt een strafbaar feit?",opts:["De vrouw", "De gemeenteambtenaar", "Zowel de vrouw als de gemeenteambtenaar", "Geen van beiden"],ans:2,exp:"Beiden plegen een strafbaar feit. De vrouw valt onder art. 177a Sr (actieve omkoping voor een handeling die niet in strijd is met de plicht). De gemeenteambtenaar valt onder art. 362 Sr (passieve omkoping). Het feit dat de handeling op zichzelf geoorloofd is, maakt de gift niet legaal."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat houdt wederspannigheid in?",opts:["Daders die met geweld of door dreigen met geweld zich verzetten tegen ambtenaren die rechtmatig werkzaam zijn.", "Daders die een ander op het idee brengen om een strafbaar feit te gaan plegen.", "Het kopen van goederen zonder (volledig) te betalen.", "Het opzettelijk aantasten van de goede naam of eer van een persoon."],ans:0,exp:"Wederspannigheid (art. 180 Sr): met geweld of bedreiging daarmee verzet plegen tegen ambtenaren die een rechtmatige taak uitvoeren. Het geweld of de bedreiging is het kenmerk dat het onderscheidt van simpel niet meewerken (art. 184 Sr)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"De vriend van een verdachte verstopt goederen voor de politie terwijl de politie naar die goederen op zoek is. Waarvan is hier sprake?",opts:["Medeplichtigheid", "Wederspannigheid", "Belemmering", "Uitlokken"],ans:2,exp:"Dit is belemmering (art. 189 Sr): het opzettelijk verbergen of helpen onttrekken van personen of voorwerpen aan het onderzoek van de politie. Het gaat om het actief dwarsbomen van een rechtmatig politieonderzoek."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Twee jongens steken zonder aanleiding hun middelvinger op naar een agent en roepen scheldwoorden. Welk strafbaar feit plegen ze?",opts:["Smaad", "Laster", "Belediging", "Ze plegen geen strafbaar feit."],ans:2,exp:"De jongens plegen belediging (art. 266 Sr): het opzettelijk beledigen van een persoon. Het richten op een ambtenaar in functie kan leiden tot toepassing van art. 267 Sr (belediging van een ambtenaar)."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Hoe noemen we het als de dader een valse aangifte indient bij de overheid?",opts:["Smaad", "Laster", "Lasterlijke aanklacht", "Belediging"],ans:2,exp:"Een lasterlijke aanklacht (art. 268 Sr) is het opzettelijk bij een ambtenaar of instantie indienen van een valse klacht of aangifte gericht op een bepaald persoon, met het doel hem in een strafrechtelijke vervolging te betrekken."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is beroepsmatige discriminatie?",opts:["Een dader die in de uitoefening van zijn ambt zich opzettelijk beledigend uitlaat op grond van ras.", "Een dader die in de uitoefening van zijn ambt zich opzettelijk beledigend uitlaat op grond van seksuele gerichtheid.", "Een dader die in de uitoefening van zijn ambt zich opzettelijk beledigend uitlaat op grond van godsdienst.", "Een dader die in de uitoefening van zijn ambt zich opzettelijk beledigend uitlaat op grond van lichamelijke handicap."],ans:0,exp:"Beroepsmatige discriminatie (art. 137g Sr) is discriminatie op grond van ras tijdens de uitoefening van een beroep of ambt. Het specifiek benoemen van 'ras' is het kenmerkende criterium bij dit delict."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving van moord?",opts:["Het doden door nalatig gedrag van de dader.", "Het toebrengen van lichamelijk letsel.", "Het opzettelijk doden van een ander.", "Het opzettelijk doden van een ander met voorbedachten rade."],ans:3,exp:"Moord (art. 289 Sr) is het opzettelijk doden van een ander met voorbedachten rade. Het verschil met doodslag (art. 287 Sr): bij moord is er vooraf nagedacht over het doden. Strafmaximum moord: levenslang."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is de juiste omschrijving van kindermoord?",opts:["De vader doodt het kind bij of kort na de geboorte om te voorkomen dat men kennis krijgt van de bevalling.", "De moeder doodt het kind bij of kort na de geboorte om te voorkomen dat men kennis krijgt van de bevalling.", "De moeder doodt het kind voor de bevalling om te voorkomen dat men kennis krijgt van de bevalling.", "De vader doodt het kind in het eerste levensjaar om te voorkomen dat men kennis krijgt van de bevalling."],ans:1,exp:"Kindermoord (art. 291 Sr): de moeder doodt haar kind bij of kort na de geboorte om de bevalling geheim te houden. Het is een verzwaring van kinderdoodslag (art. 290 Sr) bij voorbedachte rade."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een restauranthouder neemt nauwelijks brandveiligheidsmaatregelen en de nooduitgang is geblokkeerd. Er breekt brand uit en er vallen doden. Wat valt de restauranthouder te verwijten?",opts:["Doodslag", "Moord", "Zware mishandeling", "Dood of zwaar lichamelijk letsel door schuld"],ans:3,exp:"Dood of zwaar lichamelijk letsel door schuld (art. 307/308 Sr): de restauranthouder heeft door onachtzaamheid of nalatigheid de dood veroorzaakt. Er is geen opzet op het doden, maar wel een verwijtbare gedraging."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Hoe wordt het genoemd als een volwassen persoon via internet minderjarigen benadert en ontmoetingen voorstelt met als doel seksuele handelingen of het vervaardigen van kinderpornomateriaal?",opts:["Aanranding", "Chatten", "Grooming", "Jeugdprostitutie"],ans:2,exp:"Dit wordt grooming (art. 248e Sr) genoemd: het via internet benaderen van minderjarigen (onder 16 jaar) met als doel een ontmoeting voor seksuele doeleinden te arrangeren."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Een man dreigt gif in sinaasappelsap te mengen tenzij de eigenaar Turkse producten schrapt. Welk strafbaar feit pleegt de briefschrijver?",opts:["Bedreiging", "Belaging", "Dwang", "Er wordt geen strafbaar feit gepleegd."],ans:2,exp:"Dit is dwang (art. 284 Sr): iemand door bedreiging of geweld dwingen iets te doen, te laten of te dulden. De eigenaar wordt gedwongen zijn assortiment te wijzigen. Bij bedreiging (art. 285 Sr) is het doel het inboezemen van vrees, niet het afdwingen van een handeling."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Wat is een ander woord voor stalking?",opts:["Belaging", "Bedreiging", "Dwang", "Verleiding"],ans:0,exp:"Stalking wordt in het WvSr belaging (art. 285b Sr) genoemd: wederrechtelijk stelselmatig inbreuk maken op de persoonlijke levenssfeer van een ander met het doel die ander te dwingen iets te doen, te dulden of te laten."},
+{cat:"S&DK Boek 1",art:"",lvl:"K",text:"Vanaf welke leeftijd geldt de algemene identificatieplicht (ingevoerd op 1 januari 2005)?",opts:["Vanaf 10 jaar", "Vanaf 12 jaar", "Vanaf 14 jaar", "Vanaf 16 jaar"],ans:2,exp:"De algemene identificatieplicht geldt vanaf 14 jaar. Jongeren onder de 14 hoeven op vordering van de politie geen identiteitsbewijs te tonen."}
 ];
 
-// ---- Shuffle ----
-function shuffle(arr){
-  const a=[...arr];
-  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-
-// ---- State ----
-// deck: array of {qIdx, optOrder, streak}
-// streak = how many consecutive correct answers for this card in current session
-// answers: {deckPos: {displayedOpt, wasCorrect}} - only last answer per position
-let deck=[], answers={}, reviewed=false, filterCat='Alles', randomMode=true;
-let cur=0;
+// ── SHUFFLE ──
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
 const cats=[...new Set(Q.map(q=>q.cat))];
 
+// ── STATE ──
+const SK='psi2026v4';
+let filterCat='Alles', randomMode=true, qLimit=0;
+let deck=[], answers={}, reviewed=false, cur=0;
+// multiselect pending: set of displayPos selected before submit
+let multiPending=new Set();
+
 function buildDeck(){
-  const base=filterCat==='Alles'?Q.map((_,i)=>i):Q.map((_,i)=>i).filter(i=>Q[i].cat===filterCat);
-  const cards=base.map(qIdx=>({qIdx, optOrder:Q[qIdx].opts.map((_,i)=>i), streak:0}));
-  if(randomMode){
-    const shuffled=shuffle(cards);
-    return shuffled.map(c=>({...c, optOrder:shuffle(c.optOrder)}));
-  }
+  let base=filterCat==='Alles'?Q.map((_,i)=>i):Q.map((_,i)=>i).filter(i=>Q[i].cat===filterCat);
+  let cards=base.map(qIdx=>({qIdx,optOrder:shuffle(Q[qIdx].opts.map((_,i)=>i)),streak:0}));
+  if(randomMode) cards=shuffle(cards).map(c=>({...c,optOrder:shuffle(c.optOrder)}));
+  if(qLimit>0&&qLimit<cards.length) cards=cards.slice(0,qLimit);
   return cards;
 }
 
-function initSession(){
-  deck=buildDeck();
-  answers={};
-  reviewed=false;
-  cur=0;
-}
+function initSession(){deck=buildDeck();answers={};reviewed=false;cur=0;multiPending=new Set()}
 
-initSession();
-
-// Spaced repetition: after answering, if wrong -> queue the card 2 more times (needs 2 correct in a row)
-// We expand the deck dynamically
 function expandDeck(pos){
   const item=deck[pos];
-  // Insert 2 copies after a gap (within next 3-6 cards or at end if near end)
-  const insertAt1=Math.min(pos+3, deck.length);
-  const insertAt2=Math.min(pos+6, deck.length+1);
-  const clone1={qIdx:item.qIdx, optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)), streak:0, retryOf:pos};
-  const clone2={qIdx:item.qIdx, optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)), streak:0, retryOf:pos};
-  deck.splice(insertAt1, 0, clone1);
-  deck.splice(insertAt2+1, 0, clone2);
+  const i1=Math.min(pos+3,deck.length),i2=Math.min(pos+6,deck.length+1);
+  deck.splice(i1,0,{qIdx:item.qIdx,optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)),streak:0,retryOf:pos});
+  deck.splice(i2+1,0,{qIdx:item.qIdx,optOrder:shuffle(Q[item.qIdx].opts.map((_,i)=>i)),streak:0,retryOf:pos});
 }
 
-function totalAnswered(){return Object.keys(answers).length;}
-function totalCards(){return deck.length;}
-function countCorrect(){
-  return Object.values(answers).filter(a=>a.wasCorrect).length;
-}
-// Original questions answered correctly (not retries)
-function origCorrect(){
-  const orig=deck.map((d,i)=>({d,i})).filter(({d})=>!d.retryOf);
-  return orig.filter(({i})=>answers[i]&&answers[i].wasCorrect).length;
-}
-function origTotal(){return deck.filter(d=>!d.retryOf).length;}
+function origCorrect(){return deck.map((d,i)=>({d,i})).filter(({d})=>!d.retryOf).filter(({i})=>answers[i]&&answers[i].wasCorrect).length}
+function origTotal(){return deck.filter(d=>!d.retryOf).length}
 
-function isDone(){
-  // All original cards answered correctly at least once AND no pending retries ahead of cur
-  const pending=deck.slice(cur+1).some((d,i)=>!answers[cur+1+i]);
-  const curAnswered=answers[cur]!==undefined;
-  return curAnswered && !pending && cur===deck.length-1;
+// ── LOCALSTORAGE ──
+function saveState(){
+  try{localStorage.setItem(SK,JSON.stringify({answers,cur,filterCat,randomMode,qLimit}))}catch(e){}
+}
+function loadState(){
+  try{
+    const sv=JSON.parse(localStorage.getItem(SK)||'{}');
+    if(sv.answers&&Object.keys(sv.answers).length>0){
+      filterCat=sv.filterCat||'Alles';
+      randomMode=sv.randomMode!==undefined?sv.randomMode:true;
+      qLimit=sv.qLimit||0;
+      initSession();
+      answers=sv.answers;
+      cur=Math.min(sv.cur||0,deck.length-1);
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function wipeProgress(){
+  if(!confirm('Alle opgeslagen voortgang wissen?'))return;
+  try{localStorage.removeItem(SK)}catch(e){}
+  initSession();saveState();closeSettings();render();
 }
 
+// ── SETTINGS ──
+function openSettings(){
+  buildSettingsUI();
+  document.getElementById('settings-overlay').classList.add('open');
+}
+function closeSettings(){document.getElementById('settings-overlay').classList.remove('open')}
+
+function buildSettingsUI(){
+  // Mode buttons
+  const mr=document.getElementById('s-mode-row');
+  mr.innerHTML='';
+  [['🔀 Willekeurig',true],['📋 Op volgorde',false]].forEach(([lbl,val])=>{
+    const b=document.createElement('button');
+    b.className='s-btn'+(randomMode===val?' active':'');
+    b.textContent=lbl;
+    b.onclick=()=>{randomMode=val;buildSettingsUI()};
+    mr.appendChild(b);
+  });
+  // Cat buttons
+  const cr=document.getElementById('s-cat-row');
+  cr.innerHTML='';
+  ['Alles',...cats].forEach(c=>{
+    const b=document.createElement('button');
+    b.className='s-btn'+(filterCat===c?' active':'');
+    b.textContent=c;
+    b.onclick=()=>{filterCat=c;buildSettingsUI()};
+    cr.appendChild(b);
+  });
+  // Count info
+  const pool=filterCat==='Alles'?Q.length:Q.filter(q=>q.cat===filterCat).length;
+  const act=qLimit&&qLimit<pool?qLimit:pool;
+  document.getElementById('s-count-info').textContent=`Actief: ${act} van ${pool} vragen`;
+  const inp=document.getElementById('s-n');
+  inp.max=pool; inp.value=act;
+}
+
+function applySettings(){
+  const pool=filterCat==='Alles'?Q.length:Q.filter(q=>q.cat===filterCat).length;
+  let n=parseInt(document.getElementById('s-n').value);
+  if(isNaN(n)||n<1)n=1; if(n>pool)n=pool;
+  if(Object.keys(answers).length>0&&!confirm('Instellingen toepassen wist je voortgang. Doorgaan?'))return;
+  qLimit=n===pool?0:n;
+  initSession();saveState();closeSettings();render();
+}
+function resetLimit(){
+  if(Object.keys(answers).length>0&&!confirm('Alle vragen tonen wist je voortgang. Doorgaan?'))return;
+  qLimit=0;
+  const pool=filterCat==='Alles'?Q.length:Q.filter(q=>q.cat===filterCat).length;
+  document.getElementById('s-n').value=pool;
+  initSession();saveState();closeSettings();render();
+}
+
+// ── MULTISELECT ──
+function toggleMulti(displayPos){
+  if(answers[cur]!==undefined)return;
+  if(multiPending.has(displayPos)) multiPending.delete(displayPos);
+  else multiPending.add(displayPos);
+  renderMultiState();
+}
+function renderMultiState(){
+  const item=deck[cur];
+  document.querySelectorAll('.opt').forEach((btn,displayPos)=>{
+    btn.classList.toggle('selected', multiPending.has(displayPos));
+  });
+  const sub=document.getElementById('multi-submit');
+  if(sub) sub.disabled=multiPending.size===0;
+}
+function submitMulti(){
+  if(answers[cur]!==undefined)return;
+  const item=deck[cur];
+  const q=Q[item.qIdx];
+  const correctOrigIdxs=Array.isArray(q.ans)?q.ans:[];
+  // map display positions to original indices
+  const selectedOrig=Array.from(multiPending).map(dp=>item.optOrder[dp]).sort((a,b)=>a-b);
+  const correctSorted=[...correctOrigIdxs].sort((a,b)=>a-b);
+  const wasCorrect=JSON.stringify(selectedOrig)===JSON.stringify(correctSorted);
+  answers[cur]={multiSelected:Array.from(multiPending),wasCorrect};
+  if(!wasCorrect) expandDeck(cur);
+  multiPending=new Set();
+  saveState();render();
+}
+
+// ── RENDER ──
 function render(){
   const m=document.getElementById('main');
-  if(reviewed){renderResults(m);return;}
+  if(reviewed){renderResults(m);return}
+  multiPending=new Set();
+
   const total=deck.length;
-  const answered=totalAnswered();
-  const prog=Math.min(answered/Math.max(origTotal(),1)*100, 100);
+  const prog=Math.min(Object.keys(answers).length/Math.max(origTotal(),1)*100,100);
   const item=deck[cur];
   const q=Q[item.qIdx];
   const ans=answers[cur];
   const done=ans!==undefined;
-  const givenDisplay=done?ans.displayedOpt:undefined;
-  const givenOrig=done?item.optOrder[givenDisplay]:undefined;
   const isRetry=!!item.retryOf;
+  const isMulti=!!q.multi;
+
+  // Build options HTML
+  let optsHtml='';
+  const letters='ABCDEF';
+  item.optOrder.forEach((origIdx,displayPos)=>{
+    const optText=q.opts[origIdx];
+    let cls='opt';
+    if(done){
+      if(isMulti){
+        const correctOrig=Array.isArray(q.ans)?q.ans:[];
+        const isCorrectOpt=correctOrig.includes(origIdx);
+        const wasChosen=ans.multiSelected&&ans.multiSelected.includes(displayPos);
+        if(isCorrectOpt&&wasChosen) cls+=' correct';
+        else if(isCorrectOpt&&!wasChosen) cls+=' missed'; // should have picked
+        else if(!isCorrectOpt&&wasChosen) cls+=' wrong';
+      } else {
+        const isCorrect=origIdx===q.ans;
+        const isChosen=ans.displayedOpt===displayPos;
+        if(isCorrect) cls+=' correct';
+        else if(isChosen&&!isCorrect) cls+=' wrong';
+      }
+    }
+    const clickHandler=isMulti&&!done?`onclick="toggleMulti(${displayPos})"`
+                       :!done?`onclick="pick(${displayPos})"`:``;
+    optsHtml+=`<button class="${cls}" ${done?'disabled':''} ${clickHandler}><span class="opt-letter">${letters[displayPos]}</span><span>${optText}</span></button>`;
+  });
+
+  // feedback
+  let feedbackHtml='';
+  if(done){
+    const label=ans.wasCorrect?'Correct!':'Helaas.';
+    const cls=ans.wasCorrect?'correct':'wrong';
+    const retryNote=!ans.wasCorrect?'<br><br><em style="font-size:12px">Deze vraag komt nog twee keer terug.</em>':'';
+    feedbackHtml=`<div class="feedback ${cls}"><strong>${label}</strong> ${q.exp}${retryNote}</div>`;
+  }
+
+  // multiselect submit button
+  const multiSubmitHtml=isMulti&&!done?`<button class="multi-submit" id="multi-submit" disabled onclick="submitMulti()">Antwoord bevestigen</button>`:'';
+
+  // casus
+  const casusTekst=q.casus?`<div class="q-casus">${q.casus.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`:'';
+
+  // meta: cat tag + level + retry, NO art text
+  const metaHtml=`<div class="q-meta">
+    <span class="q-tag">${q.cat}</span>
+    <span class="q-level ${q.lvl}">${q.lvl==='K'?'Kennis':q.lvl==='B'?'Begrip':'Toepassing'}</span>
+    ${isMulti?'<span class="q-multi-hint">⚠️ Meerdere antwoorden mogelijk</span>':''}
+    ${isRetry?'<span style="background:#faeeda;color:#633806;border-radius:4px;padding:2px 7px;font-size:11px">↩ Herkansing</span>':''}
+    <span style="color:#888780;font-size:11px;margin-left:auto">Kaart ${cur+1}/${total}</span>
+  </div>`;
 
   m.innerHTML=`
 <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${prog.toFixed(1)}%"></div></div>
-<div class="stats">
-  <div class="stat"><div class="stat-num">${origCorrect()}/${origTotal()}</div><div class="stat-lbl">Goed (origineel)</div></div>
-  <div class="stat"><div class="stat-num">${Math.round(prog)}%</div><div class="stat-lbl">Voortgang</div></div>
-  <div class="stat"><div class="stat-num">${deck.length-origTotal()}</div><div class="stat-lbl">Herkansingen</div></div>
-  <div class="stat"><div class="stat-num">${cur+1}/${total}</div><div class="stat-lbl">Kaart</div></div>
-</div>
-<div class="filter-bar">
-  <span style="font-size:12px;color:#888780;line-height:2;margin-right:4px">Volgorde:</span>
-  <button class="filter-btn${randomMode?' active':''}" onclick="setMode(true)">🔀 Willekeurig</button>
-  <button class="filter-btn${!randomMode?' active':''}" onclick="setMode(false)">📋 Op volgorde</button>
-  <span style="font-size:12px;color:#888780;line-height:2;margin-left:8px;margin-right:4px">Categorie:</span>
-  ${['Alles',...cats].map(c=>`<button class="filter-btn${filterCat===c?' active':''}" onclick="setFilter('${c}')">${c}</button>`).join('')}
-</div>
-<div class="q-nav">${deck.map((it,pos)=>{
+<div class="q-nav-wrap" id="q-nav-wrap"><div class="q-nav" id="q-nav">${deck.map((it,pos)=>{
   let cls='q-nav-btn';
-  if(pos===cur)cls+=' current';
-  else if(answers[pos]!==undefined){
-    cls+=answers[pos].wasCorrect?' c-right':' c-wrong';
-  }
+  if(pos===cur) cls+=' current';
+  else if(answers[pos]!==undefined) cls+=answers[pos].wasCorrect?' c-right':' c-wrong';
   return `<button class="${cls}" onclick="goTo(${pos})">${pos+1}${it.retryOf!==undefined?'↩':''}</button>`;
-}).join('')}</div>
+}).join('')}</div></div>
 <div class="question-card">
-  <div class="q-meta">
-    <span class="q-tag">${q.cat}</span>
-    <span class="q-art">${q.art}</span>
-    <span class="q-level ${q.lvl}">${q.lvl==='K'?'Kennis':q.lvl==='B'?'Begrip':'Toepassing'}</span>
-    ${isRetry?`<span style="background:#faeeda;color:#633806;border-radius:4px;padding:2px 7px;font-size:11px">↩ Herkansing</span>`:''}
-    <span style="color:#888780;font-size:11px">Kaart ${cur+1}/${total}</span>
-  </div>
+  ${metaHtml}
+  ${casusTekst}
   <div class="q-text">${q.text}</div>
-  <div class="options">${item.optOrder.map((origIdx,displayPos)=>{
-    const optText=q.opts[origIdx];
-    const isCorrect=origIdx===q.ans;
-    const isChosen=givenDisplay===displayPos;
-    let cls='opt';
-    if(done){
-      if(isCorrect)cls+=' correct';
-      else if(isChosen&&!isCorrect)cls+=' wrong';
-    } else if(isChosen)cls+=' selected';
-    const ltr=['A','B','C','D'][displayPos];
-    return `<button class="${cls}" ${done?'disabled':''} onclick="pick(${displayPos})"><span class="opt-letter">${ltr}</span><span>${optText}</span></button>`;
-  }).join('')}</div>
-  ${done?`<div class="feedback ${ans.wasCorrect?'correct':'wrong'}">
-    <strong>${ans.wasCorrect?'Correct!':'Helaas.'}</strong> ${q.exp}
-    ${!ans.wasCorrect?`<br><br><em style="font-size:12px">Deze vraag komt nog twee keer terug — je moet hem twee keer achter elkaar goed hebben.</em>`:''}
-  </div>`:''}
+  <div class="options">${optsHtml}</div>
+  ${multiSubmitHtml}
+  ${feedbackHtml}
 </div>
 <div class="nav">
   ${cur>0?`<button class="nav-btn" onclick="goTo(${cur-1})">← Vorige</button>`:''}
   ${cur<deck.length-1?`<button class="nav-btn primary" onclick="goTo(${cur+1})">Volgende →</button>`:''}
-  ${(totalAnswered()>0&&cur===deck.length-1&&answers[cur]!==undefined)?`<button class="nav-btn primary" onclick="showResults()">Resultaten bekijken</button>`:''}
-  <button class="nav-btn" onclick="if(confirm('Alle antwoorden wissen en opnieuw beginnen?')){initSession();render();}" style="margin-left:auto;font-size:12px;color:#888780">Opnieuw</button>
-</div>`;
+  ${Object.keys(answers).length>0&&cur===deck.length-1&&answers[cur]!==undefined?`<button class="nav-btn primary" onclick="showResults()">Resultaten bekijken</button>`:''}
+  <button class="nav-btn" onclick="if(confirm('Alle antwoorden wissen?')){initSession();saveState();render()}" style="margin-left:auto;font-size:12px;color:#888780">↺ Opnieuw</button>
+</div>
+<div class="stats">
+  <div class="stat"><div class="stat-num">${origCorrect()}/${origTotal()}</div><div class="stat-lbl">Goed (origineel)</div></div>
+  <div class="stat"><div class="stat-num">${deck.length-origTotal()}</div><div class="stat-lbl">Herkansingen</div></div>
+  <div class="stat"><div class="stat-num">${cur+1}/${total}</div><div class="stat-lbl">Kaart</div></div>
+</div>
+<div class="footer-text">Alle artikelen uit de toetsmatrijs · Spaced repetition · Cesuur ≈ 55%</div>`;
+
+  // Auto-scroll current nav button into view
+  requestAnimationFrame(()=>{
+    const wrap=document.getElementById('q-nav-wrap');
+    const current=document.querySelector('.q-nav-btn.current');
+    if(wrap&&current){
+      const wLeft=wrap.getBoundingClientRect().left;
+      const wRight=wLeft+wrap.clientWidth;
+      const bLeft=current.getBoundingClientRect().left;
+      const bRight=current.getBoundingClientRect().right;
+      if(bLeft<wLeft+10||bRight>wRight-10){
+        current.scrollIntoView({inline:'nearest',block:'nearest'});
+      }
+    }
+  });
 }
 
 function renderResults(m){
   const orig=deck.filter(d=>!d.retryOf);
-  const origRight=orig.filter((d,i)=>{
-    const realI=deck.indexOf(d);
-    return answers[realI]&&answers[realI].wasCorrect;
-  }).length;
+  const origRight=orig.filter((d,i)=>{const ri=deck.indexOf(d);return answers[ri]&&answers[ri].wasCorrect}).length;
   const total=orig.length;
   const pct2=Math.round(origRight/total*100);
   const pass=pct2>=55;
@@ -337,7 +674,6 @@ function renderResults(m){
     catScores[c]={right,total:items.length};
   });
   const retryCount=deck.filter(d=>d.retryOf!==undefined).length;
-
   m.innerHTML=`
 <div class="result-card">
   <div class="result-score">${origRight}/${total}</div>
@@ -345,62 +681,67 @@ function renderResults(m){
   <div class="result-pass ${pass?'pass':'fail'}">${pass?'Geslaagd ✓':'Gezakt ✗'} — Cesuur: 55%</div>
   <p style="font-size:13px;color:#5f5e5a;margin-bottom:1rem">Herkansingen gemaakt: ${retryCount}</p>
   <div class="cat-results">${cats.map(c=>{
-    const cs=catScores[c];
-    if(!cs||cs.total===0)return '';
+    const cs=catScores[c];if(!cs||cs.total===0)return '';
     const cp=Math.round(cs.right/cs.total*100);
     return `<div class="cat-result"><div class="cat-result-name">${c}</div><div class="cat-result-score" style="color:${cp>=55?'#27500a':'#791f1f'}">${cs.right}/${cs.total} (${cp}%)</div></div>`;
   }).join('')}</div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button class="nav-btn primary" onclick="initSession();render()">Opnieuw oefenen</button>
+    <button class="nav-btn primary" onclick="initSession();saveState();render()">Opnieuw oefenen</button>
   </div>
 </div>
 ${deck.filter((d,pos)=>!d.retryOf&&answers[pos]&&!answers[pos].wasCorrect).length>0?`
 <div class="section-divider">Foute vragen (origineel)</div>
-<div>
-${deck.map((item,pos)=>{
+<div>${deck.map((item,pos)=>{
   if(item.retryOf!==undefined)return '';
-  const a=answers[pos];
-  if(!a||a.wasCorrect)return '';
+  const a=answers[pos];if(!a||a.wasCorrect)return '';
   const q=Q[item.qIdx];
+  const casusTekst=q.casus?`<div class="q-casus">${q.casus}</div>`:'';
   return `<div class="question-card">
-  <div class="q-meta"><span class="q-tag">${q.cat}</span><span class="q-art">${q.art}</span></div>
+  <div class="q-meta"><span class="q-tag">${q.cat}</span></div>
+  ${casusTekst}
   <div class="q-text">${q.text}</div>
   <div class="options">${item.optOrder.map((origIdx,displayPos)=>{
-    const isCorrect=origIdx===q.ans;
-    const isChosen=a.displayedOpt===displayPos;
+    const isMulti=!!q.multi;
     let cls='opt';
-    if(isCorrect)cls+=' correct';
-    else if(isChosen)cls+=' wrong';
-    return `<button class="${cls}" disabled><span class="opt-letter">${['A','B','C','D'][displayPos]}</span><span>${q.opts[origIdx]}</span></button>`;
+    if(isMulti){
+      const correctOrig=Array.isArray(q.ans)?q.ans:[];
+      const wasChosen=a.multiSelected&&a.multiSelected.includes(displayPos);
+      if(correctOrig.includes(origIdx)&&wasChosen) cls+=' correct';
+      else if(correctOrig.includes(origIdx)) cls+=' missed';
+      else if(wasChosen) cls+=' wrong';
+    } else {
+      if(origIdx===q.ans) cls+=' correct';
+      else if(a.displayedOpt===displayPos) cls+=' wrong';
+    }
+    return `<button class="${cls}" disabled><span class="opt-letter">${'ABCDEF'[displayPos]}</span><span>${q.opts[origIdx]}</span></button>`;
   }).join('')}</div>
   <div class="feedback wrong">${q.exp}</div>
-</div>`;}).join('')}
-</div>`:'<p style="text-align:center;color:#27500a;padding:2rem;font-size:15px">Alle originele vragen goed beantwoord! Uitstekend!</p>'}`;
+</div>`}).join('')}</div>`
+:'<p style="text-align:center;color:#27500a;padding:2rem;font-size:15px">Alle originele vragen goed beantwoord! Uitstekend!</p>'}`;
 }
 
+// ── ACTIONS ──
 function pick(displayPos){
   if(answers[cur]!==undefined)return;
   const item=deck[cur];
   const origIdx=item.optOrder[displayPos];
   const wasCorrect=origIdx===Q[item.qIdx].ans;
   answers[cur]={displayedOpt:displayPos,wasCorrect};
-  if(!wasCorrect){
-    expandDeck(cur);
+  if(!wasCorrect) expandDeck(cur);
+  saveState();render();
+}
+function goTo(pos){cur=pos;multiPending=new Set();saveState();render()}
+function showResults(){reviewed=true;render()}
+
+// ── YEAR WARNING ──
+(function(){
+  if(new Date().getFullYear()>=2027&&!sessionStorage.getItem('yw')){
+    const el=document.getElementById('yw');if(el)el.style.display='flex';
   }
-  render();
-}
-function goTo(pos){cur=pos;render();}
-function setMode(rand){
-  if(randomMode===rand)return;
-  if(!confirm('Volgorde wijzigen wist je voortgang. Doorgaan?'))return;
-  randomMode=rand;initSession();render();
-}
-function setFilter(c){
-  if(filterCat===c)return;
-  if(Object.keys(answers).length>0&&!confirm('Categorie wijzigen wist je voortgang. Doorgaan?'))return;
-  filterCat=c;initSession();render();
-}
-function showResults(){reviewed=true;render();}
+})();
+
+// ── INIT ──
+if(!loadState()) initSession();
 render();
 </script>
 </body>
