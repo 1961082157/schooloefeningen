@@ -234,21 +234,17 @@ function doDrop(zone, targetNr) {
   const target  = plaatsen.find(x => x.nr === targetNr);
 
   if (correct) {
+    // Correct: lock zone, mark chip used, update score
     beantwoord.add(targetNr);
     zone.dataset.locked = '1';
     zone.textContent = dropped.naam;
     zone.classList.add('correct');
     const pin = document.getElementById('mpin-' + targetNr);
     if (pin) pin.classList.add('correct-pin');
-  }
-  if (correct) {
     if (dragEl) dragEl.classList.add('gebruikt');
     scoreGoed++;
-    updateScore();
-    if (beantwoord.size === 19) toonEinde();
   } else {
-    // Wrong: put chip back in bank, reset zone, don't count as answered
-    beantwoord.delete(targetNr);
+    // Wrong: show popup, reset zone, return chip — do NOT count as answered
     zone.dataset.locked = '';
     zone.textContent = targetNr;
     zone.classList.remove('incorrect');
@@ -256,6 +252,7 @@ function doDrop(zone, targetNr) {
       dragEl.classList.remove('dragging');
       dragEl.classList.remove('gebruikt');
     }
+    scoreFout++;
 
     // Show popup
     const popup = document.getElementById('drop-popup');
@@ -271,6 +268,7 @@ function doDrop(zone, targetNr) {
     clearTimeout(window._popupTimer);
     window._popupTimer = setTimeout(() => { popup.style.display = 'none'; }, 2800);
   }
+
   updateScore();
   if (beantwoord.size === 19) toonEinde();
 }
@@ -486,10 +484,21 @@ function updateScore() {
 
 function toonEinde() {
   const s = document.getElementById('einde-scherm'); s.style.display = 'block';
-  document.getElementById('eindcijfer').textContent = scoreGoed + '/19';
-  const pct = Math.round((scoreGoed/19)*100);
-  document.getElementById('einde-bericht').textContent =
-    pct===100?'🌟 Perfecte score! Je kent alle plaatsen!':pct>=80?'🎊 Heel goed!':pct>=60?'👍 Goed bezig!':'💪 Blijf oefenen!';
+  const totaal = scoreGoed + scoreFout;
+  document.getElementById('eindcijfer').textContent = scoreGoed + ' goed, ' + scoreFout + ' fout';
+  let bericht = '';
+  if (scoreFout === 0) {
+    bericht = '🌟 Perfecte score! Geen enkele fout!';
+  } else if (scoreFout <= 2) {
+    bericht = '🎊 Heel goed! Slechts ' + scoreFout + ' fout' + (scoreFout>1?'en':'') + '.';
+  } else if (scoreFout <= 5) {
+    bericht = '👍 Goed bezig! ' + scoreFout + ' fouten — nog even oefenen.';
+  } else if (scoreFout <= 10) {
+    bericht = '📚 ' + scoreFout + ' fouten gemaakt. Blijf oefenen, het lukt!';
+  } else {
+    bericht = '💪 ' + scoreFout + ' fouten — maar je weet nu welke het zijn. Probeer nog een keer!';
+  }
+  document.getElementById('einde-bericht').textContent = bericht;
   s.scrollIntoView({behavior:'smooth'});
 }
 
