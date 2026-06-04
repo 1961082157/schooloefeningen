@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PV Aantekeningen — TTS Speler</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.7; color: #1a1a1a; background: #f8f8f6; }
+
+  #player-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  #player-bar h1 { font-size: 14px; font-weight: 600; color: #111; flex: 1; min-width: 160px; }
+  #status { font-size: 12px; color: #666; min-width: 80px; }
+
+  .ctrl-btn {
+    border: 1px solid #ccc; background: #fff; border-radius: 6px;
+    padding: 6px 14px; font-size: 13px; cursor: pointer; color: #222;
+    transition: background 0.15s;
+  }
+  .ctrl-btn:hover { background: #f0f0f0; }
+  .ctrl-btn:disabled { opacity: 0.4; cursor: default; }
+  .ctrl-btn.primary { background: #1a56db; color: #fff; border-color: #1a56db; }
+  .ctrl-btn.primary:hover { background: #1648c0; }
+  .ctrl-btn.danger { background: #fff; color: #c0392b; border-color: #e0b0b0; }
+  .ctrl-btn.danger:hover { background: #fdf0ef; }
+
+  .speed-wrap { display: flex; align-items: center; gap: 6px; }
+  .speed-wrap label { font-size: 12px; color: #555; }
+  #speed { width: 90px; }
+  #speed-val { font-size: 12px; font-weight: 600; min-width: 28px; }
+
+  .voice-wrap { display: flex; align-items: center; gap: 6px; }
+  .voice-wrap label { font-size: 12px; color: #555; }
+  #voice-sel { font-size: 12px; border: 1px solid #ccc; border-radius: 5px; padding: 4px 6px; max-width: 170px; }
+
+  #content { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  h2.sec-head {
+    font-size: 17px; font-weight: 700; color: #111;
+    margin: 2rem 0 0.5rem; padding: 10px 14px;
+    background: #eef2ff; border-left: 4px solid #1a56db;
+    border-radius: 0 6px 6px 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  h2.sec-head:hover { background: #e4eaff; }
+  h2.sec-head .toggle { font-size: 12px; font-weight: 400; color: #555; }
+
+  h3.sub-head {
+    font-size: 13px; font-weight: 700; color: #333;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin: 1.2rem 0 0.4rem; border-bottom: 1px solid #e0e0e0; padding-bottom: 4px;
+  }
+
+  .sec-body { padding-left: 0; }
+  .sec-body.collapsed { display: none; }
+
+  .item {
+    font-size: 14.5px; line-height: 1.65; color: #222;
+    padding: 5px 12px 5px 28px; position: relative;
+    border-radius: 5px; cursor: pointer; transition: background 0.1s;
+  }
+  .item::before { content: "–"; position: absolute; left: 12px; color: #999; }
+  .item:hover { background: #f4f4f0; }
+  .item.speaking { background: #fef9e7; outline: 2px solid #f0c040; }
+  .item.done { color: #888; }
+
+  .note {
+    font-size: 13px; color: #666; font-style: italic;
+    padding: 6px 12px 6px 28px; position: relative; margin-top: 2px;
+  }
+  .note::before { content: "!"; position: absolute; left: 12px; color: #aaa; font-style: normal; font-weight: bold; }
+
+  #progress-bar-wrap { background: #e8e8e4; border-radius: 4px; height: 4px; margin: 8px 0 0; width: 100%; }
+  #progress-bar { height: 4px; background: #1a56db; border-radius: 4px; transition: width 0.3s; width: 0%; }
+
+  @media (max-width: 600px) {
+    #player-bar { padding: 10px 12px; gap: 8px; }
+    #content { padding: 20px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="player-bar">
+  <h1>PV Aantekeningen — TTS</h1>
+  <span id="status">Klaar</span>
+  <button class="ctrl-btn primary" id="btn-play" onclick="ttsPlay()">&#9654; Afspelen</button>
+  <button class="ctrl-btn" id="btn-pause" onclick="ttsPause()" disabled>&#10074;&#10074; Pauze</button>
+  <button class="ctrl-btn danger" id="btn-stop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+  <div class="speed-wrap">
+    <label for="speed">Snelheid</label>
+    <input type="range" id="speed" min="0.5" max="2" step="0.1" value="0.9" oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
+    <span id="speed-val">0.9x</span>
+  </div>
+  <div class="voice-wrap">
+    <label for="voice-sel">Stem</label>
+    <select id="voice-sel" onchange="setVoice()"></select>
+  </div>
+  <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer;user-select:none;">
+    <input type="checkbox" id="chk-loop" checked style="width:15px;height:15px;cursor:pointer;accent-color:#1a56db;">
+    Herhalen (loop)
+  </label>
+  <div style="width:100%; margin-top:2px;">
+    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  </div>
+</div>
+
+<div id="content">
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 1: Examenopzet en hoofdvraag <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Opdracht</h3>
+  <div class="item">Noem drie juridische punten en licht deze toe. Het toelichten is het meest cruciale onderdeel.</div>
+  <div class="item">Noem drie taalkundige punten en licht deze toe.</div>
+  <div class="item">Geef twee concrete aanbevelingen, gebaseerd op eerder genoemde punten.</div>
+  <div class="item">Geef geen positieve feedback, maar je mag het wel toelichten.</div>
+
+  <h3 class="sub-head">Hoofdvraag</h3>
+  <div class="item">Is dit proces-verbaal overtuigend als wettig bewijsmiddel? Dit is de centrale vraag, gebaseerd op artikel 338 en 339 van het Wetboek van Strafvordering.</div>
+  <div class="item">Artikel 338 stelt dat het bewijs dat de verdachte het tenlastegelegde feit heeft begaan, door de rechter slechts kan worden aangenomen via wettige bewijsmiddelen.</div>
+  <div class="item">Artikel 339, eerste lid, sub 5, noemt schriftelijke bescheiden als wettig bewijsmiddel. Een proces-verbaal is zo'n schriftelijk bescheid, geregeld in artikel 344.</div>
+
+  <h3 class="sub-head">Conclusie-template</h3>
+  <div class="item">Als in het proces-verbaal ontbreekt: de ambtseed, de ondertekening, de redenen van wetenschap, de opsporingsbevoegdheid, de feiten en omstandigheden, of andere vereiste elementen, dan luidt de conclusie: ben ik van mening dat het huidige proces-verbaal onvoldoende overtuigt als wettig bewijsmiddel.</div>
+  <div class="item">Kies vervolgens drie juridische tekortkomingen en benoem expliciet welke je hebt gekozen. Als de verbalisant deze herstelt in een aanvullend proces-verbaal, kan het alsnog als wettig bewijsmiddel worden gebruikt.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 2: Juridische punten <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Ambtseed en ambtsbelofte — artikel 152 en 153 Sv</h3>
+  <div class="item">Staat de ambtseed of ambtsbelofte correct vermeld?</div>
+  <div class="item">Is het proces-verbaal persoonlijk opgemaakt, gedagtekend en ondertekend?</div>
+  <div class="item">Klopt de naam, afdeling en eenheid bij de ondertekening met het begin van het proces-verbaal?</div>
+  <div class="item">Staat de rang bij de naam aan het begin van het proces-verbaal?</div>
+  <div class="item">Is de verbalisant aangemerkt als algemeen opsporingsambtenaar?</div>
+  <div class="note">Als het proces-verbaal niet is ondertekend of de redenen van wetenschap ontbreken op basis van artikel 153 Sv, dan moet dit expliciet worden benoemd inclusief het oordeel.</div>
+
+  <h3 class="sub-head">Redenen van wetenschap</h3>
+  <div class="item">Vermelding van redenen van wetenschap is verplicht. Het woord blijken is geen reden van wetenschap.</div>
+  <div class="item">Schrijven in de onvoltooid verleden tijd.</div>
+  <div class="item">Niet combineren met hulpwerkwoorden van modaliteit: willen, kunnen of moeten.</div>
+  <div class="item">Niet combineren met twijfelwoorden zoals vermoedelijk of waarschijnlijk. Splits dit in een aparte zin.</div>
+  <div class="item">Redenen van wetenschap hebben alleen betrekking op de hoofdzin, niet de bijzin.</div>
+  <div class="item">Gebruik het woord dat bij redenen van wetenschap. Dit dwingt de vervolgzin in de onvoltooid verleden tijd.</div>
+  <div class="item">Som de feiten en omstandigheden op die tot de verdenking hebben geleid, zodat de lezer de redenering kan volgen.</div>
+  <div class="item">Fout: hier zou de melder een scooter zien staan. Goed: hier zag de melder een scooter staan.</div>
+  <div class="note">Gebruik ambtshalve alleen als je aangeeft hoe je dit weet, bijvoorbeeld via de briefing of een sfeer-proces-verbaal. Probeer het anders te vermijden.</div>
+
+  <h3 class="sub-head">Datum, tijd en aanhouding</h3>
+  <div class="item">Vermelding van dag, datum en tijdstip is verplicht. Dit mag met omstreeks, behalve bij aanhouding en aankomst op het bureau.</div>
+  <div class="item">Bij aanhouding gebruik je om voor de exacte tijd, vanwege de voorgeleiding. Omstreeks is hier niet toegestaan.</div>
+  <div class="item">Vermeld welke opsporingsbevoegdheid is toegepast en waartoe dit heeft geleid.</div>
+
+  <h3 class="sub-head">Verdachte, identiteit en fouillering</h3>
+  <div class="item">Het redelijk vermoeden van schuld moet duidelijk zijn voordat iemand als verdachte wordt aangemerkt. Het kantelpunt beschrijven.</div>
+  <div class="item">Vanaf de aanmerking als verdachte: alleen nog verdachte of de achternaam gebruiken.</div>
+  <div class="item">Na het bekijken van de identiteitskaart: de gegevens natrekken in de systemen en dit vermelden in het proces-verbaal. KENO nooit noemen.</div>
+  <div class="item">Personalia: ook de geboorteplaats vermelden, dus geboren te plaatsnaam, datum.</div>
+  <div class="item">Twee keer fouilleren en dan toch iets aantreffen bij de tweede keer: dit is niet goed. Dat had de eerste keer al gemoeten.</div>
+  <div class="item">Cautie, ook wel Salduz, nooit letterlijk noemen. Schrijf de letterlijke mededeling uit. Bijvoorbeeld: ik deelde de verdachte mede dat hij niet tot antwoorden verplicht was en recht had op consultatie- en verhoorbijstand.</div>
+  <div class="item">Nooit een tweede keer de cautie geven, behalve bij een nieuw verhoor.</div>
+  <div class="item">Identiteitsbewijs: niet legitimatiebewijs, maar op zijn naam gesteld identiteitsbewijs.</div>
+
+  <h3 class="sub-head">Inbeslagname en Wet Wapens en Munitie</h3>
+  <div class="item">Inbeslagname direct beschrijven. Niet: ik vertelde dat de middelen in beslag zouden worden genomen. Maar: ik nam de middelen in beslag.</div>
+  <div class="item">Vermeld of de verdachte afstand wil doen van de inbeslaggenomen goederen. Beschrijf dit met redenen van wetenschap in de onvoltooid verleden tijd.</div>
+  <div class="item">Als er meerdere tassen waren: expliciet aangeven welke tas.</div>
+  <div class="item">Verdovende middelen: altijd testen voor je weet wat het is. Niet aannemen.</div>
+  <div class="item">Wet Wapens en Munitie schrijven met alleen een eerste hoofdletter W. De overige woorden met kleine letters.</div>
+  <div class="item">Niet Rechter, maar rechter-commissaris bij inbeslagneming.</div>
+  <div class="item">Controleer alle artikelnummers op juistheid.</div>
+  <div class="item">Controleer of de naam van de officier van justitie in het document overeenkomt met die in de aanhef.</div>
+
+  <h3 class="sub-head">Aanbevelingen — kies er twee</h3>
+  <div class="item">Opdracht geven om een aanvullend proces-verbaal op te maken waarin de juridisch-inhoudelijke punten worden hersteld.</div>
+  <div class="item">Drie maanden lang de processen-verbaal van deze verbalisant juridisch laten toetsen door een ervaren brigadier.</div>
+  <div class="item">De verbalisant aanvullende scholing of een cursus aanbieden.</div>
+  <div class="item">Het advies geven om de spellingscontrole te gebruiken voordat het proces-verbaal wordt afgesloten.</div>
+  <div class="item">Het proces-verbaal laten controleren door een intern systeem voor kwaliteitscontrole.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 3: Taalkundige punten <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Samengestelde woorden en spelling</h3>
+  <div class="item">Samengestelde woorden aan elkaar schrijven, behalve bij klinkerbotsing. Voorbeelden: horecanachtdienst, opkeek, aankeek.</div>
+  <div class="item">Geen afkortingen gebruiken, of eerst voluit schrijven met de afkorting tussen haakjes.</div>
+  <div class="item">Geen verkleinwoorden, behalve woorden die altijd zo worden gebruikt, zoals kinderzitje of bushokje.</div>
+  <div class="item">Getallen tot twintig, tientallen en honderdtallen schrijf je in letters. Datums, maten, bedragen en leeftijden schrijf je in cijfers.</div>
+  <div class="item">Tijdnotatie: zeven uur nul nul met een punt, niet met een dubbele punt.</div>
+  <div class="item">Niet het persoon, maar de persoon.</div>
+
+  <h3 class="sub-head">Consistentie</h3>
+  <div class="item">Operationeel Centrum altijd zonder streepje schrijven.</div>
+  <div class="item">Plaatsnamen, straatnamen en wegnamen altijd exact hetzelfde schrijven.</div>
+  <div class="item">Kies één woord en blijf dat gebruiken. Dus altijd voorlicht en niet ineens voorlamp.</div>
+  <div class="item">Niet iemand omschrijven als ongeveer zestien jaar en in het signalement vijftien tot achttien jaar schrijven.</div>
+  <div class="item">JO of Junto betekent in verband met. Schrijf dit voluit als het wordt gebruikt.</div>
+
+  <h3 class="sub-head">Stijl en formulering</h3>
+  <div class="item">Nutteloze tekst weglaten. Zin zoals: met deze gedachte gingen wij direct aanrijdend, mag weg.</div>
+  <div class="item">Fout: aanrijdend hadden wij besproken. Goed: aanrijdend bespraken wij.</div>
+  <div class="item">Fout: positie ging nemen. Goed: positie gingen in nemen. Je neemt een positie in.</div>
+  <div class="item">Fout: ik zag dat hij mij de tas gaf. Goed: hij gaf mij de tas.</div>
+  <div class="item">Fout: wij besloten de verdachte te fouilleren. Goed: wij fouilleerden hem.</div>
+  <div class="item">Politiemedewerkers zeggen of delen mede. Verdachten verklaren. Melders kunnen zeggen, mededelen of vertellen.</div>
+  <div class="item">Geen vaktermen in het proces-verbaal. Niet cautie, maar de letterlijke gesproken tekst.</div>
+  <div class="item">Geen voornoemde of eerder genoemde. Dit is bladvulling.</div>
+  <div class="item">Gebruik signaalwoorden en voegwoorden: ten eerste, vervolgens, tegelijkertijd, hier, daar, toen.</div>
+  <div class="item">Quotes beginnen met een hoofdletter. Het punt staat binnen de aanhalingstekens.</div>
+  <div class="item">Geen woorden van gelijke strekking bij beledigingen of bedreigingen. Schrijf de exacte woorden op.</div>
+
+  <h3 class="sub-head">Adressen: op, in of aan</h3>
+  <div class="item">Straat: op een straat, aan een straat, of in een straat.</div>
+  <div class="item">Weg, laan, kade, gracht, singel, plein: op of aan. Aan wordt het meest gebruikt.</div>
+  <div class="item">Steeg: in de steeg.</div>
+  <div class="item">Straatnaam met huisnummer: op, zonder lidwoord.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 4: Opbouw en structuur van het proces-verbaal <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Inleiding en voorstelronde</h3>
+  <div class="item">Vermeld: dag, datum, tijd, plaats, activiteit, naam en dienstnummer van de verbalisant, rang, naam en dienstnummer van de collega, eenheid, en of je in uniform of in een herkenbare politieauto was.</div>
+  <div class="item">Rang moet bij naam aan het begin van het proces-verbaal staan.</div>
+  <div class="item">In een ik-proces-verbaal is er maar één verbalisant. De ander beschrijf je vanuit de derde persoon.</div>
+  <div class="item">Herkenbare politieauto, niet opvallend politievoertuig.</div>
+  <div class="item">Om met tijdstip: nooit tussen komma's. Omstreeks met tijdstip: met of zonder komma's.</div>
+
+  <h3 class="sub-head">Aanleiding</h3>
+  <div class="item">In opdracht van het operationeel centrum? Eigen waarneming? Verklaring van getuige of slachtoffer?</div>
+  <div class="item">Je krijgt een opdracht of verzoek. Verbalisanten ontvangen geen meldingen.</div>
+  <div class="item">Rang en naam hoef je niet opnieuw te noemen.</div>
+  <div class="item">Schrijf alle gegevens op die je ontvangt, zoals het signalement, namen en dergelijke.</div>
+
+  <h3 class="sub-head">Decor — vast</h3>
+  <div class="item">Decor schrijven in de onvoltooid tegenwoordige tijd, omdat het er waarschijnlijk nog steeds staat.</div>
+  <div class="item">Gebruik werkwoorden zoals: bevinden, leiden, grenzen, zijn. Niet: lopen, kijken, zitten. Dit zijn menselijke gedragingen.</div>
+  <div class="item">Geen persoonlijke voornaamwoorden in de decorbeschrijving, dus geen je, jij of u.</div>
+  <div class="item">Beschrijf van links naar rechts, groot naar klein, algemeen naar specifiek.</div>
+  <div class="item">Beschrijf alleen wat relevant is voor het strafbare feit. Denk aan de helicopterview.</div>
+  <div class="item">Ter hoogte van: niet op basis van een volledige stad. Altijd ter hoogte van een winkel, woning of iets dergelijks.</div>
+
+  <h3 class="sub-head">Variabelen en waarnemingen</h3>
+  <div class="item">Alle variabelen zoals fiets, auto en personen schrijven in de onvoltooid verleden tijd.</div>
+  <div class="item">Alle acties chronologisch beschrijven. Als het niet te volgen is, klopt de chronologie waarschijnlijk niet.</div>
+  <div class="item">Vermeld de afstand tot de persoon bij de beschrijving, en de richting waarheen de persoon ging.</div>
+  <div class="item">Als een persoon niet goed te zien was, geen jongen, meisje, man of vrouw schrijven. Gebruik dan persoon.</div>
+  <div class="item">Huidskleur: nooit wit, zwart of bruin. Wel lichte of donkere huidskleur.</div>
+
+  <h3 class="sub-head">Opsomming en signalement</h3>
+  <div class="item">Nooit beginnen met een hoofdletter.</div>
+  <div class="item">Elk item afsluiten met een puntkomma. Het laatste item met een punt.</div>
+  <div class="item">Volgorde: leeftijd, lengte, huidskleur, haar, jas, broek, en daarna variabelen zoals een tas.</div>
+  <div class="item">Begin elke regel bij voorkeur met het kenmerk gevolgd door een dubbele punt, bijvoorbeeld: leeftijd: dertig jaar.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 5: Ambtshandelingen en bijzonderheden <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Algemeen</h3>
+  <div class="item">Alle ambtshandelingen beginnen met een nieuwe alinea die start met: op dag, datum, tijdstip.</div>
+  <div class="item">Wetsartikelen hoef je niet altijd te noemen. Als je dat doet: controleer altijd of het juiste artikel is gebruikt.</div>
+  <div class="item">In een ik-proces-verbaal: de ambtshandelingen van de collega beschrijven zonder redenen van wetenschap.</div>
+  <div class="item">Staande houden: je houdt een persoon staande, nooit een object. Dus niet: de fatbike staande houden.</div>
+  <div class="item">Als iets een dealplaats is: beschrijven wat er wordt gedealt en waaruit dat blijkt.</div>
+
+  <h3 class="sub-head">Fouillering en onderzoek aan de kleding</h3>
+  <div class="item">Nooit de termen identiteitsfouillering of vervoersfouillering als zodanig gebruiken in het proces-verbaal.</div>
+  <div class="item">Vermeld altijd op basis van welke wet je handelt, en ten behoeve waarvan.</div>
+  <div class="item">Beschrijf met redenen van wetenschap waar en wat je hebt aangetroffen.</div>
+  <div class="item">Opsporingsfouillering valt onder artikel 56 lid 4 van het Wetboek van Strafvordering. Identiteitsfouillering valt onder artikel 55b. Dit zijn twee verschillende bevoegdheden. Maak duidelijk welke je hebt toegepast.</div>
+
+  <h3 class="sub-head">Tas en verdachte</h3>
+  <div class="item">Je vraagt de verdachte niet om in zijn tas te mogen kijken. Je geeft aan dat je gaat kijken op basis van je bevoegdheid.</div>
+
+  <h3 class="sub-head">Proces-verbaal van verdenking</h3>
+  <div class="item">Bij een proces-verbaal van verdenking: geen tijd besteden aan decor of inbeslagneming.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 6: Slotalinea en afronding <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Afhandeling</h3>
+  <div class="item">Rond het proces-verbaal altijd goed af.</div>
+  <div class="item">Vermeld het tijdstip van aankomst op het bureau met om voor het exacte tijdstip.</div>
+  <div class="item">Voorgeleiding bij de hulpofficier van justitie: dit maakt de hulpofficier zelf een proces-verbaal van op. Dit hoeft niet meer in jouw proces-verbaal van bevindingen.</div>
+  <div class="item">Vermeld verwijzingen naar andere processen-verbaal en formulieren van de zaak.</div>
+
+  <h3 class="sub-head">Algemene schrijfregels</h3>
+  <div class="item">Schrijf in hele zinnen met hoofdletters en punten.</div>
+  <div class="item">Alinea's scheiden met een volledige witregel.</div>
+  <div class="item">Geen haakjes gebruiken.</div>
+  <div class="item">Datum en tijd volledig uitschrijven, bijvoorbeeld: op woensdag 1 januari 2026 omstreeks acht uur.</div>
+</div>
+
+</div>
+
+<script>
+const synth = window.speechSynthesis;
+let voices = [];
+let items = [];
+let idx = 0;
+let paused = false;
+let running = false;
+let currentUtter = null;
+let chosenVoice = null;
+
+function loadVoices() {
+  voices = synth.getVoices();
+  const sel = document.getElementById('voice-sel');
+  sel.innerHTML = '';
+  const nl = voices.filter(v => v.lang.startsWith('nl'));
+  const others = voices.filter(v => !v.lang.startsWith('nl'));
+  const groups = [['Nederlands', nl], ['Overig', others]];
+  groups.forEach(([label, list]) => {
+    if (!list.length) return;
+    const og = document.createElement('optgroup');
+    og.label = label;
+    list.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v.name;
+      o.textContent = v.name + ' (' + v.lang + ')';
+      if (v.default && !chosenVoice) o.selected = true;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  if (nl.length) {
+    sel.value = nl[0].name;
+  }
+  setVoice();
+}
+
+function setVoice() {
+  const sel = document.getElementById('voice-sel');
+  chosenVoice = voices.find(v => v.name === sel.value) || null;
+}
+
+if (synth.onvoiceschanged !== undefined) {
+  synth.onvoiceschanged = loadVoices;
+}
+loadVoices();
+
+function collectItems() {
+  return Array.from(document.querySelectorAll('.item, .note'))
+    .filter(el => {
+      let p = el.closest('.sec-body');
+      return !p || !p.classList.contains('collapsed');
+    });
+}
+
+function setStatus(txt) {
+  document.getElementById('status').textContent = txt;
+}
+
+function updateProgress() {
+  const total = items.length;
+  const pct = total ? Math.round((idx / total) * 100) : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function highlightItem(el) {
+  document.querySelectorAll('.item.speaking, .note.speaking').forEach(e => e.classList.remove('speaking'));
+  if (el) {
+    el.classList.add('speaking');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function speakNext() {
+  if (!running) return;
+  if (idx >= items.length) {
+    const loop = document.getElementById('chk-loop').checked;
+    if (loop) {
+      document.querySelectorAll('.item.done, .note.done').forEach(e => e.classList.remove('done'));
+      items = collectItems();
+      idx = 0;
+      setStatus('Herhaling gestart...');
+    } else {
+      ttsStop();
+      setStatus('Klaar met afspelen');
+      return;
+    }
+  }
+  const el = items[idx];
+  highlightItem(el);
+  updateProgress();
+
+  const text = el.textContent.trim();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'nl-NL';
+  utter.rate = parseFloat(document.getElementById('speed').value);
+  if (chosenVoice) utter.voice = chosenVoice;
+
+  utter.onend = () => {
+    if (!running) return;
+    el.classList.remove('speaking');
+    el.classList.add('done');
+    idx++;
+    speakNext();
+  };
+  utter.onerror = () => {
+    idx++;
+    speakNext();
+  };
+
+  currentUtter = utter;
+  setStatus('Afspeelend... ' + (idx + 1) + ' / ' + items.length);
+  synth.speak(utter);
+}
+
+function ttsPlay() {
+  if (paused) {
+    synth.resume();
+    paused = false;
+    running = true;
+    setStatus('Afspeelend...');
+    document.getElementById('btn-pause').disabled = false;
+    document.getElementById('btn-play').disabled = true;
+    return;
+  }
+  if (running) return;
+  synth.cancel();
+  items = collectItems();
+  idx = 0;
+  document.querySelectorAll('.item.done, .note.done').forEach(e => e.classList.remove('done'));
+  running = true;
+  paused = false;
+  document.getElementById('btn-play').disabled = true;
+  document.getElementById('btn-pause').disabled = false;
+  document.getElementById('btn-stop').disabled = false;
+  speakNext();
+}
+
+function ttsPause() {
+  if (!running) return;
+  synth.pause();
+  paused = true;
+  running = false;
+  setStatus('Gepauzeerd');
+  document.getElementById('btn-play').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
+}
+
+function ttsStop() {
+  synth.cancel();
+  running = false;
+  paused = false;
+  document.querySelectorAll('.item.speaking, .note.speaking').forEach(e => e.classList.remove('speaking'));
+  document.getElementById('btn-play').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
+  document.getElementById('btn-stop').disabled = true;
+  if (idx >= (items.length || 1)) {
+    document.getElementById('progress-bar').style.width = '100%';
+  }
+}
+
+document.querySelectorAll('.item, .note').forEach(el => {
+  el.addEventListener('click', () => {
+    synth.cancel();
+    items = collectItems();
+    idx = items.indexOf(el);
+    if (idx === -1) idx = 0;
+    running = true;
+    paused = false;
+    document.getElementById('btn-play').disabled = true;
+    document.getElementById('btn-pause').disabled = false;
+    document.getElementById('btn-stop').disabled = false;
+    speakNext();
+  });
+});
+
+function toggleSec(headEl) {
+  const body = headEl.nextElementSibling;
+  const tog = headEl.querySelector('.toggle');
+  body.classList.toggle('collapsed');
+  tog.textContent = body.classList.contains('collapsed') ? 'uitklappen' : 'inklappen';
+}
+</script>
+</body>
+</html>
