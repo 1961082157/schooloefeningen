@@ -66,6 +66,8 @@
   .item::before { content: "–"; position: absolute; left: 12px; color: #999; }
   .item:hover { background: #f4f4f0; }
   .item.speaking { background: #fef9e7; outline: 2px solid #f0c040; }
+  .sub-head.speaking { color: #1a56db; border-bottom-color: #1a56db; }
+  .sec-head.speaking { background: #dde8ff; }
   .item.done { color: #888; }
 
   .note {
@@ -310,9 +312,10 @@ function loadVoices() {
   voices = synth.getVoices();
   const sel = document.getElementById('voice-sel');
   sel.innerHTML = '';
-  const nl = voices.filter(v => v.lang.startsWith('nl'));
+  const nlNL = voices.filter(v => v.lang === 'nl-NL');
+  const nlBE = voices.filter(v => v.lang === 'nl-BE');
   const others = voices.filter(v => !v.lang.startsWith('nl'));
-  const groups = [['Nederlands', nl], ['Overig', others]];
+  const groups = [['Nederlands (NL)', nlNL], ['Nederlands (BE)', nlBE], ['Overig', others]];
   groups.forEach(([label, list]) => {
     if (!list.length) return;
     const og = document.createElement('optgroup');
@@ -321,14 +324,12 @@ function loadVoices() {
       const o = document.createElement('option');
       o.value = v.name;
       o.textContent = v.name + ' (' + v.lang + ')';
-      if (v.default && !chosenVoice) o.selected = true;
       og.appendChild(o);
     });
     sel.appendChild(og);
   });
-  if (nl.length) {
-    sel.value = nl[0].name;
-  }
+  const preferred = nlNL.length ? nlNL[0] : (nlBE.length ? nlBE[0] : null);
+  if (preferred) sel.value = preferred.name;
   setVoice();
 }
 
@@ -343,10 +344,11 @@ if (synth.onvoiceschanged !== undefined) {
 loadVoices();
 
 function collectItems() {
-  return Array.from(document.querySelectorAll('.item, .note'))
+  return Array.from(document.querySelectorAll('.sec-head, .sec-body:not(.collapsed) .sub-head, .sec-body:not(.collapsed) .item, .sec-body:not(.collapsed) .note'))
     .filter(el => {
-      let p = el.closest('.sec-body');
-      return !p || !p.classList.contains('collapsed');
+      if (el.classList.contains('sec-head')) return true;
+      if (el.classList.contains('sub-head')) return true;
+      return true;
     });
 }
 
@@ -361,7 +363,7 @@ function updateProgress() {
 }
 
 function highlightItem(el) {
-  document.querySelectorAll('.item.speaking, .note.speaking').forEach(e => e.classList.remove('speaking'));
+  document.querySelectorAll('.item.speaking, .note.speaking, .sub-head.speaking, .sec-head.speaking').forEach(e => e.classList.remove('speaking'));
   if (el) {
     el.classList.add('speaking');
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -374,6 +376,7 @@ function speakNext() {
     const loop = document.getElementById('chk-loop').checked;
     if (loop) {
       document.querySelectorAll('.item.done, .note.done').forEach(e => e.classList.remove('done'));
+      document.querySelectorAll('.sec-head.speaking, .sub-head.speaking').forEach(e => e.classList.remove('speaking'));
       items = collectItems();
       idx = 0;
       setStatus('Herhaling gestart...');
@@ -387,7 +390,15 @@ function speakNext() {
   highlightItem(el);
   updateProgress();
 
-  const text = el.textContent.trim();
+  let text;
+  if (el.classList.contains('sec-head')) {
+    const clone = el.cloneNode(true);
+    const tog = clone.querySelector('.toggle');
+    if (tog) tog.remove();
+    text = clone.textContent.trim();
+  } else {
+    text = el.textContent.trim();
+  }
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'nl-NL';
   utter.rate = parseFloat(document.getElementById('speed').value);
@@ -396,7 +407,9 @@ function speakNext() {
   utter.onend = () => {
     if (!running) return;
     el.classList.remove('speaking');
-    el.classList.add('done');
+    if (!el.classList.contains('sec-head') && !el.classList.contains('sub-head')) {
+      el.classList.add('done');
+    }
     idx++;
     speakNext();
   };
@@ -456,8 +469,9 @@ function ttsStop() {
   }
 }
 
-document.querySelectorAll('.item, .note').forEach(el => {
-  el.addEventListener('click', () => {
+document.querySelectorAll('.item, .note, .sub-head').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
     synth.cancel();
     items = collectItems();
     idx = items.indexOf(el);
