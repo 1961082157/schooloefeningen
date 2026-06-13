@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presentatie Cybercrime — TTS Speler</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; font-size: 16px; line-height: 1.7; color: #1a1a1a; background: #f8f8f6; }
+
+  #player-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  #player-bar h1 { font-size: 14px; font-weight: 600; color: #111; flex: 1; min-width: 160px; }
+  #status { font-size: 12px; color: #666; min-width: 80px; }
+
+  .ctrl-btn {
+    border: 1px solid #ccc; background: #fff; border-radius: 6px;
+    padding: 6px 14px; font-size: 13px; cursor: pointer; color: #222;
+    transition: background 0.15s;
+  }
+  .ctrl-btn:hover { background: #f0f0f0; }
+  .ctrl-btn:disabled { opacity: 0.4; cursor: default; }
+  .ctrl-btn.primary { background: #1a56db; color: #fff; border-color: #1a56db; }
+  .ctrl-btn.primary:hover { background: #1648c0; }
+  .ctrl-btn.danger { background: #fff; color: #c0392b; border-color: #e0b0b0; }
+  .ctrl-btn.danger:hover { background: #fdf0ef; }
+
+  .speed-wrap { display: flex; align-items: center; gap: 6px; }
+  .speed-wrap label { font-size: 12px; color: #555; }
+  #speed { width: 90px; }
+  #speed-val { font-size: 12px; font-weight: 600; min-width: 28px; }
+
+  .voice-wrap { display: flex; align-items: center; gap: 6px; }
+  .voice-wrap label { font-size: 12px; color: #555; }
+  #voice-sel { font-size: 12px; border: 1px solid #ccc; border-radius: 5px; padding: 4px 6px; max-width: 170px; }
+
+  #content { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  h2.sec-head {
+    font-size: 17px; font-weight: 700; color: #111;
+    margin: 2rem 0 0.5rem; padding: 10px 14px;
+    background: #eef2ff; border-left: 4px solid #1a56db;
+    border-radius: 0 6px 6px 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  h2.sec-head:hover { background: #e4eaff; }
+  h2.sec-head .toggle { font-size: 12px; font-weight: 400; color: #555; }
+
+  h3.sub-head {
+    font-size: 13px; font-weight: 700; color: #333;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin: 1.2rem 0 0.4rem; border-bottom: 1px solid #e0e0e0; padding-bottom: 4px;
+  }
+
+  .sec-body { padding-left: 0; }
+  .sec-body.collapsed { display: none; }
+
+  .item {
+    font-size: 14.5px; line-height: 1.65; color: #222;
+    padding: 5px 12px 5px 28px; position: relative;
+    border-radius: 5px; cursor: pointer; transition: background 0.1s;
+  }
+  .item::before { content: "–"; position: absolute; left: 12px; color: #999; }
+  .item:hover { background: #f4f4f0; }
+  .item.speaking { background: #fef9e7; outline: 2px solid #f0c040; }
+  .sub-head.speaking { color: #1a56db; border-bottom-color: #1a56db; }
+  .sec-head.speaking { background: #dde8ff; }
+  .item.done { color: #888; }
+
+  .note {
+    font-size: 13px; color: #666; font-style: italic;
+    padding: 6px 12px 6px 28px; position: relative; margin-top: 2px;
+  }
+  .note::before { content: "!"; position: absolute; left: 12px; color: #aaa; font-style: normal; font-weight: bold; }
+
+  #progress-bar-wrap { background: #e8e8e4; border-radius: 4px; height: 4px; margin: 8px 0 0; width: 100%; }
+  #progress-bar { height: 4px; background: #1a56db; border-radius: 4px; transition: width 0.3s; width: 0%; }
+
+  @media (max-width: 600px) {
+    #player-bar { padding: 10px 12px; gap: 8px; }
+    #content { padding: 20px 12px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="player-bar">
+  <h1>Presentatie Cybercrime — TTS</h1>
+  <span id="status">Klaar</span>
+  <button class="ctrl-btn primary" id="btn-play" onclick="ttsPlay()">&#9654; Afspelen</button>
+  <button class="ctrl-btn" id="btn-pause" onclick="ttsPause()" disabled>&#10074;&#10074; Pauze</button>
+  <button class="ctrl-btn danger" id="btn-stop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+  <div class="speed-wrap">
+    <label for="speed">Snelheid</label>
+    <input type="range" id="speed" min="0.5" max="2" step="0.1" value="0.9" oninput="document.getElementById('speed-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
+    <span id="speed-val">0.9x</span>
+  </div>
+  <div class="voice-wrap">
+    <label for="voice-sel">Stem</label>
+    <select id="voice-sel" onchange="setVoice()"></select>
+  </div>
+  <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer;user-select:none;">
+    <input type="checkbox" id="chk-loop" checked style="width:15px;height:15px;cursor:pointer;accent-color:#1a56db;">
+    Herhalen (loop)
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#333;cursor:pointer;user-select:none;">
+    <input type="checkbox" id="chk-shuffle" style="width:15px;height:15px;cursor:pointer;accent-color:#7c3aed;">
+    &#x1F500; Willekeurig (shuffle)
+  </label>
+  <div style="width:100%; margin-top:2px;">
+    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  </div>
+</div>
+
+<div id="content">
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 1: Introductie <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Wie zijn wij?</h3>
+  <div class="item">Mijn naam is Wouter, ik ben Digitaal Specialist bij Team Cybercrime in de eenheid Noord-Holland.</div>
+  <div class="item">Samen met Marije, Digitaal Specialist bij de Electronic Crimes Task Force, geven we een presentatie over ons werk.</div>
+
+  <h3 class="sub-head">Agenda</h3>
+  <div class="item">We behandelen wat opsporing inhoudt en hoe de politieorganisatie is opgebouwd.</div>
+  <div class="item">We vertellen waar Marije en ik precies werken en wat we dagelijks doen.</div>
+  <div class="item">Tot slot laten we zien hoe onze teams samenwerken aan een gezamenlijke casus.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 2: Wat is opsporing? <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Wettelijke definitie</h3>
+  <div class="item">Artikel 132a van het Wetboek van Strafvordering definieert opsporing als: het onderzoek in verband met strafbare feiten, onder gezag van de officier van justitie, met als doel het nemen van strafvorderlijke beslissingen.</div>
+  <div class="item">Kortom: opsporing gaat over waarheidsvinding.</div>
+  <div class="item">Het onderzoek vindt altijd plaats onder gezag van de officier van justitie.</div>
+  <div class="item">Het doel is het nemen van strafvorderlijke beslissingen.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 3: De politieorganisatie <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Blauw — Basisteam</h3>
+  <div class="item">Het basisteam, ook wel Blauw genoemd, voert het operationele politiewerk uit in een begrensd gebied.</div>
+  <div class="item">Taken zijn onder andere noodhulp, surveilleren en assistentie.</div>
+  <div class="item">Zij behandelen veelvoorkomende criminaliteit zoals winkeldiefstal en eenvoudige mishandeling.</div>
+  <div class="item">Recherchewerk vraagt geduld en de juiste analyses. Een grote bron van informatie komt van collega's in Blauw: zij voeren gegevens in uit staandehoudingen en controles, en dat kan cruciaal zijn voor een onderzoek.</div>
+  <div class="item">Blauw is onmisbaar bij doorzoekingen: zij beveiligen de locatie en houden verdachten in bedwang zodat de recherche haar werk kan doen.</div>
+
+  <h3 class="sub-head">Districtsrecherche</h3>
+  <div class="item">De Districtsrecherche richt zich op middelzware criminaliteit op lokaal niveau.</div>
+  <div class="item">Denk aan woninginbraken, straatroof, geweldsdelicten en lokale drugszaken.</div>
+  <div class="item">Ze werken nauw samen met wijkagenten en basisteams en behandelen relatief kleinere, overzichtelijke zaken.</div>
+
+  <h3 class="sub-head">Dienst Regionale Recherche — DRR</h3>
+  <div class="item">De Dienst Regionale Recherche, afgekort D.R.R., onderzoekt zware criminaliteit zoals fraude, mensenhandel, zeden en cybercrime.</div>
+  <div class="item">Ze richten zich op criminele samenwerkingsverbanden en delicten met grote impact op slachtoffers.</div>
+  <div class="item">Daarnaast ondersteunen ze andere onderdelen met specialistische kennis op het gebied van observatie, forensisch en digitaal onderzoek.</div>
+
+  <h3 class="sub-head">Landelijke Opsporing en Interventies — LO</h3>
+  <div class="item">De Landelijke Opsporing en Interventies, afgekort L.O., richt zich op de opsporing van zware georganiseerde criminaliteit, terrorisme en cybercrime.</div>
+  <div class="item">Hieronder vallen ook de landelijke recherchetaken en Speciale Interventies.</div>
+
+  <h3 class="sub-head">Landelijke Expertise en Operaties — LX</h3>
+  <div class="item">De Landelijke Expertise en Operaties, afgekort L.X., levert kennis, kunde en materieel aan het hele korps, zowel nationaal als internationaal.</div>
+  <div class="item">Denk aan expertise op het gebied van intelligence, handhaving op de infrastructuur en bewaken en beveiligen.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 4: Onze teams <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Waar werken wij?</h3>
+  <div class="item">Wouter werkt bij het Team Cybercrime, een thematisch team binnen de Dienst Regionale Recherche van de regionale eenheid Noord-Holland.</div>
+  <div class="item">Marije werkt bij de Electronic Crimes Task Force, onderdeel van Team High Tech Crime binnen de Landelijke Opsporing en Interventies.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 5: Electronic Crimes Task Force — ECTF <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Wat is de ECTF?</h3>
+  <div class="item">De E.C.T.F., ook wel het bankenteam genoemd, is een mix tussen opsporing en inlichtingen, vanuit en met de banken.</div>
+  <div class="item">Het team houdt zich bezig met onder andere phishing panels, bankhelpdeskfraude en malware.</div>
+  <div class="item">De E.C.T.F. fungeert als schakel tussen de politie en de banken, en bereidt onderzoeken voor die vervolgens door andere teams worden uitgevoerd.</div>
+
+  <h3 class="sub-head">Wat doet de ECTF niet?</h3>
+  <div class="item">Eenvoudige zaken, zoals het opsporen van bellers of ophalers, worden doorverwezen naar basisteams.</div>
+  <div class="item">De E.C.T.F. houdt zich niet bezig met offline financiële criminaliteit en draait zelf geen volledige onderzoeken.</div>
+
+  <h3 class="sub-head">Marije als Digitaal Specialist bij de ECTF</h3>
+  <div class="item">Marije houdt zich bezig met contact met banken en andere partners.</div>
+  <div class="item">Ze doet technisch onderzoek en schrijft technische processen-verbaal.</div>
+  <div class="item">Ze monitort nieuwe ontwikkelingen en springt bij bij andere teams als dat nodig is.</div>
+  <div class="item">Wanneer een verdachte in beeld komt, wordt die informatie doorgegeven aan een onderzoeksteam.</div>
+  <div class="note">Marije doet (nog) niet: verdachten zelf verder onderzoeken, onderzoeken volledig draaien, of de meeste vorderingen. Voor nu vraagt ze hulp aan collega's met meer ervaring.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 6: Team Cybercrime — TCC <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Wat is het TCC?</h3>
+  <div class="item">Het Team Cybercrime is een thematisch team met veel verschillende specialismen.</div>
+  <div class="item">Denk aan financieel rechercheurs, O.S.I.N.T.-specialisten, analisten, cryptovaluta-experts, tactische mensen en een dossiervormer.</div>
+  <div class="item">Het team heeft een eigen Cyber Center en verschijnt regelmatig in de media.</div>
+
+  <h3 class="sub-head">Onderzoek Skywalker</h3>
+  <div class="item">Een verdachte bood via zijn platform de mogelijkheid aan gebruikers om privécontent van anderen te plaatsen.</div>
+  <div class="item">Hij verdiende daar flink aan via advertentie-inkomsten.</div>
+  <div class="item">Hij hield zich schuil in Dubai, maar meldde zich uiteindelijk aan bij de lokale politie.</div>
+  <div class="item">Hij moest vijf weken wachten in een Dubaise cel voordat de overdracht naar Nederland geregeld was.</div>
+
+  <h3 class="sub-head">Onderzoek Darthvader</h3>
+  <div class="item">Twee jongeren van veertien en vijftien jaar deden een schoolshootingdreiging en spooften daarbij het telefoonnummer van een klasgenoot.</div>
+  <div class="item">Die klasgenoot werd ten onrechte aangehouden en bracht een nacht onterecht in een cel door.</div>
+  <div class="item">Na aanhouding van de juiste verdachten kwamen bij analyse van de gegevensdragers ook oplichtingspraktijken aan het licht.</div>
+
+  <h3 class="sub-head">Wouter als Digitaal Specialist bij het TCC</h3>
+  <div class="item">Wouter schrijft technische processen-verbaal in begrijpelijke taal.</div>
+  <div class="item">Hij begeleidt nieuwe collega's en zet B.O.B.-middelen in wanneer nodig.</div>
+  <div class="item">Het team heeft veel specialisten: die worden ingezet wanneer nodig.</div>
+  <div class="item">Bij hoge werkdruk of deadlines wordt tijdig doorverwezen of hulp gevraagd.</div>
+  <div class="note">Een technisch proces-verbaal moet begrijpelijk zijn voor iedereen die het leest: van collega tot rechter.</div>
+</div>
+
+<h2 class="sec-head" onclick="toggleSec(this)">Sectie 7: Samenwerking — een casus <span class="toggle">inklappen</span></h2>
+<div class="sec-body">
+  <h3 class="sub-head">Stap 1 — De banken signaleren een phishingwebsite</h3>
+  <div class="item">Bij de banken komen phishingwebsites naar voren: websites die doen alsof ze van een bank zijn.</div>
+  <div class="item">De banken melden dit bij de E.C.T.F.</div>
+
+  <h3 class="sub-head">Stap 2 — ECTF doet technisch onderzoek</h3>
+  <div class="item">De E.C.T.F. doet technisch onderzoek naar het phishing panel.</div>
+  <div class="item">Ze vinden bewijs, zoals de gebruikersnaam van de bouwer van het panel, een Telegram-contactgegeven, of code die ook in eerdere onderzoeken naar voren is gekomen.</div>
+  <div class="item">Er wordt gezocht naar IP-adressen en serverregistraties om een verdachte in beeld te krijgen.</div>
+
+  <h3 class="sub-head">Stap 3 — Overdracht naar TCC</h3>
+  <div class="item">Als er genoeg bewijs is om een onderzoek te starten, wordt gezocht naar een onderzoeksteam.</div>
+  <div class="item">Dat is het moment waarop Team Cybercrime in beeld komt.</div>
+  <div class="item">Het T.C.C. controleert of de ontvangen informatie nog actueel is.</div>
+
+  <h3 class="sub-head">Stap 4 — BOB-middelen inzetten</h3>
+  <div class="item">Het T.C.C. zet B.O.B.-middelen in om tot de juiste verdachte op de juiste locatie te komen.</div>
+  <div class="item">Denk aan taplijnen, stealth sms-berichten, of het vorderen van historische gegevens.</div>
+
+  <h3 class="sub-head">Stap 5 — Huiszoeking en inbeslagname</h3>
+  <div class="item">Vervolgens vindt een huiszoeking plaats.</div>
+  <div class="item">De aangetroffen gegevensdragers worden in beslag genomen en uitgelezen, tegenwoordig via de uitleesstraat.</div>
+  <div class="item">Daarna doen de specialisten onderzoek naar de gevonden data.</div>
+
+  <h3 class="sub-head">Stap 6 — Aanhouding en verhoor</h3>
+  <div class="item">De verdachte wordt uitgenodigd zich te melden en in verzekering gesteld.</div>
+  <div class="item">In de drie dagen die volgen worden verhoren afgenomen die betrekking hebben op het onderzoek.</div>
+
+  <h3 class="sub-head">Stap 7 — Dossier naar het Openbaar Ministerie</h3>
+  <div class="item">Na het verwerken van de verhoren en het afronden van het dossier, wordt het dossier overhandigd aan het Openbaar Ministerie.</div>
+  <div class="item">Dat was onze presentatie. Hebben jullie nog vragen?</div>
+</div>
+
+</div>
+
+<script>
+const synth = window.speechSynthesis;
+let voices = [];
+let items = [];
+let idx = 0;
+let paused = false;
+let running = false;
+let currentUtter = null;
+let chosenVoice = null;
+
+function loadVoices() {
+  voices = synth.getVoices();
+  const sel = document.getElementById('voice-sel');
+  sel.innerHTML = '';
+  const nlNL = voices.filter(v => v.lang === 'nl-NL');
+  const nlBE = voices.filter(v => v.lang === 'nl-BE');
+  const others = voices.filter(v => !v.lang.startsWith('nl'));
+  const groups = [['Nederlands (NL)', nlNL], ['Nederlands (BE)', nlBE], ['Overig', others]];
+  groups.forEach(([label, list]) => {
+    if (!list.length) return;
+    const og = document.createElement('optgroup');
+    og.label = label;
+    list.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v.name;
+      o.textContent = v.name + ' (' + v.lang + ')';
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  const preferred = nlNL.length ? nlNL[0] : (nlBE.length ? nlBE[0] : null);
+  if (preferred) sel.value = preferred.name;
+  setVoice();
+}
+
+function setVoice() {
+  const sel = document.getElementById('voice-sel');
+  chosenVoice = voices.find(v => v.name === sel.value) || null;
+}
+
+if (synth.onvoiceschanged !== undefined) {
+  synth.onvoiceschanged = loadVoices;
+}
+loadVoices();
+
+function collectItems() {
+  const shuffle = document.getElementById('chk-shuffle').checked;
+  if (shuffle) {
+    const list = Array.from(document.querySelectorAll('.sec-body:not(.collapsed) .item, .sec-body:not(.collapsed) .note'));
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
+  }
+  return Array.from(document.querySelectorAll('.sec-head, .sec-body:not(.collapsed) .sub-head, .sec-body:not(.collapsed) .item, .sec-body:not(.collapsed) .note'));
+}
+
+function setStatus(txt) {
+  document.getElementById('status').textContent = txt;
+}
+
+function updateProgress() {
+  const total = items.length;
+  const pct = total ? Math.round((idx / total) * 100) : 0;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function highlightItem(el) {
+  document.querySelectorAll('.item.speaking, .note.speaking, .sub-head.speaking, .sec-head.speaking').forEach(e => e.classList.remove('speaking'));
+  if (el) {
+    el.classList.add('speaking');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function speakNext() {
+  if (!running) return;
+  if (idx >= items.length) {
+    const loop = document.getElementById('chk-loop').checked;
+    if (loop) {
+      document.querySelectorAll('.item.done, .note.done').forEach(e => e.classList.remove('done'));
+      document.querySelectorAll('.sec-head.speaking, .sub-head.speaking').forEach(e => e.classList.remove('speaking'));
+      items = collectItems();
+      idx = 0;
+      const isShuffle = document.getElementById('chk-shuffle').checked;
+      setStatus(isShuffle ? 'Nieuwe shuffle gestart...' : 'Herhaling gestart...');
+    } else {
+      ttsStop();
+      setStatus('Klaar met afspelen');
+      return;
+    }
+  }
+  const el = items[idx];
+  highlightItem(el);
+  updateProgress();
+
+  let text;
+  if (el.classList.contains('sec-head')) {
+    const clone = el.cloneNode(true);
+    const tog = clone.querySelector('.toggle');
+    if (tog) tog.remove();
+    text = clone.textContent.trim();
+  } else {
+    text = el.textContent.trim();
+  }
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'nl-NL';
+  utter.rate = parseFloat(document.getElementById('speed').value);
+  if (chosenVoice) utter.voice = chosenVoice;
+
+  utter.onend = () => {
+    if (!running) return;
+    el.classList.remove('speaking');
+    if (!el.classList.contains('sec-head') && !el.classList.contains('sub-head')) {
+      el.classList.add('done');
+    }
+    idx++;
+    speakNext();
+  };
+  utter.onerror = () => {
+    idx++;
+    speakNext();
+  };
+
+  currentUtter = utter;
+  setStatus('Afspeelend... ' + (idx + 1) + ' / ' + items.length);
+  synth.speak(utter);
+}
+
+function ttsPlay() {
+  if (paused) {
+    synth.resume();
+    paused = false;
+    running = true;
+    setStatus('Afspeelend...');
+    document.getElementById('btn-pause').disabled = false;
+    document.getElementById('btn-play').disabled = true;
+    return;
+  }
+  if (running) return;
+  synth.cancel();
+  items = collectItems();
+  idx = 0;
+  document.querySelectorAll('.item.done, .note.done').forEach(e => e.classList.remove('done'));
+  running = true;
+  paused = false;
+  document.getElementById('btn-play').disabled = true;
+  document.getElementById('btn-pause').disabled = false;
+  document.getElementById('btn-stop').disabled = false;
+  const startShuffle = document.getElementById('chk-shuffle').checked;
+  if (startShuffle) setStatus('Shuffle gestart... ' + items.length + ' regels');
+  speakNext();
+}
+
+function ttsPause() {
+  if (!running) return;
+  synth.pause();
+  paused = true;
+  running = false;
+  setStatus('Gepauzeerd');
+  document.getElementById('btn-play').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
+}
+
+function ttsStop() {
+  synth.cancel();
+  running = false;
+  paused = false;
+  document.querySelectorAll('.item.speaking, .note.speaking').forEach(e => e.classList.remove('speaking'));
+  document.getElementById('btn-play').disabled = false;
+  document.getElementById('btn-pause').disabled = true;
+  document.getElementById('btn-stop').disabled = true;
+  if (idx >= (items.length || 1)) {
+    document.getElementById('progress-bar').style.width = '100%';
+  }
+}
+
+document.querySelectorAll('.item, .note, .sub-head').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    synth.cancel();
+    items = collectItems();
+    idx = items.indexOf(el);
+    if (idx === -1) idx = 0;
+    running = true;
+    paused = false;
+    document.getElementById('btn-play').disabled = true;
+    document.getElementById('btn-pause').disabled = false;
+    document.getElementById('btn-stop').disabled = false;
+    speakNext();
+  });
+});
+
+function toggleSec(headEl) {
+  const body = headEl.nextElementSibling;
+  const tog = headEl.querySelector('.toggle');
+  body.classList.toggle('collapsed');
+  tog.textContent = body.classList.contains('collapsed') ? 'uitklappen' : 'inklappen';
+}
+</script>
+</body>
+</html>
