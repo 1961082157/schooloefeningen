@@ -79,11 +79,35 @@
         .intro p {
             margin-bottom: 10px;
         }
-        
+
+        /* ── Groep banner ── */
+        .groep-banner {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 40px 0 20px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #6a1b9a, #ab47bc);
+            border-radius: 16px;
+            box-shadow: 0 6px 0 #4a148c;
+        }
+
+        .groep-banner h2 {
+            font-size: 2rem;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            margin: 0;
+        }
+
+        .groep-banner .groep-emoji {
+            font-size: 2.2rem;
+        }
+
+        /* ── Subject sections ── */
         .subject-section {
             background-color: white;
             border-radius: 20px;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             padding: 25px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border: 5px solid;
@@ -122,70 +146,26 @@
             display: inline-block;
         }
         
-        .engels-section {
-            border-color: #e91e63;
-        }
-        
-        .engels-header .subject-title {
-            background-color: #e91e63;
-        }
-        
-        .engels-icon {
-            background-color: #fce4ec;
-            color: #e91e63;
-        }
-        
-        .biologie-section {
-            border-color: #4caf50;
-        }
-        
-        .biologie-header .subject-title {
-            background-color: #4caf50;
-        }
-        
-        .biologie-icon {
-            background-color: #e8f5e9;
-            color: #4caf50;
-        }
-        
-        .taal-section {
-            border-color: #2196f3;
-        }
-        
-        .taal-header .subject-title {
-            background-color: #2196f3;
-        }
-        
-        .taal-icon {
-            background-color: #e3f2fd;
-            color: #2196f3;
-        }
-        
-        .rekenen-section {
-            border-color: #ff9800;
-        }
-        
-        .rekenen-header .subject-title {
-            background-color: #ff9800;
-        }
-        
-        .rekenen-icon {
-            background-color: #fff3e0;
-            color: #ff9800;
-        }
-        
-        .muziek-section {
-            border-color: #9c27b0;
-        }
-        
-        .muziek-header .subject-title {
-            background-color: #9c27b0;
-        }
-        
-        .muziek-icon {
-            background-color: #f3e5f5;
-            color: #9c27b0;
-        }
+        .engels-section { border-color: #e91e63; }
+        .engels-header .subject-title { background-color: #e91e63; }
+        .engels-icon { background-color: #fce4ec; color: #e91e63; }
+
+        .biologie-section { border-color: #4caf50; }
+        .biologie-header .subject-title { background-color: #4caf50; }
+        .biologie-icon { background-color: #e8f5e9; color: #4caf50; }
+
+        .taal-section { border-color: #2196f3; }
+        .taal-header .subject-title { background-color: #2196f3; }
+        .taal-icon { background-color: #e3f2fd; color: #2196f3; }
+
+        .rekenen-section { border-color: #ff9800; }
+        .rekenen-header .subject-title { background-color: #ff9800; }
+        .rekenen-icon { background-color: #fff3e0; color: #ff9800; }
+
+        .topo-section { border-color: #00897b; }
+        .topo-header .subject-title { background-color: #00897b; }
+        .topo-icon { background-color: #e0f2f1; color: #00897b; }
+        .topo-link .link-icon { background-color: #e0f2f1; color: #00897b; }
         
         .exercise-links {
             display: grid;
@@ -221,50 +201,13 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+            transition: transform 0.3s;
         }
         
-        .engels-link .link-icon {
-            background-color: #fce4ec;
-            color: #e91e63;
-        }
-        
-        .biologie-link .link-icon {
-            background-color: #e8f5e9;
-            color: #4caf50;
-        }
-        
-        .taal-link .link-icon {
-            background-color: #e3f2fd;
-            color: #2196f3;
-        }
-        
-        .rekenen-link .link-icon {
-            background-color: #fff3e0;
-            color: #ff9800;
-        }
-        
-        .muziek-link .link-icon {
-            background-color: #f3e5f5;
-            color: #9c27b0;
-        }
-        
-        .topo-section {
-            border-color: #00897b;
-        }
-        
-        .topo-header .subject-title {
-            background-color: #00897b;
-        }
-        
-        .topo-icon {
-            background-color: #e0f2f1;
-            color: #00897b;
-        }
-        
-        .topo-link .link-icon {
-            background-color: #e0f2f1;
-            color: #00897b;
-        }
+        .engels-link .link-icon { background-color: #fce4ec; color: #e91e63; }
+        .biologie-link .link-icon { background-color: #e8f5e9; color: #4caf50; }
+        .taal-link .link-icon { background-color: #e3f2fd; color: #2196f3; }
+        .rekenen-link .link-icon { background-color: #fff3e0; color: #ff9800; }
         
         .link-text {
             font-size: 1.3rem;
@@ -313,53 +256,89 @@
             50% { transform: translateY(-15px); }
         }
         
-        .fun-element:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .fun-element:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        .fun-element:nth-child(4) {
-            animation-delay: 0.6s;
-        }
-        
-        .new-badge {
-            background-color: #ff5722;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
+        .fun-element:nth-child(2) { animation-delay: 0.2s; }
+        .fun-element:nth-child(3) { animation-delay: 0.4s; }
+        .fun-element:nth-child(4) { animation-delay: 0.6s; }
+
+        /* ── Groep navigatie index ── */
+        .groep-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 20px 24px;
+            background: white;
             border-radius: 20px;
-            margin-left: 10px;
-            vertical-align: middle;
+            border: 4px solid #e0e0e0;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .groep-nav-label {
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #888;
+            font-weight: bold;
+            margin-bottom: 4px;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            animation: pulse 1.5s infinite;
         }
-        @keyframes pulse {
-            0% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.7; transform: scale(1); }
+
+        .groep-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            height: 90px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 3px solid transparent;
         }
-        
+
+        .groep-nav a:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .groep-nav a .nav-emoji {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .groep-nav a.active {
+            border-width: 3px;
+            border-style: solid;
+        }
+
+        .groep-nav a.inactive {
+            opacity: 0.45;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* Per-groep kleuren */
+        .nav-gr3 { background: #fff3e0; color: #e65100; border-color: #ffb74d; }
+        .nav-gr4 { background: #fce4ec; color: #c62828; border-color: #f48fb1; }
+        .nav-gr5 { background: #e8f5e9; color: #2e7d32; border-color: #81c784; }
+        .nav-gr6 { background: #ede7f6; color: #4a148c; border-color: #ab47bc; }
+        .nav-gr7 { background: #e3f2fd; color: #0d47a1; border-color: #64b5f6; }
+        .nav-gr8 { background: #fff8e1; color: #f57f17; border-color: #ffd54f; }
+
+        /* ── Groep banner ── */
+        .groep-banner {
+            scroll-margin-top: 20px;
+        }
+
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .exercise-links {
-                grid-template-columns: 1fr;
-            }
-            
-            .subject-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .subject-icon {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
+            h1 { font-size: 2.2rem; }
+            .exercise-links { grid-template-columns: 1fr; }
+            .subject-header { flex-direction: column; text-align: center; }
+            .subject-icon { margin-right: 0; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -388,99 +367,118 @@
             <div class="fun-element">📖</div>
             <div class="fun-element">🎯</div>
         </div>
-        
-        <!-- Engels Sectie -->
+
+        <!-- ── Groep navigatie ── -->
+        <nav class="groep-nav">
+            <div class="groep-nav-label">Spring naar groep</div>
+            <a href="#groep3" class="nav-gr3 inactive">
+                <span class="nav-emoji">🌱</span>Groep 3
+            </a>
+            <a href="#groep4" class="nav-gr4 inactive">
+                <span class="nav-emoji">🌼</span>Groep 4
+            </a>
+            <a href="#groep5" class="nav-gr5 inactive">
+                <span class="nav-emoji">🌿</span>Groep 5
+            </a>
+            <a href="#groep6" class="nav-gr6 active">
+                <span class="nav-emoji">🌟</span>Groep 6
+            </a>
+            <a href="#groep7" class="nav-gr7 inactive">
+                <span class="nav-emoji">🚀</span>Groep 7
+            </a>
+            <a href="#groep8" class="nav-gr8 inactive">
+                <span class="nav-emoji">🏆</span>Groep 8
+            </a>
+        </nav>
+
+        <!-- ══════════════════════════════ GROEP 6 ══════════════════════════════ -->
+        <div id="groep6" class="groep-banner">
+            <span class="groep-emoji">🌟</span>
+            <h2>Groep 6</h2>
+        </div>
+
+        <!-- Engels -->
         <section class="subject-section engels-section">
             <div class="subject-header engels-header">
                 <div class="subject-icon engels-icon">🇬🇧</div>
                 <h2 class="subject-title">Engels</h2>
             </div>
-            
             <div class="exercise-links">
                 <a href="./engels/gr6-unit2_lesson4.html" class="exercise-link engels-link">
                     <div class="link-icon">📝</div>
-                    <div class="link-text">Groep 6 - Unit 2 Les 4</div>
+                    <div class="link-text">Unit 2 Les 4</div>
                 </a>
-                
                 <a href="./engels/gr6-unit3_lesson4.html" class="exercise-link engels-link">
                     <div class="link-icon">🔤</div>
-                    <div class="link-text">Groep 6 - Unit 3 Les 4</div>
+                    <div class="link-text">Unit 3 Les 4</div>
                 </a>
-				
-                <!-- NIEUWE LINK voor Unit 4 Les 4 -->
-                <a href="./engels/gr6-unit4-les4.html" class="exercise-link taal-link">
+                <a href="./engels/gr6-unit4-les4.html" class="exercise-link engels-link">
                     <div class="link-icon">🚂</div>
-                    <div class="link-text">Groep 6 - Unit 4 Les 4 <span class="new-badge">Nieuw!</span></div>
+                    <div class="link-text">Unit 4 Les 4</div>
                 </a>
             </div>
         </section>
-        
-        <!-- Biologie Sectie -->
+
+        <!-- Biologie -->
         <section class="subject-section biologie-section">
             <div class="subject-header biologie-header">
                 <div class="subject-icon biologie-icon">🔬</div>
                 <h2 class="subject-title">Biologie</h2>
             </div>
-            
             <div class="exercise-links">
                 <a href="./biologie/gr6-dierenrijk-jan26.html" class="exercise-link biologie-link">
                     <div class="link-icon">🐯</div>
-                    <div class="link-text">Groep 6 - Dierenrijk</div>
+                    <div class="link-text">Dierenrijk</div>
                 </a>
             </div>
         </section>
-        
-        <!-- Taal Sectie - met nieuwe link -->
+
+        <!-- Taal -->
         <section class="subject-section taal-section">
             <div class="subject-header taal-header">
                 <div class="subject-icon taal-icon">📖</div>
                 <h2 class="subject-title">Taal</h2>
             </div>
-            
             <div class="exercise-links">
                 <a href="./taal/gr6-broodjeaap.html" class="exercise-link taal-link">
                     <div class="link-icon">🍞</div>
-                    <div class="link-text">Groep 6 - Broodjeaap</div>
+                    <div class="link-text">Broodjeaap</div>
                 </a>
-                
                 <a href="./taal/gr6-blok6-dictee.html" class="exercise-link taal-link">
                     <div class="link-icon">📝</div>
-                    <div class="link-text">Groep 6 - Blok 6 Dictee</div>
+                    <div class="link-text">Blok 6 Dictee</div>
                 </a>
-
                 <a href="./taal/gr6-stads_safari.html" class="exercise-link taal-link">
                     <div class="link-icon">🏙️</div>
-                    <div class="link-text">Groep 6 - Stadssafari <span class="new-badge">Nieuw!</span></div>
+                    <div class="link-text">Stadssafari</div>
                 </a>
-
+                <a href="./taal/gr6-feest.html" class="exercise-link taal-link">
+                    <div class="link-icon">🎉</div>
+                    <div class="link-text">Feest</div>
+                </a>
             </div>
         </section>
-        
-        <!-- Rekenen Sectie -->
+
+        <!-- Rekenen -->
         <section class="subject-section rekenen-section">
             <div class="subject-header rekenen-header">
                 <div class="subject-icon rekenen-icon">🧮</div>
                 <h2 class="subject-title">Rekenen</h2>
             </div>
-            
             <div class="exercise-links">
                 <a href="https://www.redactiesommen.nl" target="_blank" rel="noopener noreferrer" class="exercise-link rekenen-link">
                     <div class="link-icon">🔢</div>
-                    <div class="link-text">
-                        Redactiesommen
-                        <span class="external-link-icon">↗️</span>
-                    </div>
+                    <div class="link-text">Redactiesommen <span class="external-link-icon">↗️</span></div>
                 </a>
             </div>
         </section>
-     
-        <!-- Topografie Sectie -->
+
+        <!-- Topografie -->
         <section class="subject-section topo-section">
             <div class="subject-header topo-header">
                 <div class="subject-icon topo-icon">🗺️</div>
                 <h2 class="subject-title">Topografie</h2>
             </div>
-            
             <div class="exercise-links">
                 <a href="./topo/west-nederland-oefenen.html" class="exercise-link topo-link">
                     <div class="link-icon">📍</div>
@@ -488,7 +486,9 @@
                 </a>
             </div>
         </section>
-     
+
+        <!-- ══════════════ Volgende groepen komen hier ══════════════ -->
+
         <footer>
             <p>Veel plezier met oefenen! Onthoud: oefening baart kunst! 🎨</p>
             <div class="encouragement">Lekker oefenen, goede cijfers! 🎉</div>
@@ -496,27 +496,21 @@
     </div>
 
     <script>
-        // Interactieve animaties
         document.querySelectorAll('.exercise-link').forEach(link => {
             link.addEventListener('mouseenter', function() {
                 const icon = this.querySelector('.link-icon');
                 if (icon) icon.style.transform = 'rotate(15deg) scale(1.2)';
             });
-            
             link.addEventListener('mouseleave', function() {
                 const icon = this.querySelector('.link-icon');
                 if (icon) icon.style.transform = 'rotate(0) scale(1)';
             });
-            
-            link.addEventListener('click', function(e) {
+            link.addEventListener('click', function() {
                 this.style.backgroundColor = '#ffffcc';
-                setTimeout(() => {
-                    this.style.backgroundColor = '';
-                }, 300);
+                setTimeout(() => { this.style.backgroundColor = ''; }, 300);
             });
         });
-        
-        // Decoratieve beweging
+
         const decorations = document.querySelectorAll('.decoration');
         decorations.forEach((dec, index) => {
             setInterval(() => {
