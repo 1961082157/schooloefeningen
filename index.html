@@ -220,9 +220,85 @@
             color: #999;
         }
         
+        /* ── Externe links sectie ── */
+        .external-links-section {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            border: 4px dashed #bdbdbd;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+        }
+
+        .external-links-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .external-links-header span { font-size: 2rem; }
+
+        .external-links-header h2 {
+            font-size: 1.8rem;
+            color: #555;
+        }
+
+        .external-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .external-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.25s;
+        }
+
+        .external-card:hover {
+            background: #fff;
+            border-color: #bdbdbd;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .ext-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ext-info { flex: 1; }
+
+        .ext-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .ext-url {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .ext-arrow { font-size: 1.2rem; }
+
         footer {
-            text-align: center;
-            margin-top: 40px;
             padding: 20px;
             background-color: #ffcc80;
             border-radius: 15px;
@@ -459,19 +535,7 @@
             </div>
         </section>
 
-        <!-- Rekenen -->
-        <section class="subject-section rekenen-section">
-            <div class="subject-header rekenen-header">
-                <div class="subject-icon rekenen-icon">🧮</div>
-                <h2 class="subject-title">Rekenen</h2>
-            </div>
-            <div class="exercise-links">
-                <a href="https://www.redactiesommen.nl" target="_blank" rel="noopener noreferrer" class="exercise-link rekenen-link">
-                    <div class="link-icon">🔢</div>
-                    <div class="link-text">Redactiesommen <span class="external-link-icon">↗️</span></div>
-                </a>
-            </div>
-        </section>
+
 
         <!-- Topografie -->
         <section class="subject-section topo-section">
@@ -488,6 +552,32 @@
         </section>
 
         <!-- ══════════════ Volgende groepen komen hier ══════════════ -->
+
+        <!-- ── Externe links ── -->
+        <section class="external-links-section">
+            <div class="external-links-header">
+                <span>🌐</span>
+                <h2>Handige websites</h2>
+            </div>
+            <div class="external-links-grid">
+                <a href="https://www.redactiesommen.nl" target="_blank" rel="noopener noreferrer" class="external-card">
+                    <div class="ext-icon">🔢</div>
+                    <div class="ext-info">
+                        <div class="ext-title">Redactiesommen</div>
+                        <div class="ext-url">redactiesommen.nl</div>
+                    </div>
+                    <span class="ext-arrow">↗️</span>
+                </a>
+                <a href="https://www.junioreinstein.nl/online/home" target="_blank" rel="noopener noreferrer" class="external-card">
+                    <div class="ext-icon">🧪</div>
+                    <div class="ext-info">
+                        <div class="ext-title">Junior Einstein</div>
+                        <div class="ext-url">junioreinstein.nl</div>
+                    </div>
+                    <span class="ext-arrow">↗️</span>
+                </a>
+            </div>
+        </section>
 
         <footer>
             <p>Veel plezier met oefenen! Onthoud: oefening baart kunst! 🎨</p>
