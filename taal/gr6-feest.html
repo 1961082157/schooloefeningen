@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woordjes Oefenen 🎉</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow:  #FFD93D;
+    --orange:  #FF6B35;
+    --pink:    #FF6FA3;
+    --purple:  #9B5DE5;
+    --blue:    #00BBF9;
+    --green:   #00F5D4;
+    --bg:      #1A1A2E;
+    --card:    #16213E;
+    --text:    #FFFFFF;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  /* ── STARS BG ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, #fff8 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, #fff6 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 70%, #fff5 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, #fff7 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, #fff4 0%, transparent 100%),
+      radial-gradient(2px 2px at 40% 15%, #fff6 0%, transparent 100%),
+      radial-gradient(2px 2px at 70% 85%, #fff5 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative; z-index: 1;
+    text-align: center;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  header h1 {
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--yellow), var(--pink), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 8px #ff6fa355);
+  }
+
+  /* ── HUD ── */
+  #hud {
+    position: relative; z-index: 1;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .hud-box {
+    background: var(--card);
+    border: 2px solid var(--purple);
+    border-radius: 14px;
+    padding: 6px 16px;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #xp-bar-wrap {
+    width: min(400px, 90vw);
+    background: #333;
+    border-radius: 20px;
+    height: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  #xp-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    border-radius: 20px;
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  /* ── MODE TABS ── */
+  #mode-tabs {
+    display: flex; gap: 8px;
+    margin-bottom: 18px;
+    position: relative; z-index: 1;
+  }
+  .tab-btn {
+    background: var(--card);
+    border: 2px solid transparent;
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: .95rem;
+    font-weight: 700;
+    color: #aaa;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    border-color: var(--yellow);
+    color: var(--yellow);
+    background: #2a2a45;
+  }
+  .tab-btn:hover:not(.active) { border-color: #555; color: #fff; }
+
+  /* ── MAIN AREA ── */
+  #game-area {
+    position: relative; z-index: 1;
+    width: min(520px, 96vw);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  /* ── FLASHCARD ── */
+  .scene {
+    width: 100%;
+    height: 220px;
+    perspective: 900px;
+    cursor: pointer;
+  }
+  .card-inner {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .55s cubic-bezier(.4,0,.2,1);
+  }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 8px 32px #0006;
+  }
+  .card-front {
+    background: linear-gradient(135deg, var(--purple), #4a00cc);
+    border: 3px solid var(--blue);
+  }
+  .card-back {
+    background: linear-gradient(135deg, #005f87, #00264d);
+    border: 3px solid var(--green);
+    transform: rotateY(180deg);
+  }
+  .card-word {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+    font-weight: 900;
+    color: var(--yellow);
+    margin-bottom: 8px;
+  }
+  .card-hint { font-size: .85rem; color: #aaa; margin-top: 8px; }
+  .card-def {
+    font-size: clamp(.9rem, 3vw, 1.15rem);
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.5;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: transform .12s, filter .12s;
+  }
+  .btn:hover { transform: scale(1.06); filter: brightness(1.1); }
+  .btn:active { transform: scale(.95); }
+  .btn-primary { background: var(--orange); color: #fff; }
+  .btn-secondary { background: var(--purple); color: #fff; }
+  .btn-green { background: var(--green); color: #1A1A2E; }
+  .btn-pink { background: var(--pink); color: #fff; }
+
+  /* ── MULTIPLE CHOICE ── */
+  #mc-word {
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    font-weight: 900;
+    color: var(--yellow);
+    text-align: center;
+    background: var(--card);
+    border: 3px solid var(--purple);
+    border-radius: 18px;
+    padding: 22px 28px;
+    width: 100%;
+  }
+  .mc-question-label {
+    font-size: .85rem;
+    color: #aaa;
+    text-align: center;
+    margin-top: -8px;
+  }
+  #mc-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+  .mc-opt {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: clamp(.85rem, 2.5vw, 1rem);
+    background: var(--card);
+    border: 3px solid #444;
+    border-radius: 14px;
+    padding: 14px 10px;
+    cursor: pointer;
+    color: #fff;
+    transition: border-color .15s, transform .12s, background .15s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .mc-opt:hover:not(:disabled) { border-color: var(--blue); transform: scale(1.03); }
+  .mc-opt.correct  { border-color: var(--green); background: #003d2f; color: var(--green); }
+  .mc-opt.wrong    { border-color: var(--pink);  background: #3d0020; color: var(--pink); }
+  .mc-opt:disabled { cursor: default; }
+
+  /* ── FEEDBACK ── */
+  #feedback {
+    font-size: 1.5rem;
+    font-weight: 900;
+    min-height: 2rem;
+    text-align: center;
+    transition: opacity .3s;
+  }
+  #feedback.good { color: var(--green); }
+  #feedback.bad  { color: var(--pink); }
+
+  /* ── LEVEL UP OVERLAY ── */
+  #level-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: #000a;
+    z-index: 99;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #level-overlay.show { display: flex; }
+  #level-overlay h2 {
+    font-size: clamp(2rem, 8vw, 4rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--yellow), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pop .4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .emoji-burst { font-size: 3rem; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pop  { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ── CONFETTI ── */
+  .confetto {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 100;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── PROGRESS ── */
+  #progress-text { font-size: .9rem; color: #aaa; }
+
+  /* ── HIDDEN ── */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎉 Woordjes Oefenen!</h1>
+</header>
+
+<div id="hud">
+  <div class="hud-box">⭐ Score: <span id="score">0</span></div>
+  <div class="hud-box">🏆 Level <span id="level">1</span></div>
+  <div class="hud-box">🔥 Streak: <span id="streak">0</span></div>
+</div>
+<div id="xp-bar-wrap"><div id="xp-bar"></div></div>
+
+<div id="mode-tabs">
+  <button class="tab-btn active" onclick="setMode('flashcard')">🃏 Flashcard</button>
+  <button class="tab-btn" onclick="setMode('mc-word')">🎯 Kies de definitie</button>
+  <button class="tab-btn" onclick="setMode('mc-def')">💡 Kies het woord</button>
+</div>
+
+<div id="game-area">
+
+  <!-- FLASHCARD MODE -->
+  <div id="flashcard-mode">
+    <div class="scene" onclick="flipCard()">
+      <div class="card-inner" id="card-inner">
+        <div class="card-face card-front">
+          <div class="card-word" id="fc-word">---</div>
+          <div class="card-hint">Klik om de uitleg te zien 👆</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-def" id="fc-def">---</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevCard()">⬅ Vorige</button>
+      <button class="btn btn-primary" onclick="nextCard()">Volgende ➡</button>
+    </div>
+    <div id="progress-text">Kaart <span id="fc-index">1</span> van <span id="fc-total">1</span></div>
+  </div>
+
+  <!-- MULTIPLE CHOICE MODE -->
+  <div id="mc-mode" class="hidden">
+    <div id="mc-word-box">
+      <div id="mc-word">---</div>
+      <div class="mc-question-label" id="mc-label">Welke definitie hoort erbij?</div>
+    </div>
+    <div id="mc-options"></div>
+    <div id="feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary hidden" id="next-btn" onclick="nextQuestion()">Volgende vraag ➡</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div id="level-overlay">
+  <div class="emoji-burst">🌟</div>
+  <h2 id="level-text">LEVEL UP!</h2>
+  <p style="font-size:1.3rem;font-weight:700;color:#fff">Je bent nu level <span id="new-level">2</span>! 🎊</p>
+  <button class="btn btn-green" onclick="closeLevelUp()">Doorgaan!</button>
+</div>
+
+<script>
+// ─────────── VOCABULARY DATA ───────────
+const words = [
+  // IMAGE 1 – sheet 1
+  { word: "aanvaarden",           def: "aannemen, laten weten dat je komt" },
+  { word: "de begroting",         def: "berekening van tevoren hoeveel iets gaat kosten" },
+  { word: "bepaald worden door",  def: "afhangen van" },
+  { word: "de berekening",        def: "het uitrekenen hoeveel iets kost" },
+  { word: "bevestigen",           def: "zeggen dat iets klopt; ja zeggen op iets" },
+  { word: "financieel",           def: "wat met geld te maken heeft" },
+  { word: "de gastenlijst",       def: "een lijst waar de namen op staan van mensen die uitgenodigd zijn voor een feest" },
+  { word: "de gastvrouw (gastheer)", def: "vrouw (of man) die het feest geeft, die de gasten ontvangt" },
+  { word: "geïmproviseerd",       def: "snel aangepakt met spullen die je bij de hand hebt" },
+  { word: "inschatten",           def: "iemand of iets vooraf beoordelen" },
+  // sheet 2 (bottom)
+  { word: "het budget",           def: "het bedrag dat bedoeld is om ergens aan te besteden" },
+  { word: "decoreren",            def: "feestelijk inrichten" },
+  { word: "dineren",              def: "feestelijk eten" },
+  { word: "er komt veel bij kijken", def: "er moet veel voor gedaan worden" },
+  { word: "er veel werk van maken", def: "ergens veel moeite voor doen" },
+  { word: "op stel en sprong",    def: "meteen, heel snel" },
+  { word: "overtuigend",          def: "je gelooft dat het waar is" },
+  { word: "de planning",          def: "een schema waarin staat wat er gedaan moet worden" },
+  { word: "het tijdpad",          def: "een tijdschema, een schema waarop je kunt zien hoe laat wat gebeurt" },
+  { word: "weerzinwekkend",       def: "walgelijk; je vindt het heel veel iets of vies of vervelend" },
+  // IMAGE 2 – sheet 1
+  { word: "aan de prijs",         def: "duur" },
+  { word: "betaalbaar",           def: "niet duur" },
+  { word: "het evenement",        def: "een grote, bijzondere gebeurtenis die georganiseerd wordt" },
+  { word: "exclusief",            def: "heel bijzonder, heel speciaal" },
+  { word: "exorbitant",           def: "overdreven, buitensporig" },
+  { word: "in geuren en kleuren", def: "heel uitgebreid, met veel bijzonderheden" },
+  { word: "inclusief",            def: "het hoort erbij; het is erbij inbegrepen" },
+  { word: "de omstandigheid",     def: "iets dat hoort bij een gebeurtenis of een toestand; gebeur dat erbij hoort" },
+  { word: "omtoveren tot",        def: "iets helemaal veranderen" },
+  { word: "optuigen",             def: "iets versieren" },
+  // sheet 2 (bottom)
+  { word: "extravagant",          def: "heel opgewoon, opvallend; de persoon voor wie het feest gegeven wordt" },
+  { word: "het feestvarken",      def: "de persoon voor wie het feest gegeven wordt" },
+  { word: "de festiviteit",       def: "een feestelijke gebeurtenis" },
+  { word: "furore maken",         def: "steeds bekender en beroemder worden" },
+  { word: "in de echt verbinden", def: "twee mensen met elkaar laten trouwen, een huwelijk sluiten" },
+  { word: "de plechtigheid",      def: "een officiële ernstige bijeenkomst, bijvoorbeeld bij een huwelijk of begrafenis" },
+  { word: "sober",                def: "eenvoudig" },
+  { word: "tamelijk",             def: "nogal, redelijk" },
+  { word: "verbinden",            def: "mensen het gevoel geven dat ze bij elkaar horen" },
+  { word: "verscheidene",         def: "verschillende, meerdere" },
+];
+
+// ─────────── STATE ───────────
+let mode       = 'flashcard';
+let score      = 0;
+let level      = 1;
+let streak     = 0;
+let xp         = 0;
+const XP_PER_LEVEL = 100;
+
+let fcIndex    = 0;
+let fcShuffled = [];
+
+let mcWord     = null;
+let mcAnswered = false;
+let mcWordMode = true; // true = show word, pick def; false = show def, pick word
+
+// ─────────── AUDIO ───────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+function getCtx() { if (!ctx) ctx = new AudioCtx(); return ctx; }
+
+function playTone(freq, dur, type='sine', vol=.18) {
+  const c = getCtx();
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(vol, c.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.0001, c.currentTime + dur);
+  osc.connect(gain); gain.connect(c.destination);
+  osc.start(); osc.stop(c.currentTime + dur);
+}
+
+function playCorrect() {
+  playTone(523, .12); // C5
+  setTimeout(() => playTone(659, .12), 100); // E5
+  setTimeout(() => playTone(784, .2),  200); // G5
+}
+function playWrong() {
+  playTone(220, .15, 'sawtooth', .1);
+  setTimeout(() => playTone(196, .25, 'sawtooth', .1), 130);
+}
+function playLevelUp() {
+  [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f, .18, 'triangle', .2), i*110));
+}
+function playFlip() {
+  playTone(880, .08, 'sine', .08);
+}
+
+// ─────────── CONFETTI ───────────
+function burst(n=30) {
+  const colors = ['#FFD93D','#FF6B35','#FF6FA3','#9B5DE5','#00BBF9','#00F5D4'];
+  for (let i=0; i<n; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetto';
+    el.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:-10px;
+      background:${colors[Math.random()*colors.length|0]};
+      animation-duration:${.8+Math.random()*1.2}s;
+      animation-delay:${Math.random()*.4}s;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+
+// ─────────── XP / LEVEL ───────────
+function addXP(amount) {
+  xp += amount;
+  score += amount;
+  document.getElementById('score').textContent = score;
+  if (xp >= XP_PER_LEVEL) {
+    xp -= XP_PER_LEVEL;
+    level++;
+    document.getElementById('level').textContent = level;
+    showLevelUp();
+  }
+  updateXPBar();
+}
+
+function updateXPBar() {
+  document.getElementById('xp-bar').style.width = (xp / XP_PER_LEVEL * 100) + '%';
+}
+
+function showLevelUp() {
+  playLevelUp();
+  burst(60);
+  document.getElementById('new-level').textContent = level;
+  document.getElementById('level-overlay').classList.add('show');
+}
+function closeLevelUp() {
+  document.getElementById('level-overlay').classList.remove('show');
+}
+
+// ─────────── MODE ───────────
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.getElementById('flashcard-mode').classList.toggle('hidden', m !== 'flashcard');
+  document.getElementById('mc-mode').classList.toggle('hidden', m === 'flashcard');
+
+  if (m === 'flashcard') {
+    initFlashcards();
+  } else {
+    mcWordMode = (m === 'mc-word');
+    nextQuestion();
+  }
+}
+
+// ─────────── FLASHCARDS ───────────
+function initFlashcards() {
+  fcShuffled = shuffle([...words]);
+  fcIndex = 0;
+  showCard();
+}
+
+function showCard() {
+  const w = fcShuffled[fcIndex];
+  document.getElementById('fc-word').textContent = w.word;
+  document.getElementById('fc-def').textContent  = w.def;
+  document.getElementById('fc-index').textContent = fcIndex + 1;
+  document.getElementById('fc-total').textContent = fcShuffled.length;
+  // reset flip
+  document.getElementById('card-inner').classList.remove('flipped');
+}
+
+function flipCard() {
+  playFlip();
+  document.getElementById('card-inner').classList.toggle('flipped');
+}
+function nextCard() {
+  fcIndex = (fcIndex + 1) % fcShuffled.length;
+  showCard();
+  addXP(2);
+}
+function prevCard() {
+  fcIndex = (fcIndex - 1 + fcShuffled.length) % fcShuffled.length;
+  showCard();
+}
+
+// ─────────── MULTIPLE CHOICE ───────────
+function nextQuestion() {
+  mcAnswered = false;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = '';
+  document.getElementById('next-btn').classList.add('hidden');
+
+  const pool = shuffle([...words]);
+  mcWord = pool[0];
+
+  const correct = mcWord;
+  const distractors = pool.slice(1, 4);
+
+  if (mcWordMode) {
+    document.getElementById('mc-word').textContent = mcWord.word;
+    document.getElementById('mc-label').textContent = 'Welke definitie hoort erbij?';
+    const opts = shuffle([correct.def, ...distractors.map(d=>d.def)]);
+    renderOpts(opts, correct.def, false);
+  } else {
+    document.getElementById('mc-word').textContent = mcWord.def;
+    document.getElementById('mc-label').textContent = 'Welk woord hoort erbij?';
+    const opts = shuffle([correct.word, ...distractors.map(d=>d.word)]);
+    renderOpts(opts, correct.word, false);
+  }
+}
+
+function renderOpts(opts, correctAns, isWord) {
+  const container = document.getElementById('mc-options');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mc-opt';
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(opt, correctAns, btn);
+    container.appendChild(btn);
+  });
+}
+
+function checkAnswer(chosen, correct, btn) {
+  if (mcAnswered) return;
+  mcAnswered = true;
+
+  const allBtns = document.querySelectorAll('.mc-opt');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b.textContent === correct) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    fb.textContent = ['Super! 🌟', 'Goed zo! 🎉', 'Wauw! 💪', 'Toppie! ✨', 'YES! 🔥'][Math.random()*5|0];
+    fb.className = 'good';
+    streak++;
+    document.getElementById('streak').textContent = streak;
+    const bonus = streak >= 3 ? 15 : 10;
+    addXP(bonus);
+    playCorrect();
+    if (streak % 5 === 0) burst(40);
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = ['Oeps! 😅 Probeer nog eens!', 'Niet helemaal… 🤔', 'Bijna! 💡'][Math.random()*3|0];
+    fb.className = 'bad';
+    streak = 0;
+    document.getElementById('streak').textContent = streak;
+    playWrong();
+  }
+
+  document.getElementById('next-btn').classList.remove('hidden');
+}
+
+// ─────────── UTILS ───────────
+function shuffle(arr) {
+  for (let i=arr.length-1; i>0; i--) {
+    const j = Math.random()*(i+1)|0;
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// ─────────── INIT ───────────
+initFlashcards();
+</script>
+</body>
+</html>
